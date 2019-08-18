@@ -29,7 +29,10 @@ class KernelParamsListActivity : AppCompatActivity() {
             layoutManager = GridLayoutManager(this.context, recyclerViewColumns)
             paramsListRecyclerView.adapter = paramsListAdapter
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
         updateRecyclerViewData()
     }
 
@@ -53,18 +56,17 @@ class KernelParamsListActivity : AppCompatActivity() {
 
     private suspend fun getKernelParams() = withContext(Dispatchers.Default) {
         delay(500)
-        val kernelParams = mutableListOf<KernelParam>()
-        RootUtils.executeWithOutput("sysctl -a", "", true) { line ->
+        val kernelParams = mutableListOf<KernelParameter>()
+        RootUtils.executeWithOutput("busybox sysctl -a", "", true) { line ->
             line?.let {
                 if (!it.contains("denied") && !it.startsWith("sysctl") && it.contains("=")) {
                     val kernelParam = it.split("=").first().trim()
-                    kernelParams.add(KernelParam(param = kernelParam).apply {
+                    kernelParams.add(KernelParameter(param = kernelParam).apply {
                         setPathFromParam(kernelParam)
                     })
                 }
             }
         }
-        println(kernelParams)
         kernelParams
     }
 

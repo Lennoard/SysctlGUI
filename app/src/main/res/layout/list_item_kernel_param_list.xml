@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:orientation="vertical"
+    android:id="@+id/listKernelParamLayout"
     android:background="?attr/selectableItemBackground">
 
     <TextView

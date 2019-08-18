@@ -15,4 +15,8 @@
     <string name="kernel_params">Kernel parameters</string>
     <string name="browse_variables">Browse variables</string>
     <string name="browse_variables_sum">Browse /proc/sys for a specific kernel parameter</string>
+    <string name="edit_params">Edit parameters</string>
+    <string name="unexpected_error">Something wrong is not right</string>
+    <string name="error_empty_input_field">Please check the input fields</string>
+    <string name="failed">Failed</string>
 </resources>

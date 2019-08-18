@@ -9,6 +9,6 @@
     <color name="colorBackgroundAlt">#304049</color>
     <color name="iconColor">#abb8c3</color>
     <color name="white">#FFFFFF</color>
-    <color name="error">#d50000</color>
+    <color name="error">#ff1744</color>
     <color name="warning">#ff9100</color>
 </resources>
