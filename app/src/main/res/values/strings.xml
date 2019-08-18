@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Sysctl GUI</string>
+    <string name="splash_status_checking_root">Checking for root access</string>
+    <string name="splash_status_checking_busybox">Checking for busybox</string>
+    <string name="error">Error</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="show_variables">Show variables</string>
+    <string name="show_variables_sum">Display and edit all kernel parameters in a list</string>
+    <string name="sysctl_operations">Sysctl operations</string>
+    <string name="read_from_file">Read values from file</string>
+    <string name="read_from_file_sum">Use this option to load parameters from a selected .conf file</string>
+    <string name="exit">Exit</string>
+    <string name="kernel_params">Kernel parameters</string>
+    <string name="browse_variables">Browse variables</string>
+    <string name="browse_variables_sum">Browse /proc/sys for a specific kernel parameter</string>
+</resources>

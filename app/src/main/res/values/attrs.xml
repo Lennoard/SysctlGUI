@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="iconColor" format="reference|color" />
+    <attr name="cardViewElevation" format="reference|dimension" />
+    <attr name="textHeadingColor" format="reference|color" />
+    <attr name="textHeadingColorInverse" format="reference|color" />
+</resources>
