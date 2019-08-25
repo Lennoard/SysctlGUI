@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
         }
 
+        mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

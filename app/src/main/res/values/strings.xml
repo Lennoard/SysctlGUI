@@ -20,4 +20,7 @@
     <string name="error_empty_input_field">Please check the input fields</string>
     <string name="failed">Failed</string>
     <string name="invalid_path">Invalid path</string>
+    <string name="sysctl">Sysctl</string>
+    <string name="sysctl_help">Sysctl is used to modify kernel parameters at runtime. The parameters available are those listed under /proc/sys.</string>
+    <string name="app_description">This apps main purpose is to provide a graphical way to edit these parameters. You can find its source code on <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>.</string>
 </resources>
