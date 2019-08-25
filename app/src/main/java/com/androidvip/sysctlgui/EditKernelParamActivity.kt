@@ -42,7 +42,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 editParamApply.setOnClickListener { view ->
                     val newValue = editParamInput.text.toString()
                     if (newValue.isEmpty()) {
-                        Snackbar.make(view, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(view, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsDark()
                     } else {
                         kernelParameter.value = newValue
                         GlobalScope.launch {
@@ -53,7 +53,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                                 } else {
                                     result
                                 }
-                                Snackbar.make(view, feedback, Snackbar.LENGTH_LONG).show()
+                                Snackbar.make(view, feedback, Snackbar.LENGTH_LONG).showAsDark()
                             }
                         }
                     }

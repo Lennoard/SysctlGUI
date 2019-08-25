@@ -802,7 +802,7 @@ public final class RootToolsInternalMethods {
      *
      * @param path The partition to find the space for.
      * @return the amount if space found within the desired partition. If the space was not found
-     * then the value is -1
+     * then the icon is -1
      * @throws TimeoutException
      */
     public long getSpace(String path) {
@@ -1082,7 +1082,7 @@ public final class RootToolsInternalMethods {
      * @param context  the current activity's <code>Context</code>
      * @param sourceId resource id; typically <code>R.raw.id</code>
      * @param destName destination file name; appended to /data/data/app.package/files/
-     * @param mode     chmod value for this file
+     * @param mode     chmod icon for this file
      * @return a <code>boolean</code> which indicates whether or not we were able to create the new
      * file.
      */

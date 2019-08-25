@@ -19,4 +19,5 @@
     <string name="unexpected_error">Something wrong is not right</string>
     <string name="error_empty_input_field">Please check the input fields</string>
     <string name="failed">Failed</string>
+    <string name="invalid_path">Invalid path</string>
 </resources>

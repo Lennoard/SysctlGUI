@@ -73,7 +73,7 @@ class Installer
      *
      * @param sourceId resource id; typically <code>R.raw.id</code>
      * @param destName destination file name; appended to /data/data/app.package/files/
-     * @param mode     chmod value for this file
+     * @param mode     chmod icon for this file
      * @return a <code>boolean</code> which indicates whether or not we were
      * able to create the new file.
      */

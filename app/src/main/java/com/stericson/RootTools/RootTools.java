@@ -431,7 +431,7 @@ public final class RootTools {
      *
      * @param path The partition to find the space for.
      * @return the amount if space found within the desired partition. If the space was not found
-     * then the value is -1
+     * then the icon is -1
      * @throws TimeoutException
      */
     public static long getSpace(String path) {
@@ -507,7 +507,7 @@ public final class RootTools {
      * @param context  the current activity's <code>Context</code>
      * @param sourceId resource id; typically <code>R.raw.id</code>
      * @param destName destination file name; appended to /data/data/app.package/files/
-     * @param mode     chmod value for this file
+     * @param mode     chmod icon for this file
      * @return a <code>boolean</code> which indicates whether or not we were able to create the new
      * file.
      */
@@ -715,7 +715,7 @@ public final class RootTools {
     }
 
     /**
-     * Executes a given command with root access or without depending on the value of the boolean passed.
+     * Executes a given command with root access or without depending on the icon of the boolean passed.
      * This will also start a root shell or a standard shell without you having to open it specifically.
      * <p/>
      * You will still need to close the shell after you are done using the shell.
