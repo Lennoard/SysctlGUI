@@ -82,7 +82,9 @@ class KernelParamBrowserActivity : AppCompatActivity(), DirectoryChangedListener
 
             withContext(Dispatchers.Main) {
                 paramBrowserSwipeLayout.isRefreshing = false
-                paramsBrowserAdapter.updateData(files)
+                files?.let {
+                    paramsBrowserAdapter.updateData(it)
+                }
             }
         }
     }
