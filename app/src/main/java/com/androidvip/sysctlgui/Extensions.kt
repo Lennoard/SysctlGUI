@@ -16,7 +16,7 @@ fun View.show() {
     this.visibility = View.VISIBLE
 }
 
-fun Snackbar.showAsDark() {
+fun Snackbar.showAsLight() {
     view.setBackgroundColor(Color.parseColor("#cfd8dc"))
     setTextColor(Color.parseColor("#DE000000"))
     show()

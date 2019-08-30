@@ -23,4 +23,12 @@
     <string name="sysctl">Sysctl</string>
     <string name="sysctl_help">Sysctl is used to modify kernel parameters at runtime. The parameters available are those listed under /proc/sys.</string>
     <string name="app_description">This apps main purpose is to provide a graphical way to edit these parameters. You can find its source code on <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>.</string>
+    <string name="list_folders_first">List folders first</string>
+    <string name="list_folders_first_sum">List folders first when using the kernel parameter browser option</string>
+    <string name="app">Application</string>
+    <string name="operations">Operations</string>
+    <string name="allow_blank_values">Allow blank values</string>
+    <string name="commit_mode">Commit mode</string>
+    <string name="guess_input_type">Guess input type</string>
+    <string name="done">Done</string>
 </resources>

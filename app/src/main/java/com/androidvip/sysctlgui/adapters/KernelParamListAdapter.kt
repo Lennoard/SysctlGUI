@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.adapters
 
 import android.content.Context
 import android.content.Intent
@@ -8,6 +8,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.androidvip.sysctlgui.KernelParameter
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.activities.EditKernelParamActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

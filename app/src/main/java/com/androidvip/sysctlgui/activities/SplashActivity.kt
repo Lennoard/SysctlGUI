@@ -1,14 +1,14 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.activities
 
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.androidvip.sysctlgui.R
 import com.stericson.RootShell.RootShell
 import com.stericson.RootTools.RootTools
 import kotlinx.android.synthetic.main.activity_splash.*
@@ -22,7 +22,9 @@ class SplashActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimaryLight)
+            window.statusBarColor = ContextCompat.getColor(this,
+                R.color.colorPrimaryLight
+            )
         }
 
         GlobalScope.launch {

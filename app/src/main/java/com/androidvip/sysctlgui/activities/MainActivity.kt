@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.androidvip.sysctlgui.R
+import com.stericson.RootTools.RootTools
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -47,11 +49,15 @@ class MainActivity : AppCompatActivity() {
             android.R.id.home -> finish()
 
             R.id.action_settings -> {
-                Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
 
             R.id.action_exit -> {
-                Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
+                runCatching {
+                    RootTools.closeAllShells()
+                }
+                moveTaskToBack(true)
+                finish()
             }
         }
 

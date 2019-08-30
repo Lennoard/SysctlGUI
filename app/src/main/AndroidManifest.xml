@@ -15,21 +15,24 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".EditKernelParamActivity"
-            android:label="@string/edit_params"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".activities.SettingsActivity"
+            android:label="@string/settings"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.EditKernelParamActivity"
+            android:label="@string/edit_params"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".KernelParamsListActivity"
+            android:name=".activities.KernelParamsListActivity"
             android:label="@string/kernel_params" />
         <activity
-            android:name=".KernelParamBrowserActivity"
+            android:name=".activities.KernelParamBrowserActivity"
             android:label="@string/browse_variables" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.activities
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
+import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
+import com.androidvip.sysctlgui.R
 import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -18,7 +20,8 @@ interface DirectoryChangedListener {
     fun onDirectoryChanged(newDir: File)
 }
 
-class KernelParamBrowserActivity : AppCompatActivity(), DirectoryChangedListener {
+class KernelParamBrowserActivity : AppCompatActivity(),
+    DirectoryChangedListener {
     private var currentPath = "/proc/sys"
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
         KernelParamBrowserAdapter(arrayOf(), this, this)

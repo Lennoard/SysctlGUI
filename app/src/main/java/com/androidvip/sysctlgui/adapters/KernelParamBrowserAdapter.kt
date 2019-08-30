@@ -1,7 +1,8 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
@@ -12,7 +13,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import com.androidvip.sysctlgui.KernelParameter
+import com.androidvip.sysctlgui.Prefs
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.activities.DirectoryChangedListener
+import com.androidvip.sysctlgui.activities.EditKernelParamActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,6 +34,7 @@ class KernelParamBrowserAdapter(
 ) : RecyclerView.Adapter<KernelParamBrowserAdapter.ViewHolder>() {
 
     private val dataSet = mutableListOf<File>()
+    private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
     companion object {
         const val EXTRA_PARAM = "kernel_param"
@@ -57,7 +66,9 @@ class KernelParamBrowserAdapter(
             holder.name.setTextColor(Color.WHITE)
             holder.icon.setImageResource(R.drawable.ic_folder_outline)
             holder.icon.setBackgroundResource(R.drawable.circle_folder)
-            holder.icon.setColorFilter(ContextCompat.getColor(context, R.color.colorAccentLight), PorterDuff.Mode.SRC_IN)
+            holder.icon.setColorFilter(ContextCompat.getColor(context,
+                R.color.colorAccentLight
+            ), PorterDuff.Mode.SRC_IN)
         } else {
             holder.name.setTextColor(Color.parseColor("#99FFFFFF")) // 60% white
             holder.icon.setImageResource(R.drawable.ic_file_outline)
@@ -106,9 +117,11 @@ class KernelParamBrowserAdapter(
             }
         }
 
-        dataSet.sortWith(Comparator { f1, f2 ->
-            f2.isDirectory.compareTo(f1.isDirectory)
-        })
+        if (prefs.getBoolean(Prefs.LIST_FOLDERS_FIRST, true)) {
+            dataSet.sortWith(Comparator { f1, f2 ->
+                f2.isDirectory.compareTo(f1.isDirectory)
+            })
+        }
     }
 
     private suspend fun getParamValue(path: String) = withContext(Dispatchers.Default) {

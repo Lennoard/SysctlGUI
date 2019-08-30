@@ -1,10 +1,14 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.activities
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
+import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
@@ -16,6 +20,7 @@ import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class EditKernelParamActivity : AppCompatActivity() {
+    private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,8 +28,10 @@ class EditKernelParamActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val kernelParameter: KernelParameter? = intent.getSerializableExtra(KernelParamListAdapter.EXTRA_PARAM) as KernelParameter?
-        println(kernelParameter)
+        val extraParam = KernelParamListAdapter.EXTRA_PARAM
+        val kernelParameter: KernelParameter? = intent.getSerializableExtra(extraParam) as KernelParameter?
+        val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
+
         if (kernelParameter == null) {
             editParamErrorText.show()
             editParamLayout.goAway()
@@ -41,19 +48,28 @@ class EditKernelParamActivity : AppCompatActivity() {
 
                 editParamApply.setOnClickListener { view ->
                     val newValue = editParamInput.text.toString()
-                    if (newValue.isEmpty()) {
-                        Snackbar.make(view, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsDark()
+                    if (!prefs.getBoolean(Prefs.ALLOW_BLANK, false) && newValue.isEmpty()) {
+                        Snackbar.make(view,
+                            R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
                     } else {
                         kernelParameter.value = newValue
                         GlobalScope.launch {
                             val result = commitChanges(kernelParameter)
                             withContext(Dispatchers.Main) {
-                                val feedback = if (result == "error" || !result.contains(kernelParameter.param)) {
-                                    getString(R.string.failed)
+                                val feedback = if (commitMode == "sysctl") {
+                                    if (result == "error" || !result.contains(kernelParameter.param)) {
+                                        getString(R.string.failed)
+                                    } else {
+                                        result
+                                    }
                                 } else {
-                                    result
+                                    if (result == "error") {
+                                        getString(R.string.failed)
+                                    } else {
+                                        getString(R.string.done)
+                                    }
                                 }
-                                Snackbar.make(view, feedback, Snackbar.LENGTH_LONG).showAsDark()
+                                Snackbar.make(view, feedback, Snackbar.LENGTH_LONG).showAsLight()
                             }
                         }
                     }
@@ -88,6 +104,8 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private fun defineInputTypeForValue(paramValue: String) {
+        if (!prefs.getBoolean(Prefs.GUESS_INPUT_TYPE, true)) return
+
         if (paramValue.length > 12) {
             editParamInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             editParamInput.setLines(3)
@@ -107,6 +125,11 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Main) {
-        RootUtils.executeWithOutput("busybox sysctl -w ${kernelParam.param}=${kernelParam.value}", "error")
+        val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
+            "sysctl" -> "busybox sysctl -w ${kernelParam.param}=${kernelParam.value}"
+            "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
+            else -> "busybox sysctl -w ${kernelParam.param}=${kernelParam.value}"
+        }
+        RootUtils.executeWithOutput(command, "error")
     }
 }
