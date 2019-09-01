@@ -125,8 +125,9 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Main) {
+        val commandPrefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
         val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
-            "sysctl" -> "busybox sysctl -w ${kernelParam.param}=${kernelParam.value}"
+            "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.param}=${kernelParam.value}"
             "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
             else -> "busybox sysctl -w ${kernelParam.param}=${kernelParam.value}"
         }

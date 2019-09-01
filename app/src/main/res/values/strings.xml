@@ -3,7 +3,6 @@
     <string name="splash_status_checking_root">Checking for root access</string>
     <string name="splash_status_checking_busybox">Checking for busybox</string>
     <string name="error">Error</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
     <string name="show_variables">Show variables</string>
@@ -22,7 +21,7 @@
     <string name="invalid_path">Invalid path</string>
     <string name="sysctl">Sysctl</string>
     <string name="sysctl_help">Sysctl is used to modify kernel parameters at runtime. The parameters available are those listed under /proc/sys.</string>
-    <string name="app_description">This apps main purpose is to provide a graphical way to edit these parameters. You can find its source code on <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>.</string>
+    <string name="app_description">This apps main purpose is to provide a graphical way to edit these parameters. You can find its source code on <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>. Support on <a href="https://forum.xda-developers.com/android/apps-games/app-sysctlgui-modify-kernel-parameters-t3960785">XDA Thread</a>.</string>
     <string name="list_folders_first">List folders first</string>
     <string name="list_folders_first_sum">List folders first when using the kernel parameter browser option</string>
     <string name="app">Application</string>
@@ -31,4 +30,8 @@
     <string name="commit_mode">Commit mode</string>
     <string name="guess_input_type">Guess input type</string>
     <string name="done">Done</string>
+    <string name="use_busybox_on">Busybox will be used to ensure compatibility</string>
+    <string name="use_busybox">Use busybox</string>
+    <string name="use_busybox_off">Currently relying on system\'s sysctl binary</string>
+    <string name="guess_input_type_sum">Try to set the best input type for the keyboard based on the value of the parameter</string>
 </resources>

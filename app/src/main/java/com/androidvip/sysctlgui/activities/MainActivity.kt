@@ -63,4 +63,11 @@ class MainActivity : AppCompatActivity() {
 
         return true
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        runCatching {
+            RootTools.closeAllShells()
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui
 
+import android.app.Activity
 import android.graphics.Color
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
@@ -20,4 +21,12 @@ fun Snackbar.showAsLight() {
     view.setBackgroundColor(Color.parseColor("#cfd8dc"))
     setTextColor(Color.parseColor("#DE000000"))
     show()
+}
+
+fun Activity?.runSafeOnUiThread(uiBlock: () -> Unit) {
+    this?.let {
+        if (!it.isFinishing && !it.isDestroyed) {
+            runCatching(uiBlock)
+        }
+    }
 }

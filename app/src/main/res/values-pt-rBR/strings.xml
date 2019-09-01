@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sysctl GUI</string>
+    <string name="about">Sobre</string>
+    <string name="allow_blank_values">Permitir valores em branco</string>
+    <string name="app">Aplicativo</string>
+    <string name="browse_variables">Procurar variáveis</string>
+    <string name="browse_variables_sum">Procure em /proc/sys um parâmetro específico do kernel</string>
+    <string name="commit_mode">Modo de aplicação</string>
+    <string name="done">Pronto</string>
+    <string name="edit_params">Editar parâmetros</string>
+    <string name="error_empty_input_field">Por favor, verifique os campos de entrada</string>
+    <string name="error">Erro</string>
+    <string name="exit">Sair</string>
+    <string name="failed">Falhou</string>
+    <string name="guess_input_type">Adivinhar tipo de entrada</string>
+    <string name="invalid_path">Caminho inválido</string>
+    <string name="kernel_params">Parâmetros do kernel</string>
+    <string name="list_folders_first">Listar pastas primeiro</string>
+    <string name="list_folders_first_sum">Listar pastas primeiro ao usar a opção de navegador de parâmetros do kernel</string>
+    <string name="operations">Operações</string>
+    <string name="read_from_file">Ler valores do arquivo</string>
+    <string name="read_from_file_sum">Use esta opção para carregar parâmetros de um arquivo .conf selecionado</string>
+    <string name="settings">Configurações</string>
+    <string name="show_variables">Mostrar variáveis</string>
+    <string name="show_variables_sum">Exibir e editar todos os parâmetros do kernel em uma lista</string>
+    <string name="splash_status_checking_busybox">Verificando o busybox</string>
+    <string name="splash_status_checking_root">Verificando acesso root</string>
+    <string name="sysctl">Sysctl</string>
+    <string name="sysctl_help">Sysctl é usado para modificar os parâmetros do kernel no tempo de execução. Os parâmetros disponíveis são aqueles listados em /proc/sys.</string>
+    <string name="sysctl_operations">Operações Sysctl</string>
+    <string name="unexpected_error">Algo de errado não está certo</string>
+    <string name="use_busybox">Usar busybox</string>
+    <string name="use_busybox_on">Busybox será usado para garantir a compatibilidade</string>
+    <string name="app_description">O objetivo principal deste aplicativo é fornecer uma maneira gráfica de editar esses parâmetros. Você pode encontrar o código fonte no <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>. Suporte no <a href="https://forum.xda-developers.com/android/apps-games/app-sysctlgui-modify-kernel-parameters-t3960785">XDA Thread</a>.</string>
+    <string name="use_busybox_off">Atualmente confiando no binário sysctl do sistema</string>
+    <string name="guess_input_type_sum">Tentar definir o melhor tipo de entrada para o teclado com base no valor do parâmetro</string>
+</resources>

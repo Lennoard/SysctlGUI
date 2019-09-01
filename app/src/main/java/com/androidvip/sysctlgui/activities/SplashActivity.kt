@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +9,9 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
+import com.androidvip.sysctlgui.Prefs
 import com.androidvip.sysctlgui.R
 import com.stericson.RootShell.RootShell
 import com.stericson.RootTools.RootTools
@@ -27,6 +31,7 @@ class SplashActivity : AppCompatActivity() {
             )
         }
 
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         GlobalScope.launch {
             val isRootAccessGiven = checkRootAccess()
             withContext(Dispatchers.Main) {
@@ -36,23 +41,18 @@ class SplashActivity : AppCompatActivity() {
             val isBusyBoxAvailable = checkBusyBox()
             withContext(Dispatchers.Main) {
                 if (isRootAccessGiven) {
-                    if (isBusyBoxAvailable) {
-                       startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                        finish()
-                    } else {
-                        splashProgress.visibility = View.GONE
-                        AlertDialog.Builder(this@SplashActivity)
-                            .setTitle(R.string.error)
-                            .setMessage("Busybox not found")
-                            .setPositiveButton("OK") { _, _ ->  }
-                            .show()
+                    if (!isBusyBoxAvailable) {
+                        prefs.edit().putBoolean(Prefs.USE_BUSYBOX, false).apply()
                     }
+                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                    finish()
                 } else {
                     splashProgress.visibility = View.GONE
                     AlertDialog.Builder(this@SplashActivity)
                         .setTitle(R.string.error)
-                        .setMessage("Root access not found")
+                        .setMessage("Root access not found. You can only edit properties with root access.")
                         .setPositiveButton("OK") { _, _ ->  }
+                        .setCancelable(false)
                         .show()
                 }
             }
@@ -60,12 +60,12 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private suspend fun checkRootAccess() = withContext(Dispatchers.IO) {
-        delay(500)
+        delay(700)
         RootTools.isAccessGiven(6000, 2)
     }
 
     private suspend fun checkBusyBox() = withContext(Dispatchers.IO) {
-        delay(500)
+        delay(400)
         RootShell.isBusyboxAvailable()
     }
 }

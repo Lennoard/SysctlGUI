@@ -1,0 +1,11 @@
+<resources>
+    <string-array name="commit_modes">
+        <item>Usar sysctl -w</item>
+        <item>Usar echo \'valor\' > /proc/sys/…</item>
+    </string-array>
+
+    <string-array name="commit_modes_values">
+        <item>sysctl</item>
+        <item>echo</item>
+    </string-array>
+</resources>
