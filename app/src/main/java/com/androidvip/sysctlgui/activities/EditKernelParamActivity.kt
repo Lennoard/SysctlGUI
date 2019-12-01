@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class EditKernelParamActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
@@ -55,7 +54,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                         kernelParameter.value = newValue
                         GlobalScope.launch {
                             val result = commitChanges(kernelParameter)
-                            withContext(Dispatchers.Main) {
+                            runSafeOnUiThread {
                                 val feedback = if (commitMode == "sysctl") {
                                     if (result == "error" || !result.contains(kernelParameter.param)) {
                                         getString(R.string.failed)

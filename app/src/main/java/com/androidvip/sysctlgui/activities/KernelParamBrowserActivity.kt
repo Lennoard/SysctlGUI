@@ -7,8 +7,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
-import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
+import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -81,9 +82,9 @@ class KernelParamBrowserActivity : AppCompatActivity(),
         paramBrowserSwipeLayout.isRefreshing = true
 
         GlobalScope.launch {
-            val files = getFiles()
+            val files = getCurrentPathFiles()
 
-            withContext(Dispatchers.Main) {
+            runSafeOnUiThread {
                 paramBrowserSwipeLayout.isRefreshing = false
                 files?.let {
                     paramsBrowserAdapter.updateData(it)
@@ -92,7 +93,7 @@ class KernelParamBrowserActivity : AppCompatActivity(),
         }
     }
 
-    private suspend fun getFiles() = withContext(Dispatchers.IO) {
+    private suspend fun getCurrentPathFiles() = withContext(Dispatchers.IO) {
         try {
             File(currentPath).listFiles()
         } catch (e: Exception) {

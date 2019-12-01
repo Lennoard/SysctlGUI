@@ -10,6 +10,7 @@ import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
 import kotlinx.coroutines.*
 
@@ -53,7 +54,7 @@ class KernelParamsListActivity : AppCompatActivity() {
         GlobalScope.launch {
             val kernelParams = getKernelParams()
 
-            withContext(Dispatchers.Main) {
+            runSafeOnUiThread {
                 paramsListSwipeLayout.isRefreshing = false
                 paramsListAdapter.updateData(kernelParams)
             }
@@ -63,8 +64,7 @@ class KernelParamsListActivity : AppCompatActivity() {
     private suspend fun getKernelParams() = withContext(Dispatchers.Default) {
         delay(500)
         val kernelParams = mutableListOf<KernelParameter>()
-        RootUtils.executeWithOutput(
-            "busybox sysctl -a", "", true) { line ->
+        RootUtils.executeWithOutput("busybox sysctl -a", "") { line ->
             line?.let {
                 if (!it.contains("denied") && !it.startsWith("sysctl") && it.contains("=")) {
                     val kernelParam = it.split("=").first().trim()

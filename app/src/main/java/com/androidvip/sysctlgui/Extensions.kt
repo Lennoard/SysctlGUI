@@ -4,6 +4,8 @@ import android.app.Activity
 import android.graphics.Color
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 fun View.goAway() {
     this.visibility = View.GONE
@@ -23,10 +25,12 @@ fun Snackbar.showAsLight() {
     show()
 }
 
-fun Activity?.runSafeOnUiThread(uiBlock: () -> Unit) {
+suspend fun Activity?.runSafeOnUiThread(uiBlock: () -> Unit) {
     this?.let {
         if (!it.isFinishing && !it.isDestroyed) {
-            runCatching(uiBlock)
+            withContext(Dispatchers.Main) {
+                runCatching(uiBlock)
+            }
         }
     }
 }
