@@ -8,7 +8,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.R
-import com.stericson.RootTools.RootTools
+import com.androidvip.sysctlgui.RootUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -53,9 +53,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_exit -> {
-                runCatching {
-                    RootTools.closeAllShells()
-                }
+                RootUtils.finishProcess()
                 moveTaskToBack(true)
                 finish()
             }
@@ -66,8 +64,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        runCatching {
-            RootTools.closeAllShells()
-        }
+        RootUtils.finishProcess()
     }
 }

@@ -1,6 +1,5 @@
 package com.androidvip.sysctlgui.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -9,12 +8,12 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.Prefs
 import com.androidvip.sysctlgui.R
-import com.stericson.RootShell.RootShell
-import com.stericson.RootTools.RootTools
+import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.runSafeOnUiThread
+import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.*
 
@@ -34,12 +33,12 @@ class SplashActivity : AppCompatActivity() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         GlobalScope.launch {
             val isRootAccessGiven = checkRootAccess()
-            withContext(Dispatchers.Main) {
+            runSafeOnUiThread {
                 splashStatusText.setText(R.string.splash_status_checking_busybox)
             }
 
             val isBusyBoxAvailable = checkBusyBox()
-            withContext(Dispatchers.Main) {
+            runSafeOnUiThread {
                 if (isRootAccessGiven) {
                     if (!isBusyBoxAvailable) {
                         prefs.edit().putBoolean(Prefs.USE_BUSYBOX, false).apply()
@@ -60,12 +59,12 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private suspend fun checkRootAccess() = withContext(Dispatchers.IO) {
-        delay(700)
-        RootTools.isAccessGiven(6000, 2)
+        delay(500)
+        Shell.rootAccess()
     }
 
     private suspend fun checkBusyBox() = withContext(Dispatchers.IO) {
-        delay(400)
-        RootShell.isBusyboxAvailable()
+        delay(500)
+        RootUtils.isBusyboxAvailable()
     }
 }

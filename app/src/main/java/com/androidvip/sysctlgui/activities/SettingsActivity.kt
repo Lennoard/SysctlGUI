@@ -9,8 +9,8 @@ import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.Prefs
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.RootUtils
 import com.androidvip.sysctlgui.runSafeOnUiThread
-import com.stericson.RootTools.RootTools
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -42,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context!!)
 
             val currCommitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
-            val commitModePref = findPreference(Prefs.COMMIT_MODE)
+            val commitModePref = findPreference<Preference?>(Prefs.COMMIT_MODE)
             commitModePref?.summary = if (currCommitMode == "sysctl")
                 "Use sysctl -w"
             else
@@ -59,7 +59,7 @@ class SettingsActivity : AppCompatActivity() {
             val useBusyboxPref = findPreference(Prefs.USE_BUSYBOX) as SwitchPreferenceCompat?
 
             GlobalScope.launch(Dispatchers.IO) {
-                val isBusyboxAvailable = RootTools.isBusyboxAvailable()
+                val isBusyboxAvailable = RootUtils.isBusyboxAvailable()
                 activity.runSafeOnUiThread {
                     if (isBusyboxAvailable) {
                         useBusyboxPref?.isEnabled = true
