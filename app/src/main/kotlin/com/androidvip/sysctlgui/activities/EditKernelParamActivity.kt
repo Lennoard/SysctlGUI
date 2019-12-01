@@ -33,12 +33,12 @@ class EditKernelParamActivity : AppCompatActivity() {
 
         if (kernelParameter == null) {
             editParamErrorText.show()
-            editParamLayout.goAway()
+            editParamScroll.goAway()
             editParamApply.hide()
         } else {
             if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidParam()) {
                 editParamErrorText.show()
-                editParamLayout.goAway()
+                editParamScroll.goAway()
                 editParamApply.hide()
             } else {
                 defineInputTypeForValue(kernelParameter.value)
@@ -97,6 +97,8 @@ class EditKernelParamActivity : AppCompatActivity() {
             YoYo.with(Techniques.SlideInLeft)
                 .duration(600)
                 .playOn(editParamSub)
+
+            editParamInfo.text = findInfoForParam(paramName)
         }, 100)
 
         Handler().postDelayed({ editParamApply.show() }, 300)
@@ -120,6 +122,15 @@ class EditKernelParamActivity : AppCompatActivity() {
                     editParamInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
                 }
             }
+        }
+    }
+
+    private fun findInfoForParam(paramName: String): String {
+        val resId = resources.getIdentifier(paramName.replace("-", "_"), "string", packageName)
+        return if (resId != 0) {
+            getString(resId)
+        } else {
+            getString(R.string.no_info_available)
         }
     }
 

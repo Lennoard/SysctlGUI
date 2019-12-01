@@ -34,4 +34,7 @@
     <string name="use_busybox">Use busybox</string>
     <string name="use_busybox_off">Currently relying on system\'s sysctl binary</string>
     <string name="guess_input_type_sum">Try to set the best input type for the keyboard based on the value of the parameter</string>
+    <string name="root_not_found_sum">Root access not found. You can only edit properties with root access.</string>
+    <string name="information">Information</string>
+    <string name="no_info_available">No info available for this parameter</string>
 </resources>

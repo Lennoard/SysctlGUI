@@ -2,6 +2,18 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+android.applicationVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = "sysctlgui"
+        outputFileName += "-v${android.defaultConfig.versionName}(${android.defaultConfig.versionCode})"
+        if (variant.buildType.name == "release") {
+            outputFileName += ".apk"
+        } else {
+            outputFileName += "-SNAPSHOT.apk"
+        }
+    }
+}
+
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
@@ -12,11 +24,34 @@ android {
         versionCode 2
         versionName "1.0.1"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    sourceSets{
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    packagingOptions {
+        exclude '/META-INF/**'
+        exclude '/androidsupportmultidexversion.txt'
+        exclude '/org/bouncycastle/**'
+        exclude '/kotlin/**'
+        exclude '/kotlinx/**'
+        exclude '/okhttp3/**'
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
 }
 

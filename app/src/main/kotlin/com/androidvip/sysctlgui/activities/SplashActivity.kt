@@ -49,7 +49,7 @@ class SplashActivity : AppCompatActivity() {
                     splashProgress.visibility = View.GONE
                     AlertDialog.Builder(this@SplashActivity)
                         .setTitle(R.string.error)
-                        .setMessage("Root access not found. You can only edit properties with root access.")
+                        .setMessage(getString(R.string.root_not_found_sum))
                         .setPositiveButton("OK") { _, _ ->  }
                         .setCancelable(false)
                         .show()
