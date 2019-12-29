@@ -87,7 +87,6 @@ class EditKernelParamActivity : AppCompatActivity() {
     private fun updateTextUi(kernelParameter: KernelParameter) {
         val paramName = kernelParameter.param.split(".").last()
         editParamName.text = paramName
-        editParamSub.text = kernelParameter.param.removeSuffix(paramName).removeSuffix(".")
 
         YoYo.with(Techniques.SlideInLeft)
             .duration(600)
@@ -98,6 +97,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 .duration(600)
                 .playOn(editParamSub)
 
+            editParamSub.text = kernelParameter.param.removeSuffix(paramName).removeSuffix(".")
             editParamInfo.text = findInfoForParam(paramName)
         }, 100)
 

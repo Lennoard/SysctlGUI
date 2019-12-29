@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- VM -->
     <string name="admin_reserve_kbytes" translatable="false">The amount of free memory in the system that should be reserved for users with the capability cap_sys_admin</string>
     <string name="block_dump" translatable="false">Enables block I/O debugging when set to a nonzero value</string>
     <string name="compact_memory" translatable="false">Available only when CONFIG_COMPACTION is set. When 1 is written to the file, all zones are compacted such that free memory is available in contiguous blocks where possible.</string>
@@ -29,4 +30,27 @@
     <string name="percpu_pagelist_fraction" translatable="false">This is the fraction of pages at most in each zone that are allocated for each per cpu page list. The min value for this is 8.</string>
     <string name="stat_interval" translatable="false">The time interval between which vm statistics are updated. The default is 1 second.</string>
     <string name="swappiness" translatable="false">This control is used to define how aggressive the kernel will swap memory pages. Higher values will increase aggressiveness, lower values decrease the amount of swap. Default: 60.</string>
+
+    <!-- Kernel/Random -->
+    <string name="boot_id">Uniquely identifies the current boot.</string>
+    <string name="entropy_avail">Current available entropy.</string>
+    <string name="poolsize">Maximum limit of bits that the entropy pool can hold.</string>
+    <string name="read_wakeup_threshold">The number of bits of entropy required to be available before allowing reading from the random interfaces.</string>
+    <string name="write_wakeup_threshold">Threshold for entropy_avail at which devices blocking are woken up to write to the entropy pool.</string>
+
+    <!-- NET/Core -->
+    <string name="busy_read">Low latency busy poll timeout for socket reads. (needs CONFIG_NET_RX_BUSY_POLL) Approximate time in us to busy loop waiting for packets on the device queue. This sets the default value of the SO_BUSY_POLL socket option. Default: 0 (off).</string>
+    <string name="busy_poll">Low latency busy poll timeout for poll and select. (needs CONFIG_NET_RX_BUSY_POLL) Approximate time in us to busy loop waiting for events. Recommended value depends on the number of sockets you poll on. For several sockets 50, for several hundreds 100. Default: 0 (off).</string>
+    <string name="default_qdisc">The default queuing discipline to use for network devices. This allows overriding the default of pfifo_fast with an alternative. Default: pfifo_fast.</string>
+    <string name="dev_weight">The maximum number of packets that kernel can handle on a NAPI interrupt, it is a Per-CPU variable.</string>
+    <string name="message_burst">Message_burst and message_cost are used to limit the warning messages written to the kernel log from the networking code. They enforce a rate limit to make a DOS attack impossible. A higher message_cost factor, results in fewer messages that will be written. Message_burst controls when messages will be dropped. The default settings limit warning messages to one every five seconds.</string>
+    <string name="message_cost">Message_burst and message_cost are used to limit the warning messages written to the kernel log from the networking code. They enforce a rate limit to make a DOS attack impossible. A higher message_cost factor, results in fewer messages that will be written. Message_burst controls when messages will be dropped. The default settings limit warning messages to one every five seconds.</string>
+    <string name="warnings">[No longer used] This was used to control console messages from the networking stack that occur because of problems on the network like duplicate address or bad checksums.</string>
+    <string name="netdev_budget">Maximum number of packets taken from all interfaces in one polling cycle (NAPI poll)</string>
+    <string name="optmem_max">Maximum ancillary buffer size allowed per socket. Ancillary data is a sequence of struct cmsghdr structures with appended data.</string>
+    <string name="rmem_default">The default setting of the socket receive buffer in bytes.</string>
+    <string name="rmem_max">The maximum receive socket buffer size in bytes.</string>
+    <string name="wmem_default">The default setting (in bytes) of the socket send buffer.</string>
+    <string name="wmem_max">The maximum send socket buffer size in bytes.</string>
+
 </resources>
