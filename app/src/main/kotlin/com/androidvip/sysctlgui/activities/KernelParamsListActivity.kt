@@ -64,7 +64,8 @@ class KernelParamsListActivity : AppCompatActivity() {
     private suspend fun getKernelParams() = withContext(Dispatchers.Default) {
         delay(500)
         val kernelParams = mutableListOf<KernelParameter>()
-        RootUtils.executeWithOutput("busybox sysctl -a", "") { line ->
+        val command = if (RootUtils.isBusyboxAvailable()) "busybox sysctl -a" else "sysctl -a"
+        RootUtils.executeWithOutput(command, "") { line ->
             line?.let {
                 if (!it.contains("denied") && !it.startsWith("sysctl") && it.contains("=")) {
                     val kernelParam = it.split("=").first().trim()
