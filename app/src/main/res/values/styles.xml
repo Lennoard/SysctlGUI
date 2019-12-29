@@ -1,13 +1,12 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.Bridge">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Bridge">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorPrimary</item>
         <item name="iconColor">@color/iconColor</item>
     </style>
-
 
     <style name="CardStyle">
         <item name="cardBackgroundColor">@color/colorPrimary</item>
@@ -26,7 +25,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:gravity">start</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="CardContentText">
@@ -49,6 +48,6 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
 </resources>
