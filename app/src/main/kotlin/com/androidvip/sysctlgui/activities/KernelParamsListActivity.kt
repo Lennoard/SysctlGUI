@@ -64,9 +64,9 @@ class KernelParamsListActivity : BaseSearchActivity() {
             var kernelParams = getKernelParams()
 
             if (searchExpression.isNotEmpty()) {
-                val locale: Locale = Locale.getDefault()
                 kernelParams = kernelParams.filter { kernelParameter ->
-                    kernelParameter.param.toLowerCase(locale).contains(searchExpression.toLowerCase(locale))
+                    kernelParameter.param.toLowerCase(defaultLocale)
+                        .contains(searchExpression.toLowerCase(defaultLocale))
                 }.toMutableList()
             }
 

@@ -4,14 +4,17 @@ import android.view.Menu
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.R
+import java.util.*
 
-abstract class BaseSearchActivity: AppCompatActivity() {
+abstract class BaseSearchActivity : AppCompatActivity() {
     protected var searchExpression: String = ""
+    protected var defaultLocale: Locale = Locale.getDefault()
+    private var searchView: SearchView? = null
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
 
-        (menu?.findItem(R.id.action_search)?.actionView as SearchView).apply {
+        searchView = (menu?.findItem(R.id.action_search)?.actionView as SearchView).apply {
             setOnQueryTextListener(object :
                 androidx.appcompat.widget.SearchView.OnQueryTextListener,
                 SearchView.OnQueryTextListener {
@@ -36,4 +39,9 @@ abstract class BaseSearchActivity: AppCompatActivity() {
     }
 
     abstract fun onQueryTextChanged()
+
+    fun resetSearchExpression() {
+        searchExpression = ""
+        searchView?.setQuery("", false)
+    }
 }
