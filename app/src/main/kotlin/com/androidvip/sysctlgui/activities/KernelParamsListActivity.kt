@@ -11,45 +11,21 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
 import kotlinx.coroutines.*
 import java.util.*
 
-class KernelParamsListActivity : AppCompatActivity() {
-    private var searchExpression: String = ""
+class KernelParamsListActivity : BaseSearchActivity() {
 
     private val paramsListAdapter: KernelParamListAdapter by lazy {
         KernelParamListAdapter(this, mutableListOf())
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_search, menu)
-
-        (menu?.findItem(R.id.action_search)?.actionView as SearchView).apply {
-            setOnQueryTextListener(object :
-                androidx.appcompat.widget.SearchView.OnQueryTextListener,
-                SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchExpression = newText.orEmpty()
-
-                    updateRecyclerViewData()
-                    return true
-                }
-
-            })
-
-            // expand and show keyboard
-            setIconifiedByDefault(false)
-            onActionViewExpanded()
-        }
-
-        return true
+    override fun onQueryTextChanged() {
+        updateRecyclerViewData()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
