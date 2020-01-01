@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sysctl GUI</string>
+    <string name="splash_status_checking_root">Überprüfe Rootstatus</string>
+    <string name="splash_status_checking_busybox">Überprüfe busybox</string>
+    <string name="error">Fehler</string>
+    <string name="settings">Einstellungen</string>
+    <string name="about">Über</string>
+    <string name="show_variables">Variabeln anzeigen</string>
+    <string name="show_variables_sum">Kernel-Parameter in einer Liste anzeigen und verändern</string>
+    <string name="sysctl_operations">Sysctl Operationen</string>
+    <string name="read_from_file">Werte werden aus der Datei gelesen</string>
+    <string name="read_from_file_sum">Verwenden sie diese Option um aus einer .conf Datei die Parameter zu verwenden</string>
+    <string name="exit">Beenden</string>
+    <string name="kernel_params">Kernel Parameter</string>
+    <string name="browse_variables">Variabeln durchstöbern</string>
+    <string name="browse_variables_sum">In /proc/sys nach einem bestimmten Kernel-Parameter stöbern.</string>
+    <string name="edit_params">Parameter verändern</string>
+    <string name="unexpected_error">Oh nein! Ein Fehler ist aufgetretten.</string>
+    <string name="error_empty_input_field">Überprüfen sie ihre Eingaben</string>
+    <string name="failed">Fehlgeschlagen</string>
+    <string name="invalid_path">Ungültiger Pfad</string>
+    <string name="sysctl">Sysctl</string>
+    <string name="sysctl_help">Mit Sysctl können Kernel-Parameter zur Laufzeit geändert werden. Die verfügbaren Parameter verden aus /proc/sys bestimmt.</string>
+    <string name="app_description">Mit dieser App soll eine graphische Möglichkeit geschaffen werden diese Parameter zu ändern. Der Quellcode ist einsehbar auf <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>. Support finden sie im <a href="https://forum.xda-developers.com/android/apps-games/app-sysctlgui-modify-kernel-parameters-t3960785">XDA Thread</a>.</string>
+    <string name="list_folders_first">Ordner zuerst anzeigen</string>
+    <string name="list_folders_first_sum">Beim Durchstöbern der Kernel-Parameter werden Ordner zuerst angezeigt</string>
+    <string name="app">Anwendung</string>
+    <string name="operations">Operationen</string>
+    <string name="allow_blank_values">Leerstehende Werte zulassen</string>
+    <string name="commit_mode">Übernahmemodus</string>
+    <string name="guess_input_type">Eingabetyp erraten</string>
+    <string name="done">Fertig</string>
+    <string name="use_busybox_on">Zur Gewährleistung von Kompatibilität wird Busybox verwendet</string>
+    <string name="use_busybox">Busybox verwenden</string>
+    <string name="use_busybox_off">Zurzeit wird sysctl verwendet</string>
+    <string name="guess_input_type_sum">Anhand des Parameterwertes wird versucht den Eingabetyp der Tastatur zu setzten</string>
+    <string name="root_not_found_sum">Rootzugriff verweigert. Werte können nur mit Rootzugriff geändert werden.</string>
+    <string name="information">Information</string>
+    <string name="no_info_available">Keine Informationen für den Parameter verfügbar</string>
+</resources>
