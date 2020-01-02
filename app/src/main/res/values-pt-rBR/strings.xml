@@ -35,4 +35,8 @@
     <string name="app_description">O objetivo principal deste aplicativo é fornecer uma maneira gráfica de editar esses parâmetros. Você pode encontrar o código fonte no <a href="https://github.com/Lennoard/SysctlGUI">GitHub</a>. Suporte no <a href="https://forum.xda-developers.com/android/apps-games/app-sysctlgui-modify-kernel-parameters-t3960785">XDA Thread</a>.</string>
     <string name="use_busybox_off">Atualmente confiando no binário sysctl do sistema</string>
     <string name="guess_input_type_sum">Tentar definir o melhor tipo de entrada para o teclado com base no valor do parâmetro</string>
+    <string name="root_not_found_sum">Acesso root não encontrado. Você só pode editar parâmetros com acesso root.</string>
+    <string name="information">Informação</string>
+    <string name="no_info_available">Nenhuma informação disponível para este parâmetro</string>
+    <string name="search">Pesquisar</string>
 </resources>
