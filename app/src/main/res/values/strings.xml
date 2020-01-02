@@ -37,4 +37,5 @@
     <string name="root_not_found_sum">Root access not found. You can only edit properties with root access.</string>
     <string name="information">Information</string>
     <string name="no_info_available">No info available for this parameter</string>
+    <string name="search">search</string>
 </resources>

@@ -38,4 +38,5 @@
     <string name="root_not_found_sum">Rootzugriff verweigert. Werte können nur mit Rootzugriff geändert werden.</string>
     <string name="information">Information</string>
     <string name="no_info_available">Keine Informationen für den Parameter verfügbar</string>
+    <string name="search">Suche</string>
 </resources>

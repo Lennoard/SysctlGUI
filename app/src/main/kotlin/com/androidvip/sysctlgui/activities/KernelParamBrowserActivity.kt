@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
@@ -21,7 +22,7 @@ interface DirectoryChangedListener {
     fun onDirectoryChanged(newDir: File)
 }
 
-class KernelParamBrowserActivity : AppCompatActivity(),
+class KernelParamBrowserActivity : BaseSearchActivity(),
     DirectoryChangedListener {
     private var currentPath = "/proc/sys"
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
@@ -54,11 +55,18 @@ class KernelParamBrowserActivity : AppCompatActivity(),
         } else {
             Toast.makeText(this, getString(R.string.invalid_path), Toast.LENGTH_SHORT).show()
         }
+
+        resetSearchExpression()
+
         refreshList()
     }
 
     override fun onStart() {
         super.onStart()
+        refreshList()
+    }
+
+    override fun onQueryTextChanged() {
         refreshList()
     }
 
@@ -82,7 +90,14 @@ class KernelParamBrowserActivity : AppCompatActivity(),
         paramBrowserSwipeLayout.isRefreshing = true
 
         GlobalScope.launch {
-            val files = getCurrentPathFiles()
+            var files = getCurrentPathFiles()
+
+            if (searchExpression.isNotEmpty()) {
+                files = files.filter { file ->
+                    file.name.toLowerCase(defaultLocale)
+                        .contains(searchExpression.toLowerCase(defaultLocale))
+                }.toTypedArray()
+            }
 
             runSafeOnUiThread {
                 paramBrowserSwipeLayout.isRefreshing = false
