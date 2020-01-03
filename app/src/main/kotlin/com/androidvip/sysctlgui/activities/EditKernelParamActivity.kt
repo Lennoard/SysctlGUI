@@ -141,6 +141,10 @@ class EditKernelParamActivity : AppCompatActivity() {
             "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
             else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
         }
+
+        withContext(Dispatchers.IO) {
+            Prefs.putParam(kernelParam, this@EditKernelParamActivity)
+        }
         RootUtils.executeWithOutput(command, "error")
     }
 }
