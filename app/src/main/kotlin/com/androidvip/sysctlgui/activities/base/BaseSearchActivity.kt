@@ -14,7 +14,7 @@ abstract class BaseSearchActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
 
-        searchView = (menu?.findItem(R.id.action_search)?.actionView as SearchView).apply {
+        searchView = (menu?.findItem(R.id.action_search)?.actionView as SearchView?)?.apply {
             setOnQueryTextListener(object :
                 androidx.appcompat.widget.SearchView.OnQueryTextListener,
                 SearchView.OnQueryTextListener {

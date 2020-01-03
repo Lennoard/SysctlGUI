@@ -36,7 +36,7 @@ class EditKernelParamActivity : AppCompatActivity() {
             editParamScroll.goAway()
             editParamApply.hide()
         } else {
-            if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidParam()) {
+            if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidName()) {
                 editParamErrorText.show()
                 editParamScroll.goAway()
                 editParamApply.hide()
@@ -56,7 +56,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                             val result = commitChanges(kernelParameter)
                             runSafeOnUiThread {
                                 val feedback = if (commitMode == "sysctl") {
-                                    if (result == "error" || !result.contains(kernelParameter.param)) {
+                                    if (result == "error" || !result.contains(kernelParameter.name)) {
                                         getString(R.string.failed)
                                     } else {
                                         result
@@ -85,7 +85,7 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private fun updateTextUi(kernelParameter: KernelParameter) {
-        val paramName = kernelParameter.param.split(".").last()
+        val paramName = kernelParameter.name.split(".").last()
         editParamName.text = paramName
 
         YoYo.with(Techniques.SlideInLeft)
@@ -97,7 +97,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 .duration(600)
                 .playOn(editParamSub)
 
-            editParamSub.text = kernelParameter.param.removeSuffix(paramName).removeSuffix(".")
+            editParamSub.text = kernelParameter.name.removeSuffix(paramName).removeSuffix(".")
             editParamInfo.text = findInfoForParam(paramName)
         }, 100)
 
@@ -134,12 +134,12 @@ class EditKernelParamActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Main) {
+    private suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Default) {
         val commandPrefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
         val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
-            "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.param}=${kernelParam.value}"
+            "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.name}=${kernelParam.value}"
             "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
-            else -> "busybox sysctl -w ${kernelParam.param}=${kernelParam.value}"
+            else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
         }
         RootUtils.executeWithOutput(command, "error")
     }

@@ -1,11 +1,8 @@
 package com.androidvip.sysctlgui.activities
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
-import android.widget.SearchView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.KernelParameter
@@ -16,7 +13,6 @@ import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
 import kotlinx.coroutines.*
-import java.util.*
 
 class KernelParamsListActivity : BaseSearchActivity() {
 
@@ -65,7 +61,7 @@ class KernelParamsListActivity : BaseSearchActivity() {
 
             if (searchExpression.isNotEmpty()) {
                 kernelParams = kernelParams.filter { kernelParameter ->
-                    kernelParameter.param.toLowerCase(defaultLocale)
+                    kernelParameter.name.toLowerCase(defaultLocale)
                         .contains(searchExpression.toLowerCase(defaultLocale))
                 }.toMutableList()
             }
@@ -85,8 +81,8 @@ class KernelParamsListActivity : BaseSearchActivity() {
             line?.let {
                 if (!it.contains("denied") && !it.startsWith("sysctl") && it.contains("=")) {
                     val kernelParam = it.split("=").first().trim()
-                    kernelParams.add(KernelParameter(param = kernelParam).apply {
-                        setPathFromParam(kernelParam)
+                    kernelParams.add(KernelParameter(name = kernelParam).apply {
+                        setPathFromName(kernelParam)
                     })
                 }
             }

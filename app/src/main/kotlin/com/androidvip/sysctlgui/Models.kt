@@ -2,16 +2,16 @@ package com.androidvip.sysctlgui
 
 import java.io.Serializable
 
-data class KernelParameter(var path: String = "", var param: String = "", var value: String = "") : Serializable {
+data class KernelParameter(var path: String = "", var name: String = "", var value: String = "") : Serializable {
 
-    fun setParamFromPath(path: String) {
+    fun setNameFromPath(path: String) {
         if (path.trim().isEmpty() || !path.startsWith("/proc/sys/")) return
         if (path.contains(".")) return
 
-        this.param =  path.removeSuffix("/").removePrefix("/proc/sys/").replace("/", ".")
+        this.name =  path.removeSuffix("/").removePrefix("/proc/sys/").replace("/", ".")
     }
 
-    fun setPathFromParam(kernelParam: String) {
+    fun setPathFromName(kernelParam: String) {
         if (kernelParam.trim().isEmpty() || kernelParam.contains("/")) return
         if (kernelParam.startsWith(".") || kernelParam.endsWith(".")) return
 
@@ -25,9 +25,9 @@ data class KernelParameter(var path: String = "", var param: String = "", var va
         return true
     }
 
-    fun hasValidParam() : Boolean {
-        if (param.trim().isEmpty() || param.contains("/")) return false
-        if (param.startsWith(".") || param.endsWith(".")) return false
+    fun hasValidName() : Boolean {
+        if (name.trim().isEmpty() || name.contains("/")) return false
+        if (name.startsWith(".") || name.endsWith(".")) return false
 
         return true
     }

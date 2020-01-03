@@ -25,7 +25,7 @@ fun Snackbar.showAsLight() {
     show()
 }
 
-suspend fun Activity?.runSafeOnUiThread(uiBlock: () -> Unit) {
+suspend inline fun Activity?.runSafeOnUiThread(crossinline uiBlock: () -> Unit) {
     this?.let {
         if (!it.isFinishing && !it.isDestroyed) {
             withContext(Dispatchers.Main) {

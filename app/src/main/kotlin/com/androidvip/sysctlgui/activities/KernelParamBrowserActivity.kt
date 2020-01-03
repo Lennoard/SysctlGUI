@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
@@ -109,11 +108,9 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
     }
 
     private suspend fun getCurrentPathFiles() = withContext(Dispatchers.IO) {
-        try {
+        runCatching {
             File(currentPath).listFiles()
-        } catch (e: Exception) {
-            arrayOf<File>()
-        }
+        }.getOrDefault(arrayOf<File>())
     }
 
     private val recyclerViewColumns: Int
