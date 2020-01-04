@@ -14,7 +14,7 @@ object Prefs {
     const val ALLOW_BLANK = "allow_blank_values"
     const val USE_BUSYBOX = "use_busybox"
 
-    private fun getUserParamsSet(context: Context?): MutableList<KernelParameter> {
+    fun getUserParamsSet(context: Context?): MutableList<KernelParameter> {
         if (context == null) return mutableListOf()
 
         val paramsFile = File(context.filesDir, USER_PARAMS_FILENAME)

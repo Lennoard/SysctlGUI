@@ -12,7 +12,7 @@ class BootReceiver : BroadcastReceiver() {
             Toast.makeText(context, "TODO", Toast.LENGTH_LONG).show()
 
             context?.let {
-                StartUpService.start(context, Intent(context, StartUpService::class.java))
+                StartUpService.start(context)
             }
         }
     }

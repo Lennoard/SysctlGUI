@@ -38,4 +38,10 @@
     <string name="information">Information</string>
     <string name="no_info_available">No info available for this parameter</string>
     <string name="search">Search</string>
+    <string name="start_up">Start Up</string>
+    <string name="start_up_sum">Allow to apply parameters on start up</string>
+    <string name="notification_start_up_title">Applying Parameters</string>
+    <string name="notification_start_up_description">Applying your Parameters</string>
+    <string name="notification_start_up_channel_name">Start Up Notification</string>
+    <string name="notification_start_up_channel_description">Applying your Parameters</string>
 </resources>
