@@ -37,7 +37,7 @@ class KernelParamListAdapter(private val context: Context, private val dataSet: 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val kernelParam = dataSet[position]
 
-        holder.name.text = kernelParam.param
+        holder.name.text = kernelParam.name
         holder.itemLayout.setOnClickListener(null)
 
         GlobalScope.launch {

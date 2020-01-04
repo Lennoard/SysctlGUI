@@ -3,20 +3,25 @@ package com.androidvip.sysctlgui.activities
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
-import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
+import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
 import kotlinx.coroutines.*
 
-class KernelParamsListActivity : AppCompatActivity() {
+class KernelParamsListActivity : BaseSearchActivity() {
+
     private val paramsListAdapter: KernelParamListAdapter by lazy {
         KernelParamListAdapter(this, mutableListOf())
+    }
+
+    override fun onQueryTextChanged() {
+        updateRecyclerViewData()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +57,14 @@ class KernelParamsListActivity : AppCompatActivity() {
 
     private fun updateRecyclerViewData() {
         GlobalScope.launch {
-            val kernelParams = getKernelParams()
+            var kernelParams = getKernelParams()
+
+            if (searchExpression.isNotEmpty()) {
+                kernelParams = kernelParams.filter { kernelParameter ->
+                    kernelParameter.name.toLowerCase(defaultLocale)
+                        .contains(searchExpression.toLowerCase(defaultLocale))
+                }.toMutableList()
+            }
 
             runSafeOnUiThread {
                 paramsListSwipeLayout.isRefreshing = false
@@ -69,8 +81,8 @@ class KernelParamsListActivity : AppCompatActivity() {
             line?.let {
                 if (!it.contains("denied") && !it.startsWith("sysctl") && it.contains("=")) {
                     val kernelParam = it.split("=").first().trim()
-                    kernelParams.add(KernelParameter(param = kernelParam).apply {
-                        setPathFromParam(kernelParam)
+                    kernelParams.add(KernelParameter(name = kernelParam).apply {
+                        setPathFromName(kernelParam)
                     })
                 }
             }

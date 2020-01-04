@@ -58,22 +58,26 @@ class KernelParamBrowserAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val kernelFile = dataSet[position]
         val kernelParam = KernelParameter(path = kernelFile.absolutePath).apply {
-            setParamFromPath(this.path)
+            setNameFromPath(this.path)
         }
 
         if (kernelFile.isDirectory) {
-            holder.name.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-            holder.name.setTextColor(Color.WHITE)
-            holder.icon.setImageResource(R.drawable.ic_folder_outline)
-            holder.icon.setBackgroundResource(R.drawable.circle_folder)
-            holder.icon.setColorFilter(ContextCompat.getColor(context,
-                R.color.colorAccentLight
-            ), PorterDuff.Mode.SRC_IN)
+            with (holder) {
+                name.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                name.setTextColor(Color.WHITE)
+                icon.setImageResource(R.drawable.ic_folder_outline)
+                icon.setBackgroundResource(R.drawable.circle_folder)
+                icon.setColorFilter(ContextCompat.getColor(context,
+                    R.color.colorAccentLight
+                ), PorterDuff.Mode.SRC_IN)
+            }
         } else {
-            holder.name.setTextColor(Color.parseColor("#99FFFFFF")) // 60% white
-            holder.icon.setImageResource(R.drawable.ic_file_outline)
-            holder.icon.setBackgroundResource(R.drawable.circle_file)
-            holder.icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+            with (holder) {
+                name.setTextColor(Color.parseColor("#99FFFFFF")) // 60% white
+                icon.setImageResource(R.drawable.ic_file_outline)
+                icon.setBackgroundResource(R.drawable.circle_file)
+                icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+            }
         }
 
         holder.name.text = kernelFile.nameWithoutExtension
@@ -81,6 +85,7 @@ class KernelParamBrowserAdapter(
 
         GlobalScope.launch {
             val paramValue = getParamValue(kernelFile.path)
+
             withContext(Dispatchers.Main) {
                 kernelParam.value = paramValue
 
