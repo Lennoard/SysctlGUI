@@ -17,6 +17,10 @@ import com.androidvip.sysctlgui.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -44,13 +48,15 @@ class StartUpService : JobService() {
     override fun onStart(intent: Intent?, startId: Int) {
         // call the .conf file and make an notification for android >= O
 
-        showNotification()
+        GlobalScope.launch {
+            showNotification()
 
-        if (checkRequirements()) {
-            applyConfig()
+            if (checkRequirements()) {
+                applyConfig()
+            }
+
+            this@StartUpService.stopForeground(true)
         }
-
-        this.stopForeground(true)
     }
 
     private fun showNotification() {
@@ -83,7 +89,7 @@ class StartUpService : JobService() {
         }
     }
 
-    private fun applyConfig() {
+    private suspend fun applyConfig() = withContext(Dispatchers.IO) {
         val params: List<KernelParameter> = Prefs.getUserParamsSet(applicationContext)
 
         params.forEach { kernelParam: KernelParameter ->
@@ -95,20 +101,12 @@ class StartUpService : JobService() {
             }
             RootUtils.executeSync(command)
         }
-
     }
 
-    private fun checkRequirements(): Boolean {
-        if (!prefs.getBoolean(RUN_ON_START_UP, false)) {
-            return false
-        }
+    private suspend fun checkRequirements() = withContext(Dispatchers.IO) {
+        val allowStartUp: Boolean = prefs.getBoolean(RUN_ON_START_UP, false)
 
-        if (!Shell.rootAccess()) {
-            this.stopSelf()
-            return false
-        }
-
-        return true
+        allowStartUp && Shell.rootAccess()
     }
 
 
@@ -128,5 +126,4 @@ class StartUpService : JobService() {
         private const val serviceId: Int = 2
         private const val notificationId: String = "2"
     }
-
 }
