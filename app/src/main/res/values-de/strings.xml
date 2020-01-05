@@ -39,4 +39,10 @@
     <string name="information">Information</string>
     <string name="no_info_available">Keine Informationen für den Parameter verfügbar</string>
     <string name="search">Suche</string>
+    <string name="start_up">Systemstart</string>
+    <string name="start_up_sum">Beim Systemstart die Parameter übernehmen</string>
+    <string name="notification_start_up_title">wende Parameter an</string>
+    <string name="notification_start_up_description">Ihre Parameter werden angewendet</string>
+    <string name="notification_start_up_channel_name">Startbenachrichtigung</string>
+    <string name="notification_start_up_channel_description">Ihre Parameter werden angewendet</string>
 </resources>

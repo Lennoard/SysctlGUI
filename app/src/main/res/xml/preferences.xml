@@ -40,4 +40,12 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/start_up">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="run_on_start_up"
+            android:title="@string/start_up_sum" />
+    </PreferenceCategory>
+
 </PreferenceScreen>
