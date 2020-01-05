@@ -83,22 +83,20 @@ class KernelParamBrowserAdapter(
         holder.name.text = kernelFile.nameWithoutExtension
         holder.itemLayout.setOnClickListener(null)
 
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.Main) {
             val paramValue = getParamValue(kernelFile.path)
 
-            withContext(Dispatchers.Main) {
-                kernelParam.value = paramValue
+            kernelParam.value = paramValue
 
-                if (kernelFile.isDirectory) {
-                    holder.itemLayout.setOnClickListener {
-                        directoryChangedListener.onDirectoryChanged(kernelFile)
-                    }
-                } else {
-                    holder.itemLayout.setOnClickListener {
-                        Intent(context, EditKernelParamActivity::class.java).apply {
-                            putExtra(EXTRA_PARAM, kernelParam)
-                            context.startActivity(this)
-                        }
+            if (kernelFile.isDirectory) {
+                holder.itemLayout.setOnClickListener {
+                    directoryChangedListener.onDirectoryChanged(kernelFile)
+                }
+            } else {
+                holder.itemLayout.setOnClickListener {
+                    Intent(context, EditKernelParamActivity::class.java).apply {
+                        putExtra(EXTRA_PARAM, kernelParam)
+                        context.startActivity(this)
                     }
                 }
             }

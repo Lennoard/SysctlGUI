@@ -73,16 +73,15 @@ class KernelParamsListActivity : BaseSearchActivity() {
         }
     }
 
-    private suspend fun getKernelParams() = withContext(Dispatchers.Default) {
-        delay(500)
+    private suspend fun getKernelParams() = withContext(Dispatchers.IO) {
         val kernelParams = mutableListOf<KernelParameter>()
         val command = if (RootUtils.isBusyboxAvailable()) "busybox sysctl -a" else "sysctl -a"
         RootUtils.executeWithOutput(command, "") { line ->
             line?.let {
                 if (!it.contains("denied") && !it.startsWith("sysctl") && it.contains("=")) {
-                    val kernelParam = it.split("=").first().trim()
-                    kernelParams.add(KernelParameter(name = kernelParam).apply {
-                        setPathFromName(kernelParam)
+                    val paramName = it.split("=").first().trim()
+                    kernelParams.add(KernelParameter(name = paramName).apply {
+                        setPathFromName(paramName)
                     })
                 }
             }

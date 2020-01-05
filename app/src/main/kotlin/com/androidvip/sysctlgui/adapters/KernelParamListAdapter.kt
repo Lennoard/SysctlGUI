@@ -31,22 +31,20 @@ class KernelParamListAdapter(private val context: Context, private val dataSet: 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.list_item_kernel_param_list, parent, false)
-        return ViewHolder(v)
+        return ViewHolder(v).apply { setIsRecyclable(false) }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val kernelParam = dataSet[position]
+        val kernelParam = dataSet[holder.adapterPosition]
 
         holder.name.text = kernelParam.name
         holder.itemLayout.setOnClickListener(null)
 
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.Main) {
             val paramValue = getParamValue(kernelParam.path)
-            withContext(Dispatchers.Main) {
-                holder.value.text = paramValue
-                kernelParam.value = paramValue
-            }
 
+            kernelParam.value = paramValue
+            holder.value.text = paramValue
             holder.itemLayout.setOnClickListener {
                 Intent(context, EditKernelParamActivity::class.java).apply {
                     putExtra(EXTRA_PARAM, kernelParam)
@@ -66,7 +64,7 @@ class KernelParamListAdapter(private val context: Context, private val dataSet: 
         notifyDataSetChanged()
     }
 
-    private suspend fun getParamValue(path: String) = withContext(Dispatchers.Default) {
+    private suspend fun getParamValue(path: String) = withContext(Dispatchers.IO) {
         RootUtils.executeWithOutput("cat $path", "")
     }
 }
