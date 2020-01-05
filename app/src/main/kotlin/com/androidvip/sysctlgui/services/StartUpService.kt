@@ -22,7 +22,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class StartUpService : JobService() {
 
@@ -32,9 +31,7 @@ class StartUpService : JobService() {
      */
 
     private val prefs: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(
-            this
-        )
+        PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {
@@ -48,7 +45,7 @@ class StartUpService : JobService() {
     override fun onStart(intent: Intent?, startId: Int) {
         // call the .conf file and make an notification for android >= O
 
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.Main) {
             showNotification()
 
             if (checkRequirements()) {
@@ -60,7 +57,7 @@ class StartUpService : JobService() {
     }
 
     private fun showNotification() {
-        val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, notificationId)
+        val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, NOTIFICATION_ID)
             .setSmallIcon(R.drawable.app_icon_foreground)
             .setContentTitle(resources.getString(R.string.notification_start_up_title))
             .setContentText(resources.getString(R.string.notification_start_up_description))
@@ -74,7 +71,7 @@ class StartUpService : JobService() {
                 getSystemService(NotificationManager::class.java)
 
             val notificationChannel = NotificationChannel(
-                notificationId,
+                NOTIFICATION_ID,
                 resources.getString(R.string.notification_start_up_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
@@ -83,9 +80,9 @@ class StartUpService : JobService() {
             notificationManager.createNotificationChannel(notificationChannel)
 
 
-            startForeground(serviceId, notification)
+            startForeground(SERVICE_ID, notification)
         } else {
-            startForeground(serviceId, notification)
+            startForeground(SERVICE_ID, notification)
         }
     }
 
@@ -123,7 +120,7 @@ class StartUpService : JobService() {
         }
 
         private const val RUN_ON_START_UP: String = "run_on_start_up"
-        private const val serviceId: Int = 2
-        private const val notificationId: String = "2"
+        private const val SERVICE_ID: Int = 2
+        private const val NOTIFICATION_ID: String = "2"
     }
 }

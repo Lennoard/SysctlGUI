@@ -39,4 +39,10 @@
     <string name="information">Informação</string>
     <string name="no_info_available">Nenhuma informação disponível para este parâmetro</string>
     <string name="search">Pesquisar</string>
+    <string name="notification_start_up_channel_description">Aplicando seus parâmetros</string>
+    <string name="notification_start_up_channel_name">Notificação de inicialização</string>
+    <string name="notification_start_up_description">Aplicando seus parâmetros</string>
+    <string name="notification_start_up_title">Aplicando parâmetros</string>
+    <string name="start_up">Inicialização</string>
+    <string name="start_up_sum">Permitir a reaplicação de parâmetros na inicialização</string>
 </resources>

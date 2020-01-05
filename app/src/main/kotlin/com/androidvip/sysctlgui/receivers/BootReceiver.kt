@@ -9,8 +9,8 @@ import com.androidvip.sysctlgui.services.StartUpService
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            Toast.makeText(context, "TODO", Toast.LENGTH_LONG).show()
 
+            // TODO: make a regular service for KitKat
             context?.let {
                 StartUpService.start(context)
             }
