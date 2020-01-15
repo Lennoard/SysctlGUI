@@ -52,22 +52,30 @@ class EditKernelParamActivity : AppCompatActivity() {
                             R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
                     } else {
                         kernelParameter.value = newValue
-                        GlobalScope.launch {
+                        GlobalScope.launch(Dispatchers.IO) {
                             val result = commitChanges(kernelParameter)
-                            runSafeOnUiThread {
-                                val feedback = if (commitMode == "sysctl") {
-                                    if (result == "error" || !result.contains(kernelParameter.name)) {
-                                        getString(R.string.failed)
-                                    } else {
-                                        result
-                                    }
+                            var success = true
+                            val feedback = if (commitMode == "sysctl") {
+                                if (result == "error" || !result.contains(kernelParameter.name)) {
+                                    success = false
+                                    getString(R.string.failed)
                                 } else {
-                                    if (result == "error") {
-                                        getString(R.string.failed)
-                                    } else {
-                                        getString(R.string.done)
-                                    }
+                                    result
                                 }
+                            } else {
+                                if (result == "error") {
+                                    success = false
+                                    getString(R.string.failed)
+                                } else {
+                                    getString(R.string.done)
+                                }
+                            }
+
+                            if (success) {
+                                Prefs.putParam(kernelParameter, this@EditKernelParamActivity)
+                            }
+
+                            runSafeOnUiThread {
                                 Snackbar.make(view, feedback, Snackbar.LENGTH_LONG).showAsLight()
                             }
                         }
@@ -128,7 +136,9 @@ class EditKernelParamActivity : AppCompatActivity() {
     private fun findInfoForParam(paramName: String): String {
         val resId = resources.getIdentifier(paramName.replace("-", "_"), "string", packageName)
         return if (resId != 0) {
-            getString(resId)
+            runCatching {
+                getString(resId)
+            }.getOrDefault(getString(R.string.no_info_available))
         } else {
             getString(R.string.no_info_available)
         }
@@ -142,9 +152,6 @@ class EditKernelParamActivity : AppCompatActivity() {
             else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
         }
 
-        withContext(Dispatchers.IO) {
-            Prefs.putParam(kernelParam, this@EditKernelParamActivity)
-        }
         RootUtils.executeWithOutput(command, "error")
     }
 }

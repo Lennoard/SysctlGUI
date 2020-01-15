@@ -34,7 +34,7 @@ class BaseStartUpService(
 
     fun onStart() {
         if (weakContext.get() != null) {
-            
+
             // call the .conf file and make an notification for android >= O
             GlobalScope.launch(Dispatchers.Main) {
                 showNotification()
