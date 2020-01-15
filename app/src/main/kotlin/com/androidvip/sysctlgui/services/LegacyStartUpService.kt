@@ -8,11 +8,12 @@ import android.os.Build
 import android.os.IBinder
 import com.androidvip.sysctlgui.services.base.BaseStartUpService
 import java.lang.RuntimeException
+import java.lang.ref.WeakReference
 
 class LegacyStartUpService : Service(), BaseStartUpService.ServiceHandler {
 
     override fun onStart(intent: Intent?, startId: Int) {
-        BaseStartUpService(this, resources, this).onStart()
+        BaseStartUpService(WeakReference(this), this).onStart()
     }
 
     override fun onBind(intent: Intent?): IBinder? {

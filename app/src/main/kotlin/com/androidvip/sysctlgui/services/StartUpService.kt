@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.androidvip.sysctlgui.services.base.BaseStartUpService
+import java.lang.ref.WeakReference
 
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class StartUpService : JobService(), BaseStartUpService.ServiceHandler {
@@ -21,7 +22,7 @@ class StartUpService : JobService(), BaseStartUpService.ServiceHandler {
     }
 
     override fun onStart(intent: Intent?, startId: Int) {
-        BaseStartUpService(this, resources, this).onStart()
+        BaseStartUpService(WeakReference(this), this).onStart()
     }
 
     override fun onStartForeground(id: Int, notification: Notification) {
