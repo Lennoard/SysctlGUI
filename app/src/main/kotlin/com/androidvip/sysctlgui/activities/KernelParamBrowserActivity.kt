@@ -17,12 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-interface DirectoryChangedListener {
-    fun onDirectoryChanged(newDir: File)
-}
-
-class KernelParamBrowserActivity : BaseSearchActivity(),
-    DirectoryChangedListener {
+class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListener {
     private var currentPath = "/proc/sys"
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
         KernelParamBrowserAdapter(arrayOf(), this, this)
@@ -118,4 +113,8 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
             val isLandscape = resources.getBoolean(R.bool.is_landscape)
             return if (isLandscape) 2 else 1
         }
+}
+
+interface DirectoryChangedListener {
+    fun onDirectoryChanged(newDir: File)
 }

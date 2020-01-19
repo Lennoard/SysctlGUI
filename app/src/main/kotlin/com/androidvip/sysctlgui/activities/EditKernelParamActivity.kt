@@ -1,14 +1,17 @@
 package com.androidvip.sysctlgui.activities
 
+import android.app.Activity
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
+import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
@@ -29,7 +32,6 @@ class EditKernelParamActivity : AppCompatActivity() {
 
         val extraParam = KernelParamListAdapter.EXTRA_PARAM
         val kernelParameter: KernelParameter? = intent.getSerializableExtra(extraParam) as KernelParameter?
-        val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
 
         if (kernelParameter == null) {
             editParamErrorText.show()
@@ -45,41 +47,8 @@ class EditKernelParamActivity : AppCompatActivity() {
                 editParamInput.setText(kernelParameter.value)
                 Handler().postDelayed({ updateTextUi(kernelParameter) }, 100)
 
-                editParamApply.setOnClickListener { view ->
-                    val newValue = editParamInput.text.toString()
-                    if (!prefs.getBoolean(Prefs.ALLOW_BLANK, false) && newValue.isEmpty()) {
-                        Snackbar.make(view,
-                            R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
-                    } else {
-                        kernelParameter.value = newValue
-                        GlobalScope.launch(Dispatchers.IO) {
-                            val result = commitChanges(kernelParameter)
-                            var success = true
-                            val feedback = if (commitMode == "sysctl") {
-                                if (result == "error" || !result.contains(kernelParameter.name)) {
-                                    success = false
-                                    getString(R.string.failed)
-                                } else {
-                                    result
-                                }
-                            } else {
-                                if (result == "error") {
-                                    success = false
-                                    getString(R.string.failed)
-                                } else {
-                                    getString(R.string.done)
-                                }
-                            }
-
-                            if (success) {
-                                Prefs.putParam(kernelParameter, this@EditKernelParamActivity)
-                            }
-
-                            runSafeOnUiThread {
-                                Snackbar.make(view, feedback, Snackbar.LENGTH_LONG).showAsLight()
-                            }
-                        }
-                    }
+                editParamApply.setOnClickListener {
+                    applyParam(kernelParameter)
                 }
             }
         }
@@ -141,6 +110,60 @@ class EditKernelParamActivity : AppCompatActivity() {
             }.getOrDefault(getString(R.string.no_info_available))
         } else {
             getString(R.string.no_info_available)
+        }
+    }
+
+    private fun applyParam(kernelParameter: KernelParameter) {
+        val newValue = editParamInput.text.toString()
+        val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
+
+        if (!prefs.getBoolean(Prefs.ALLOW_BLANK, false) && newValue.isEmpty()) {
+            Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
+        } else {
+            kernelParameter.value = newValue
+
+            GlobalScope.launch(Dispatchers.IO) {
+                if (intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)) {
+                    val success = Prefs.putParam(kernelParameter, this@EditKernelParamActivity)
+                    runSafeOnUiThread {
+                        if (success) {
+                            Toast.makeText(this@EditKernelParamActivity, R.string.done, Toast.LENGTH_SHORT).show()
+                            setResult(Activity.RESULT_OK)
+                        } else {
+                            Toast.makeText(this@EditKernelParamActivity, R.string.failed, Toast.LENGTH_SHORT).show()
+                            setResult(Activity.RESULT_CANCELED)
+                        }
+                        finish()
+                    }
+
+                } else {
+                    val result = commitChanges(kernelParameter)
+                    var success = true
+                    val feedback = if (commitMode == "sysctl") {
+                        if (result == "error" || !result.contains(kernelParameter.name)) {
+                            success = false
+                            getString(R.string.failed)
+                        } else {
+                            result
+                        }
+                    } else {
+                        if (result == "error") {
+                            success = false
+                            getString(R.string.failed)
+                        } else {
+                            getString(R.string.done)
+                        }
+                    }
+
+                    if (success) {
+                        Prefs.putParam(kernelParameter, this@EditKernelParamActivity)
+                    }
+
+                    runSafeOnUiThread {
+                        Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
+                    }
+                }
+            }
         }
     }
 

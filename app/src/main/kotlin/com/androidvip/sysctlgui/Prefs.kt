@@ -1,6 +1,7 @@
 package com.androidvip.sysctlgui
 
 import android.content.Context
+import com.androidvip.sysctlgui.Prefs.containsParam
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -40,6 +41,27 @@ object Prefs {
             val paramsFile = File(context.filesDir, USER_PARAMS_FILENAME)
             paramsFile.writeText(Gson().toJson(list))
             true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    fun removeParam(param: KernelParameter, context: Context?): Boolean {
+        if (context == null) return false
+
+        return try {
+            val list = getUserParamsSet(context)
+            if (list.containsParam(param)) {
+                val index = list.indexOf(param)
+                list.removeAt(index)
+
+                val paramsFile = File(context.filesDir, USER_PARAMS_FILENAME)
+                paramsFile.writeText(Gson().toJson(list))
+                true
+            } else {
+                return false
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             false

@@ -34,6 +34,9 @@
             android:name=".activities.KernelParamBrowserActivity"
             android:label="@string/browse_variables" />
         <activity
+            android:name=".activities.ManageOnStartUpParamsActivity"
+            android:label="@string/manage_parameters" />
+        <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

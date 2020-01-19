@@ -45,4 +45,7 @@
     <string name="notification_start_up_title">Aplicando parâmetros</string>
     <string name="start_up">Inicialização</string>
     <string name="start_up_sum">Permitir a reaplicação de parâmetros na inicialização</string>
+    <string name="manage_parameters">Gerenciar parâmetros</string>
+    <string name="manage_parameters_sum">Gerenciar os parâmetros que serão aplicados na inicialização</string>
+    <string name="no_parameters_found">Nenhum parâmetro encontrado</string>
 </resources>

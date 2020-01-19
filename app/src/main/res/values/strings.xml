@@ -44,4 +44,7 @@
     <string name="notification_start_up_description">Applying your parameters</string>
     <string name="notification_start_up_channel_name">Start Up Notification</string>
     <string name="notification_start_up_channel_description">Applying your parameters</string>
+    <string name="manage_parameters">Manage parameters</string>
+    <string name="manage_parameters_sum">Manage the parameters that will be applied at startup</string>
+    <string name="no_parameters_found">No parameters found</string>
 </resources>

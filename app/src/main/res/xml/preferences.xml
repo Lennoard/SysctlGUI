@@ -29,8 +29,8 @@
         <SwitchPreferenceCompat
             app:key="use_busybox"
             app:title="@string/use_busybox"
-            android:summaryOn="@string/use_busybox_on"
-            android:summaryOff="@string/use_busybox_off"
+            app:summaryOn="@string/use_busybox_on"
+            app:summaryOff="@string/use_busybox_off"
             app:defaultValue="false"/>
 
         <SwitchPreferenceCompat
@@ -42,10 +42,23 @@
 
     <PreferenceCategory android:title="@string/start_up">
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="run_on_start_up"
-            android:title="@string/start_up_sum" />
+        <SwitchPreferenceCompat
+            app:key="run_on_start_up"
+            app:title="@string/start_up_sum"
+            app:defaultValue="false"/>
+
+        <PreferenceScreen
+            app:title="@string/manage_parameters"
+            app:summary="@string/manage_parameters_sum"
+            app:dependency="run_on_start_up">
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="com.androidvip.sysctlgui"
+                android:targetClass="com.androidvip.sysctlgui.activities.ManageOnStartUpParamsActivity" />
+
+        </PreferenceScreen>
+
     </PreferenceCategory>
 
 </PreferenceScreen>
