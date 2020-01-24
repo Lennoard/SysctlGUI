@@ -45,4 +45,7 @@
     <string name="notification_start_up_description">Ihre Parameter werden angewendet</string>
     <string name="notification_start_up_channel_name">Startbenachrichtigung</string>
     <string name="notification_start_up_channel_description">Ihre Parameter werden angewendet</string>
+    <string name="manage_parameters">Parameter verwalten</string>
+    <string name="manage_parameters_sum">Verwalte Parameter die beim Systemstart angewandt werden</string>
+    <string name="no_parameters_found">Keine Parameter gefunden</string>
 </resources>
