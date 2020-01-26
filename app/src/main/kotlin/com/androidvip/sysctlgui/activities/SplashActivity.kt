@@ -12,6 +12,7 @@ import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
@@ -43,7 +44,7 @@ class SplashActivity : AppCompatActivity() {
                     if (!isBusyBoxAvailable) {
                         prefs.edit().putBoolean(Prefs.USE_BUSYBOX, false).apply()
                     }
-                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                    navigate()
                     finish()
                 } else {
                     splashProgress.visibility = View.GONE
@@ -66,5 +67,25 @@ class SplashActivity : AppCompatActivity() {
     private suspend fun checkBusyBox() = withContext(Dispatchers.IO) {
         delay(500)
         RootUtils.isBusyboxAvailable()
+    }
+
+    private fun navigate() {
+        when(this.intent.action) {
+            Actions.KernelParamBrowserActivity.name -> {
+                startActivity(Intent(this, KernelParamBrowserActivity::class.java))
+            }
+
+            Actions.KernelParamsListActivity.name -> {
+                startActivity(Intent(this, KernelParamsListActivity::class.java))
+            }
+
+            Actions.SettingsActivity.name -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            }
+
+            else -> {
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            }
+        }
     }
 }

@@ -1,0 +1,56 @@
+<shortcuts xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="KernelParamsList"
+        android:enabled="true"
+        android:icon="@drawable/ic_edit_outline_dark"
+        android:shortcutShortLabel="@string/show_variables"
+        android:shortcutLongLabel="@string/show_variables_sum"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.androidvip.sysctlgui"
+            android:targetClass="com.androidvip.sysctlgui.activities.MainActivity" />
+        <intent
+            android:action="KernelParamsListActivity"
+            android:targetPackage="com.androidvip.sysctlgui"
+            android:targetClass="com.androidvip.sysctlgui.activities.SplashActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="KernelParamBrowser"
+        android:enabled="true"
+        android:icon="@drawable/ic_folder_outline_dark"
+        android:shortcutShortLabel="@string/browse_variables"
+        android:shortcutLongLabel="@string/browse_variables_sum"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.androidvip.sysctlgui"
+            android:targetClass="com.androidvip.sysctlgui.activities.MainActivity" />
+        <intent
+            android:action="KernelParamBrowserActivity"
+            android:targetPackage="com.androidvip.sysctlgui"
+            android:targetClass="com.androidvip.sysctlgui.activities.SplashActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="Settings"
+        android:enabled="true"
+        android:icon="@drawable/ic_settings_outline_dark"
+        android:shortcutShortLabel="@string/settings"
+        android:shortcutLongLabel="@string/settings"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.androidvip.sysctlgui"
+            android:targetClass="com.androidvip.sysctlgui.activities.MainActivity" />
+        <intent
+            android:action="SettingsActivity"
+            android:targetPackage="com.androidvip.sysctlgui"
+            android:targetClass="com.androidvip.sysctlgui.activities.SplashActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>
