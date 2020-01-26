@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Menu
@@ -9,11 +10,15 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.*
+import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -89,51 +94,63 @@ class MainActivity : AppCompatActivity() {
 
                     // check if mime is json
                     if (uri.lastPathSegment?.contains(".json")?.not() ?: run { false }) {
-                        Toast.makeText(this, getString(R.string.open_file_failed), Toast.LENGTH_LONG).show()
+                        toast(R.string.import_error_invalid_file_type)
                         return
                     }
 
-                    val successfulParams: MutableList<KernelParameter> = mutableListOf()
-
-                    GlobalScope.launch(Dispatchers.IO) {
-                        KernelParamUtils(this@MainActivity)
-                            .paramsFromUri(uri)
-                            .forEach { kernelParameter: KernelParameter ->
-                                // apply the param to check if valid
-                                KernelParamUtils(this@MainActivity).applyParam(
-                                    kernelParameter,
-                                    object : KernelParamUtils.KernelParamApply {
-                                        override fun onEmptyValue() {
-                                        }
-
-                                        override fun onFeedBack(feedback: String) {
-                                        }
-
-                                        override fun onCustomApply(kernelParam: KernelParameter) {
-                                        }
-
-                                        override fun onSuccess() {
-                                            successfulParams.add(kernelParameter)
-                                        }
-                                    }, false
-                                )
-                            }
-
-                        val oldParams = Prefs.removeAllParams(this@MainActivity)
-                        if (Prefs.putParams(successfulParams, this@MainActivity)) {
-                            runOnUiThread {
-                                Toast.makeText(this@MainActivity, getString(R.string.done), Toast.LENGTH_LONG).show()
-                            }
-                        } else {
-                            Prefs.putParams(oldParams, this@MainActivity)
-                            runOnUiThread {
-                                Toast.makeText(this@MainActivity, getString(R.string.restore_parameters), Toast.LENGTH_LONG).show()
-                            }
-                        }
+                    GlobalScope.launch {
+                        applyParamsFromUri(uri)
                     }
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private suspend fun applyParamsFromUri(uri: Uri) = withContext(Dispatchers.Default) {
+        val context = this@MainActivity
+        val successfulParams: MutableList<KernelParameter> = mutableListOf()
+
+        try {
+            val params = KernelParamUtils(context).getParamsFromUri(uri)
+            if (params.isNullOrEmpty()) {
+                context.toast(R.string.no_parameters_found)
+                return@withContext
+            }
+
+            params.forEach {
+                // apply the param to check if valid
+                KernelParamUtils(context).applyParam(it, false, object : KernelParamUtils.KernelParamApply {
+                    override fun onEmptyValue() { }
+                    override fun onFeedBack(feedback: String) { }
+
+                    override fun onSuccess() {
+                        successfulParams.add(it)
+                    }
+
+                    override suspend fun onCustomApply(kernelParam: KernelParameter) { }
+                })
+            }
+
+            val oldParams = Prefs.removeAllParams(context)
+            if (Prefs.putParams(successfulParams, context)) {
+                runSafeOnUiThread {
+                    context.toast(R.string.done, Toast.LENGTH_LONG)
+                }
+            } else {
+                // Probably an IO error, revert back
+                Prefs.putParams(oldParams, context)
+                runSafeOnUiThread {
+                    context.toast(R.string.restore_parameters, Toast.LENGTH_LONG)
+                }
+            }
+        } catch (e: Exception) {
+            runSafeOnUiThread {
+                when (e) {
+                    is JsonParseException, is JsonSyntaxException -> context.toast(R.string.import_error_invalid_json)
+                    else -> context.toast(R.string.import_error, Toast.LENGTH_LONG)
+                }
+            }
+        }
     }
 }

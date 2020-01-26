@@ -48,4 +48,10 @@
     <string name="manage_parameters">Gerenciar parâmetros</string>
     <string name="manage_parameters_sum">Gerenciar os parâmetros que serão aplicados na inicialização</string>
     <string name="no_parameters_found">Nenhum parâmetro encontrado</string>
+    <string name="export_parameters">Exportar parâmetros</string>
+    <string name="export_parameters_sum">Exportar os parâmetros que serão aplicados na inicialização</string>
+    <string name="import_error_invalid_file_type">Não foi possível abrir o arquivo: tipo de arquivo inválido.</string>
+    <string name="restore_parameters">Tentando restaurar parâmetros</string>
+    <string name="import_error_invalid_json">Arquivo JSON inválido ou mal formado</string>
+    <string name="import_error">Falha ao importar parâmetros</string>
 </resources>

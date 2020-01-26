@@ -16,7 +16,6 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -47,7 +46,9 @@ class EditKernelParamActivity : AppCompatActivity() {
                 Handler().postDelayed({ updateTextUi(kernelParameter) }, 100)
 
                 editParamApply.setOnClickListener {
-                    applyParam(kernelParameter)
+                    GlobalScope.launch {
+                        applyParam(kernelParameter)
+                    }
                 }
             }
         }
@@ -112,7 +113,7 @@ class EditKernelParamActivity : AppCompatActivity() {
         }
     }
 
-    private fun applyParam(kernelParameter: KernelParameter) {
+    private suspend fun applyParam(kernelParameter: KernelParameter) {
         val newValue = editParamInput.text.toString()
 
         val newKernelParameter = kernelParameter.copy().apply {
@@ -121,43 +122,34 @@ class EditKernelParamActivity : AppCompatActivity() {
 
         val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
 
-        KernelParamUtils(this).applyParam(newKernelParameter, object : KernelParamUtils.KernelParamApply{
+        val kernelParamUtils = KernelParamUtils(this@EditKernelParamActivity)
+        kernelParamUtils.applyParam(newKernelParameter, useCustomApply, object : KernelParamUtils.KernelParamApply {
             override fun onEmptyValue() {
-                GlobalScope.launch(Dispatchers.IO) {
-                    runSafeOnUiThread {
-                        Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
-                    }
-                }
+                Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
             }
 
             override fun onFeedBack(feedback: String) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    runSafeOnUiThread {
-                        Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
-                    }
-                }
-            }
-
-            override fun onCustomApply(kernelParam: KernelParameter) {
-                val success = Prefs.putParam(kernelParam, this@EditKernelParamActivity)
-
-                GlobalScope.launch(Dispatchers.IO) {
-                    runSafeOnUiThread {
-                        if (success) {
-                            Toast.makeText(this@EditKernelParamActivity, R.string.done, Toast.LENGTH_SHORT).show()
-                            setResult(Activity.RESULT_OK)
-                        } else {
-                            Toast.makeText(this@EditKernelParamActivity, R.string.failed, Toast.LENGTH_SHORT).show()
-                            setResult(Activity.RESULT_CANCELED)
-                        }
-                        finish()
-                    }
-                }
+                Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
             }
 
             override fun onSuccess() {
                 kernelParameter.value = newValue
             }
-        }, useCustomApply)
+
+            override suspend fun onCustomApply(kernelParam: KernelParameter) {
+                val success = Prefs.putParam(kernelParam, this@EditKernelParamActivity)
+
+                runSafeOnUiThread {
+                    if (success) {
+                        this@EditKernelParamActivity.toast(R.string.done)
+                        setResult(Activity.RESULT_OK)
+                    } else {
+                        this@EditKernelParamActivity.toast(R.string.failed)
+                        setResult(Activity.RESULT_CANCELED)
+                    }
+                    finish()
+                }
+            }
+        })
     }
 }

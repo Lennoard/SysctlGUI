@@ -49,6 +49,8 @@
     <string name="export_parameters">Export parameters</string>
     <string name="export_parameters_sum">Export the parameters that will be applied at startup</string>
     <string name="no_parameters_found">No parameters found</string>
-    <string name="open_file_failed">can\'t open file</string>
-    <string name="restore_parameters">trying to restore of parameter</string>
+    <string name="restore_parameters">Trying to restore parameters</string>
+    <string name="import_error">Failed to import parameters</string>
+    <string name="import_error_invalid_json">Invalid or malformed JSON file</string>
+    <string name="import_error_invalid_file_type">Can\'t open file: invalid file type.</string>
 </resources>

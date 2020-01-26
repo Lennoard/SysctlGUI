@@ -50,6 +50,5 @@
     <string name="export_parameters">Exportiere Parameter</string>
     <string name="export_parameters_sum">Exportiert die beim Start angewandeten Parameter</string>
     <string name="no_parameters_found">Keine Parameter gefunden</string>
-    <string name="open_file_failed">Datei kann nicht geöffnet werden</string>
     <string name="restore_parameters">Versuche die Prameter wiederherzustellen</string>
 </resources>

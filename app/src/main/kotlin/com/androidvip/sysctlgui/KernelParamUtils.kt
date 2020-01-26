@@ -7,8 +7,6 @@ import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.lang.reflect.Type
@@ -35,14 +33,14 @@ class KernelParamUtils(val context: Context) {
         }
     }
 
-    fun paramsFromUri(uri: Uri): MutableList<KernelParameter> {
+    fun getParamsFromUri(uri: Uri): MutableList<KernelParameter>? {
         val stringBuilder = StringBuilder()
         context.contentResolver.openInputStream(uri).use { inputStream: InputStream? ->
-            BufferedReader(InputStreamReader(inputStream)).use { bufferedReader: BufferedReader ->
-                var content: String? = bufferedReader.readLine()
+            inputStream?.bufferedReader().use {
+                var content: String? = it?.readLine()
                 while (content != null) {
                     stringBuilder.append(content)
-                    content = bufferedReader.readLine()
+                    content = it?.readLine()
                 }
             }
         }
@@ -62,42 +60,55 @@ class KernelParamUtils(val context: Context) {
         RootUtils.executeWithOutput(command, "error")
     }
 
+    /**
+     * Suspend function to apply kernel parameters. Should be called with [Dispatchers.Default]
+     * as it will swap dispatchers according to the result/operation
+     *
+     * @param kernelParameter: parameter to apply
+     * @param kernelParamApply: callback interface
+     * @param customApply whether or not to delegate this application of parameters
+     */
+    suspend fun applyParam(
+        kernelParameter: KernelParameter,
+        customApply: Boolean,
+        kernelParamApply: KernelParamApply
+    ) = withContext(Dispatchers.Default) {
 
-    fun applyParam(kernelParameter: KernelParameter, kernelParamApply: KernelParamApply, customApply: Boolean) {
         val newValue = kernelParameter.value
         val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
 
         if (!prefs.getBoolean(Prefs.ALLOW_BLANK, false) && newValue.isEmpty()) {
-            kernelParamApply.onEmptyValue()
+            // Probably only used to show errors anyway.
+            // If we need logging to a file, we can log it here before onEmptyValue()
+            withContext(Dispatchers.Main) { kernelParamApply.onEmptyValue() }
         } else {
-
-            GlobalScope.launch(Dispatchers.IO) {
-                if (customApply) {
-                    kernelParamApply.onCustomApply(kernelParameter)
-                } else {
-                    val result = commitChanges(kernelParameter)
-                    var success = true
-                    val feedback = if (commitMode == "sysctl") {
-                        if (result == "error" || !result.contains(kernelParameter.name)) {
-                            success = false
-                            context.getString(R.string.failed)
-                        } else {
-                            result
-                        }
+            if (customApply) {
+                kernelParamApply.onCustomApply(kernelParameter) // Keeping the current dispatcher
+            } else {
+                val result = commitChanges(kernelParameter) // IO suspend
+                var success = true
+                val feedback = if (commitMode == "sysctl") {
+                    if (result == "error" || !result.contains(kernelParameter.name)) {
+                        success = false
+                        context.getString(R.string.failed)
                     } else {
-                        if (result == "error") {
-                            success = false
-                            context.getString(R.string.failed)
-                        } else {
-                            context.getString(R.string.done)
-                        }
+                        result
                     }
+                } else {
+                    if (result == "error") {
+                        success = false
+                        context.getString(R.string.failed)
+                    } else {
+                        context.getString(R.string.done)
+                    }
+                }
 
+                // Fire onSuccess and onFeedBack on Main thread
+                withContext(Dispatchers.Main) {
                     if (success) {
                         Prefs.putParam(kernelParameter, context)
                         kernelParamApply.onSuccess()
                     }
-
                     kernelParamApply.onFeedBack(feedback)
                 }
             }
@@ -107,7 +118,7 @@ class KernelParamUtils(val context: Context) {
     interface KernelParamApply {
         fun onEmptyValue()
         fun onFeedBack(feedback: String)
-        fun onCustomApply(kernelParam: KernelParameter)
         fun onSuccess()
+        suspend fun onCustomApply(kernelParam: KernelParameter)
     }
 }
