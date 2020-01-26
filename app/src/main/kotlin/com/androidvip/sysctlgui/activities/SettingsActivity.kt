@@ -53,6 +53,7 @@ class SettingsActivity : AppCompatActivity() {
         when(requestCode) {
             CREATE_FILE_REQUEST_CODE -> {
                 if (resultCode != Activity.RESULT_OK) {
+                    finish()
                     return
                 }
 
