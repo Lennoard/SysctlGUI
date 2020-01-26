@@ -1,17 +1,11 @@
 package com.androidvip.sysctlgui
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
-import android.provider.ContactsContract
-import android.widget.Toast
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -19,9 +13,7 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.lang.StringBuilder
 import java.lang.reflect.Type
-import java.net.URI
 
 class KernelParamUtils(val context: Context) {
     private val prefs: SharedPreferences by lazy {
