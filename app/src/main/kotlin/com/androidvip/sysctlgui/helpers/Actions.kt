@@ -4,4 +4,5 @@ enum class Actions {
     KernelParamsListActivity,
     KernelParamBrowserActivity,
     SettingsActivity,
+    ExportParams
 }

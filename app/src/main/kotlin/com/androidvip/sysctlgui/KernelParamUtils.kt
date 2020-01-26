@@ -10,18 +10,30 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
+import java.io.*
 import java.lang.reflect.Type
 
 class KernelParamUtils(val context: Context) {
-    private val prefs: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(
-            context
-        )
-    }
+    private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
+    fun exportParamsToUri(uri: Uri): Boolean {
+
+        return try {
+            context.contentResolver.openFileDescriptor(uri, "w")?.use {
+                FileOutputStream(it.fileDescriptor).use {
+                        fileOutputStream: FileOutputStream ->
+                    fileOutputStream.write(Gson().toJson(Prefs.getUserParamsSet(context)).toByteArray())
+                }
+            }
+            true
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+            false
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
+        }
+    }
 
     fun paramsFromUri(uri: Uri): MutableList<KernelParameter> {
         val stringBuilder = StringBuilder()
@@ -51,11 +63,7 @@ class KernelParamUtils(val context: Context) {
     }
 
 
-    fun applyParam(
-        kernelParameter: KernelParameter,
-        kernelParamApply: KernelParamApply,
-        customApply: Boolean
-    ) {
+    fun applyParam(kernelParameter: KernelParameter, kernelParamApply: KernelParamApply, customApply: Boolean) {
         val newValue = kernelParameter.value
         val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
 
