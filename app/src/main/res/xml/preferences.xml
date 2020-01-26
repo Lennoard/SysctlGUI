@@ -59,6 +59,18 @@
 
         </PreferenceScreen>
 
+        <PreferenceScreen
+            app:title="@string/export_parameters"
+            app:summary="@string/export_parameters_sum"
+            app:dependency="run_on_start_up">
+
+            <intent
+                android:action="ExportParams"
+                android:targetPackage="com.androidvip.sysctlgui"
+                android:targetClass="com.androidvip.sysctlgui.activities.SettingsActivity" />
+
+        </PreferenceScreen>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

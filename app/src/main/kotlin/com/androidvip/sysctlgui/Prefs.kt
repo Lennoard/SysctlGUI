@@ -68,6 +68,23 @@ object Prefs {
         }
     }
 
+    fun putParams(params: MutableList<KernelParameter>, context: Context?) : Boolean {
+        return params.map { kernelParameter: KernelParameter ->
+            putParam(kernelParameter, context)
+        }.contains(false).not()
+    }
+
+    fun removeAllParams(context: Context?): MutableList<KernelParameter> {
+        val oldParams = getUserParamsSet(context)
+        try {
+            val paramFile = File(context?.filesDir, USER_PARAMS_FILENAME)
+            paramFile.writeText("[]")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return oldParams
+    }
+
     private fun List<KernelParameter>.containsParam(param: KernelParameter): Boolean {
         for (p in this) if (p.name == param.name) return true
         return false

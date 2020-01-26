@@ -8,10 +8,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.Prefs
-import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.*
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -86,13 +83,7 @@ class BaseStartUpService(
         val params: List<KernelParameter> = Prefs.getUserParamsSet(weakContext.get())
 
         params.forEach { kernelParam: KernelParameter ->
-            val commandPrefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
-            val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
-                "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.name}=${kernelParam.value}"
-                "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
-                else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
-            }
-            RootUtils.executeSync(command)
+            KernelParamUtils(weakContext.get()!!).commitChanges(kernelParam)
         }
     }
 

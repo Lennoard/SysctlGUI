@@ -1,21 +1,25 @@
 package com.androidvip.sysctlgui.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
-import com.androidvip.sysctlgui.Prefs
-import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
-import com.androidvip.sysctlgui.runSafeOnUiThread
+import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.helpers.Actions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class SettingsActivity : AppCompatActivity() {
+    companion object {
+        private const val CREATE_FILE_REQUEST_CODE: Int = 2
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +30,15 @@ class SettingsActivity : AppCompatActivity() {
             replace(R.id.settingsFragmentHolder, SettingsFragment())
             commit()
         }
+
+        if (intent.action == Actions.ExportParams.name) {
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+                putExtra(Intent.EXTRA_TITLE, "params.json")
+            }
+            startActivityForResult(intent, CREATE_FILE_REQUEST_CODE)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -33,6 +46,35 @@ class SettingsActivity : AppCompatActivity() {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when(requestCode) {
+            CREATE_FILE_REQUEST_CODE -> {
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
+
+                data?.data?.let { uri ->
+
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val message: String = if (KernelParamUtils(this@SettingsActivity).exportParamsToUri(uri)) {
+                            getString(R.string.done)
+                        } else {
+                            getString(R.string.failed)
+                        }
+
+                        runSafeOnUiThread {
+                            Toast.makeText(this@SettingsActivity, message, Toast.LENGTH_LONG).show()
+                            // close the activity else it's there double
+                            finish()
+                        }
+                    }
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
