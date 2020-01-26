@@ -124,7 +124,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_file_upload_outline"
+                    android:src="@drawable/ic_file_import_outline"
                     android:tint="?attr/iconColor"
                     android:paddingStart="16dp"/>
 

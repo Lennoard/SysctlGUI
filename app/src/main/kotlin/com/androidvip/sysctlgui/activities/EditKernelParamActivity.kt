@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
 import android.view.MenuItem
-import android.widget.Toast
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
@@ -67,18 +67,27 @@ class EditKernelParamActivity : AppCompatActivity() {
 
         YoYo.with(Techniques.SlideInLeft)
             .duration(600)
+            .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
             .playOn(editParamName)
 
         Handler().postDelayed({
             YoYo.with(Techniques.SlideInLeft)
                 .duration(600)
+                .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
                 .playOn(editParamSub)
 
             editParamSub.text = kernelParameter.name.removeSuffix(paramName).removeSuffix(".")
-            editParamInfo.text = findInfoForParam(paramName)
         }, 100)
 
-        Handler().postDelayed({ editParamApply.show() }, 300)
+        Handler().postDelayed({
+            editParamInfo.text = findInfoForParam(paramName)
+            YoYo.with(Techniques.ZoomIn)
+                .duration(260)
+                .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
+                .playOn(editParamInfo)
+
+            editParamApply.show()
+        }, 300)
     }
 
     private fun defineInputTypeForValue(paramValue: String) {

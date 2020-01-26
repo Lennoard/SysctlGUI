@@ -44,7 +44,8 @@
             android:orientation="vertical"
             android:paddingTop="16dp"
             android:paddingStart="@dimen/default_margin"
-            android:paddingEnd="@dimen/default_margin">
+            android:paddingEnd="@dimen/default_margin"
+            android:animateLayoutChanges="true">
 
             <TextView
                 android:id="@+id/editParamName"
