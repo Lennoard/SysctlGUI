@@ -48,4 +48,6 @@
     <string name="manage_parameters">Parameter verwalten</string>
     <string name="manage_parameters_sum">Verwalte Parameter die beim Systemstart angewandt werden</string>
     <string name="no_parameters_found">Keine Parameter gefunden</string>
+    <string name="open_file_failed">Datei kann nicht geöffnet werden</string>
+    <string name="restore_parameters">Versuche die Prameter wiederherzustellen</string>
 </resources>

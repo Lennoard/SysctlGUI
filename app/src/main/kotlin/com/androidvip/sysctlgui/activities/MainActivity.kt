@@ -1,38 +1,25 @@
 package com.androidvip.sysctlgui.activities
 
+import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.Prefs
-import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.androidvip.sysctlgui.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.*
-import java.lang.StringBuilder
-import java.lang.reflect.Type
-import java.nio.charset.Charset
 
 class MainActivity : AppCompatActivity() {
-    private val prefs: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(
-            this
-        )
+    companion object {
+        private const val OPEN_FILE_REQUEST_CODE: Int = 1
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,13 +39,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainReadFromFile.setOnClickListener {
-            Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show()
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "*/*"
-//                putExtra(Intent.EXTRA_TITLE, "params.json")
             }
-            startActivityForResult(intent, 1)
+            startActivityForResult(intent, OPEN_FILE_REQUEST_CODE)
         }
 
         mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
@@ -95,62 +80,61 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            1 -> {
-                Toast.makeText(applicationContext, "got", Toast.LENGTH_LONG).show()
-                println(data.toString())
-                val stringBuilder = StringBuilder()
-                data?.data.also { uri ->
-                    contentResolver.openInputStream(uri).use { inputStream: InputStream? ->
-                        BufferedReader(InputStreamReader(inputStream)).use { bufferedReader: BufferedReader ->
-                            var content: String? = bufferedReader.readLine()
-                            while (content != null) {
-                                stringBuilder.append(content)
-                                content = bufferedReader.readLine()
-                            }
-                        }
+            OPEN_FILE_REQUEST_CODE -> {
+
+                if (resultCode != Activity.RESULT_OK) {
+                    return
+                }
+
+                data?.data?.let { uri ->
+
+                    // check if mime is json
+                    if (uri.lastPathSegment?.contains(".json")?.not() ?: run { false }) {
+                        Toast.makeText(this, getString(R.string.open_file_failed), Toast.LENGTH_LONG).show()
+                        return
                     }
-                    val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
-                    val list: MutableList<KernelParameter> =
-                        Gson().fromJson(stringBuilder.toString(), type)
-                    var noErro: MutableList<KernelParameter> = mutableListOf()
+
+                    val successfulParams: MutableList<KernelParameter> = mutableListOf()
 
                     GlobalScope.launch(Dispatchers.IO) {
-                        list.forEach { kernelParameter: KernelParameter ->
-                            val result = commitChanges(kernelParameter)
-                            if (result == "error" || !result.contains(kernelParameter.name)) {
+                        KernelParamUtils(this@MainActivity)
+                            .paramsFromUri(uri)
+                            .forEach { kernelParameter: KernelParameter ->
+                                // apply the param to check if valid
+                                KernelParamUtils(this@MainActivity).applyParam(
+                                    kernelParameter,
+                                    object : KernelParamUtils.KernelParamApply {
+                                        override fun onEmptyValue() {
+                                        }
 
-                            } else {
-                                noErro.add(kernelParameter)
+                                        override fun onFeedBack(feedback: String) {
+                                        }
+
+                                        override fun onCustomApply(kernelParam: KernelParameter) {
+                                        }
+
+                                        override fun onSuccess() {
+                                            successfulParams.add(kernelParameter)
+                                        }
+                                    }, false
+                                )
                             }
-                        }
-                        println(noErro.toString())
-                        println("finished")
+
                         val oldParams = Prefs.removeAllParams(this@MainActivity)
-                        if (Prefs.putParams(noErro, this@MainActivity)) {
+                        if (Prefs.putParams(successfulParams, this@MainActivity)) {
                             runOnUiThread {
-                                Toast.makeText(this@MainActivity, "succes", Toast.LENGTH_LONG)
-                                    .show()
+                                Toast.makeText(this@MainActivity, getString(R.string.done), Toast.LENGTH_LONG).show()
                             }
                         } else {
                             Prefs.putParams(oldParams, this@MainActivity)
+                            runOnUiThread {
+                                Toast.makeText(this@MainActivity, getString(R.string.restore_parameters), Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
-                    println(stringBuilder.toString())
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
-
-    private suspend fun commitChanges(kernelParam: KernelParameter) =
-        withContext(Dispatchers.Default) {
-            val commandPrefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
-            val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
-                "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.name}=${kernelParam.value}"
-                "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
-                else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
-            }
-
-            RootUtils.executeWithOutput(command, "error")
-        }
 }
