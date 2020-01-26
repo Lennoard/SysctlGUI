@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class EditKernelParamActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
@@ -115,16 +114,34 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     private fun applyParam(kernelParameter: KernelParameter) {
         val newValue = editParamInput.text.toString()
-        val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
 
-        if (!prefs.getBoolean(Prefs.ALLOW_BLANK, false) && newValue.isEmpty()) {
-            Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
-        } else {
-            kernelParameter.value = newValue
+        val newKernelParameter = kernelParameter.copy().apply {
+            value = newValue
+        }
 
-            GlobalScope.launch(Dispatchers.IO) {
-                if (intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)) {
-                    val success = Prefs.putParam(kernelParameter, this@EditKernelParamActivity)
+        val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
+
+        KernelParamUtils(this).applyParam(newKernelParameter, object : KernelParamUtils.KernelParamApply{
+            override fun onEmptyValue() {
+                GlobalScope.launch(Dispatchers.IO) {
+                    runSafeOnUiThread {
+                        Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
+                    }
+                }
+            }
+
+            override fun onFeedBack(feedback: String) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    runSafeOnUiThread {
+                        Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
+                    }
+                }
+            }
+
+            override fun onCustomApply(kernelParam: KernelParameter) {
+                val success = Prefs.putParam(kernelParam, this@EditKernelParamActivity)
+
+                GlobalScope.launch(Dispatchers.IO) {
                     runSafeOnUiThread {
                         if (success) {
                             Toast.makeText(this@EditKernelParamActivity, R.string.done, Toast.LENGTH_SHORT).show()
@@ -135,46 +152,12 @@ class EditKernelParamActivity : AppCompatActivity() {
                         }
                         finish()
                     }
-
-                } else {
-                    val result = commitChanges(kernelParameter)
-                    var success = true
-                    val feedback = if (commitMode == "sysctl") {
-                        if (result == "error" || !result.contains(kernelParameter.name)) {
-                            success = false
-                            getString(R.string.failed)
-                        } else {
-                            result
-                        }
-                    } else {
-                        if (result == "error") {
-                            success = false
-                            getString(R.string.failed)
-                        } else {
-                            getString(R.string.done)
-                        }
-                    }
-
-                    if (success) {
-                        Prefs.putParam(kernelParameter, this@EditKernelParamActivity)
-                    }
-
-                    runSafeOnUiThread {
-                        Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
-                    }
                 }
             }
-        }
-    }
 
-    private suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Default) {
-        val commandPrefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
-        val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
-            "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.name}=${kernelParam.value}"
-            "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
-            else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
-        }
-
-        RootUtils.executeWithOutput(command, "error")
+            override fun onSuccess() {
+                kernelParameter.value = newValue
+            }
+        }, useCustomApply)
     }
 }
