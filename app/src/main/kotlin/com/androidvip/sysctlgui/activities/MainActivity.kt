@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.*
 import com.google.gson.JsonParseException
@@ -111,6 +112,18 @@ class MainActivity : AppCompatActivity() {
         val context = this@MainActivity
         val successfulParams: MutableList<KernelParameter> = mutableListOf()
 
+        fun showResultDialog(message: String, success: Boolean) {
+            val dialog = AlertDialog.Builder(context)
+                .setIcon(if (success) R.drawable.ic_check else R.drawable.ic_close)
+                .setTitle(if (success) R.string.done else R.string.failed)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
+
+            if (!isFinishing) {
+                dialog.show()
+            }
+        }
+
         try {
             val params = KernelParamUtils(context).getParamsFromUri(uri)
             if (params.isNullOrEmpty()) {
@@ -135,20 +148,22 @@ class MainActivity : AppCompatActivity() {
             val oldParams = Prefs.removeAllParams(context)
             if (Prefs.putParams(successfulParams, context)) {
                 runSafeOnUiThread {
+                    showResultDialog(getString(R.string.import_success_message, successfulParams.size), true)
                     context.toast(R.string.done, Toast.LENGTH_LONG)
                 }
             } else {
                 // Probably an IO error, revert back
                 Prefs.putParams(oldParams, context)
                 runSafeOnUiThread {
-                    context.toast(R.string.restore_parameters, Toast.LENGTH_LONG)
+                    showResultDialog(getString(R.string.restore_parameters), false)
                 }
             }
         } catch (e: Exception) {
             runSafeOnUiThread {
                 when (e) {
-                    is JsonParseException, is JsonSyntaxException -> context.toast(R.string.import_error_invalid_json)
-                    else -> context.toast(R.string.import_error, Toast.LENGTH_LONG)
+                    is JsonParseException,
+                    is JsonSyntaxException -> showResultDialog(getString(R.string.import_error_invalid_json), false)
+                    else -> showResultDialog(getString(R.string.import_error), false)
                 }
             }
         }

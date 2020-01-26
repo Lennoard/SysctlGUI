@@ -18,8 +18,7 @@ class KernelParamUtils(val context: Context) {
 
         return try {
             context.contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use {
-                        fileOutputStream: FileOutputStream ->
+                FileOutputStream(it.fileDescriptor).use { fileOutputStream ->
                     fileOutputStream.write(Gson().toJson(Prefs.getUserParamsSet(context)).toByteArray())
                 }
             }

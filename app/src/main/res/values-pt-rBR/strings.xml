@@ -54,4 +54,5 @@
     <string name="restore_parameters">Tentando restaurar parâmetros</string>
     <string name="import_error_invalid_json">Arquivo JSON inválido ou mal formado</string>
     <string name="import_error">Falha ao importar parâmetros</string>
+    <string name="import_success_message">%d parâmetro(s) aplicados</string>
 </resources>
