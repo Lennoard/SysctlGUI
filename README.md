@@ -6,12 +6,14 @@ A GUI application for Android `sysctl` to edit kernel variables
 
 - Browse filesystem for specifc kernel parameters
 - Select parameters from a searchable list
-- Load parameters from a .conf file
+- Information about known parameters
+- Load parameters from a configuration file
+- Reapply parameters at startup
 
 ### License
 This project is licensed under the terms of the MIT license.
 
-> Copyright (c) 2019 Lennoard.
+> Copyright (c) 2019-2020 Lennoard.
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
