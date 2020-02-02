@@ -54,4 +54,5 @@
     <string name="import_error_invalid_json">Invalid or malformed JSON file</string>
     <string name="import_error_invalid_file_type">Can\'t open file: invalid file type.</string>
     <string name="import_success_message">%d parameter(s) applied</string>
+    <string name="open_documentation">Open documentation</string>
 </resources>

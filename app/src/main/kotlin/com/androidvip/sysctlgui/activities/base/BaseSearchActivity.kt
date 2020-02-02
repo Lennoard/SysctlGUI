@@ -13,7 +13,14 @@ abstract class BaseSearchActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
+        setUpSearchView(menu)
 
+        return true
+    }
+
+    abstract fun onQueryTextChanged()
+
+    fun setUpSearchView(menu: Menu?) {
         searchView = (menu?.findItem(R.id.action_search)?.actionView as SearchView?)?.apply {
             setOnQueryTextListener(object :
                 androidx.appcompat.widget.SearchView.OnQueryTextListener,
@@ -34,11 +41,7 @@ abstract class BaseSearchActivity : AppCompatActivity() {
             setIconifiedByDefault(false)
             onActionViewExpanded()
         }
-
-        return true
     }
-
-    abstract fun onQueryTextChanged()
 
     fun resetSearchExpression() {
         searchExpression = ""
