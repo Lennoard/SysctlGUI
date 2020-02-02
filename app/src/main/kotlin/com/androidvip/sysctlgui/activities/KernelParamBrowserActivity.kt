@@ -168,12 +168,23 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         val swipeLayout= dialog.findViewById<SwipeRefreshLayout>(R.id.webDialogSwipeLayout)
 
         val webView = dialog.findViewById<WebView>(R.id.webDialogWebView).apply {
-            settings.javaScriptEnabled = false
+            settings.javaScriptEnabled = true
             loadUrl(documentationUrl)
 
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
+                    super.onPageFinished(view, url)
                     swipeLayout.isRefreshing = false
+
+                    // Change webView background and text color to match the app theme
+                    view.loadUrl("""
+                        |javascript:(
+                            |function() { 
+                                |document.querySelector('body').style.color='#FFFFFF'; 
+                                |document.querySelector('body').style.background='#232F34';
+                            |}
+                        |)()""".trimMargin()
+                    )
                 }
             }
 
