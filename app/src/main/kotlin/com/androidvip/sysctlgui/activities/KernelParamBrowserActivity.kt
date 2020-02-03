@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.activities
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Menu
@@ -7,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
@@ -155,6 +157,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         }.getOrDefault(arrayOf<File>())
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun openDocumentationUrl() {
         if (isFinishing) return
 
@@ -168,7 +171,13 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         val swipeLayout= dialog.findViewById<SwipeRefreshLayout>(R.id.webDialogSwipeLayout)
 
         val webView = dialog.findViewById<WebView>(R.id.webDialogWebView).apply {
-            settings.javaScriptEnabled = true
+            settings.apply {
+                javaScriptEnabled = true
+                setAppCacheEnabled(true)
+                setAppCachePath(cacheDir.absolutePath)
+                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+            }
+
             loadUrl(documentationUrl)
 
             webViewClient = object : WebViewClient() {

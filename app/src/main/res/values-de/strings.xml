@@ -55,4 +55,5 @@
     <string name="import_error_invalid_json">Ungültige oder falsch formatierte JSON-Datei</string>
     <string name="import_error_invalid_file_type">Datei konnte nicht geöffnet werden: ungültiger Dateityp.</string>
     <string name="import_success_message">%d Parameter angewendet</string>
+    <string name="open_documentation">Dokumentation öffnen</string>
 </resources>
