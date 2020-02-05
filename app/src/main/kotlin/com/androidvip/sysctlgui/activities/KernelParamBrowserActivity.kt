@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.Window
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -13,14 +12,12 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
-import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -86,7 +83,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
                 else -> actionBarMenu?.findItem(R.id.action_documentation)?.isVisible = false
             }
         } else {
-            Toast.makeText(this, getString(R.string.invalid_path), Toast.LENGTH_SHORT).show()
+            toast(getString(R.string.invalid_path))
         }
 
         resetSearchExpression()
@@ -136,10 +133,10 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
             var files = getCurrentPathFiles()
 
             if (searchExpression.isNotEmpty()) {
-                files = files.filter { file ->
+                files = files?.filter { file ->
                     file.name.toLowerCase(defaultLocale)
                         .contains(searchExpression.toLowerCase(defaultLocale))
-                }.toTypedArray()
+                }?.toTypedArray()
             }
 
             runSafeOnUiThread {
@@ -151,7 +148,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         }
     }
 
-    private suspend fun getCurrentPathFiles() = withContext(Dispatchers.IO) {
+    private suspend fun getCurrentPathFiles() : Array<File>? = withContext(Dispatchers.IO) {
         runCatching {
             File(currentPath).listFiles()
         }.getOrDefault(arrayOf<File>())
@@ -167,8 +164,8 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
             setCancelable(true)
         }
 
-        val progressBar = dialog.findViewById<ProgressBar>(R.id.webDialogProgress)
-        val swipeLayout= dialog.findViewById<SwipeRefreshLayout>(R.id.webDialogSwipeLayout)
+        val progressBar: ProgressBar = dialog.findViewById(R.id.webDialogProgress)
+        val swipeLayout: SwipeRefreshLayout = dialog.findViewById(R.id.webDialogSwipeLayout)
 
         val webView = dialog.findViewById<WebView>(R.id.webDialogWebView).apply {
             settings.apply {
@@ -201,9 +198,11 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
                 override fun onProgressChanged(view: WebView, progress: Int) {
                     progressBar.progress = progress
                     if (progress == 100) {
-                        progressBar.visibility = View.GONE
+                        progressBar.goAway()
                         swipeLayout.isRefreshing = false
-                    } else progressBar.visibility = View.VISIBLE
+                    } else {
+                        progressBar.show()
+                    }
                 }
             }
         }

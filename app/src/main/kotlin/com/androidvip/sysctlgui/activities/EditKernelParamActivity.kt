@@ -125,8 +125,8 @@ class EditKernelParamActivity : AppCompatActivity() {
     private suspend fun applyParam(kernelParameter: KernelParameter) {
         val newValue = editParamInput.text.toString()
 
-        val newKernelParameter = kernelParameter.copy().apply {
-            value = newValue
+        val newKernelParameter = kernelParameter.copy().also {
+            it.value = newValue
         }
 
         val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)

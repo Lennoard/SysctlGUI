@@ -26,9 +26,9 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.settings_activity)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        with (supportFragmentManager.beginTransaction()) {
-            replace(R.id.settingsFragmentHolder, SettingsFragment())
-            commit()
+        supportFragmentManager.beginTransaction().also {
+            it.replace(R.id.settingsFragmentHolder, SettingsFragment())
+            it.commit()
         }
 
         if (intent.action == Actions.ExportParams.name) {
@@ -67,7 +67,7 @@ class SettingsActivity : AppCompatActivity() {
                         }
 
                         runSafeOnUiThread {
-                            Toast.makeText(this@SettingsActivity, message, Toast.LENGTH_LONG).show()
+                            toast(message, Toast.LENGTH_LONG)
                             // close the activity else it's there double
                             finish()
                         }

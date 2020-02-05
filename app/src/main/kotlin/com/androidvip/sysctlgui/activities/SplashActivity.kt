@@ -3,17 +3,13 @@ package com.androidvip.sysctlgui.activities
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.Prefs
-import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.runSafeOnUiThread
 import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.*
@@ -47,7 +43,7 @@ class SplashActivity : AppCompatActivity() {
                     navigate()
                     finish()
                 } else {
-                    splashProgress.visibility = View.GONE
+                    splashProgress.goAway()
                     AlertDialog.Builder(this@SplashActivity)
                         .setTitle(R.string.error)
                         .setMessage(getString(R.string.root_not_found_sum))

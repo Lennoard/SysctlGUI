@@ -2,8 +2,6 @@ package com.androidvip.sysctlgui
 
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ShellUtils
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 object RootUtils {
 
@@ -12,25 +10,6 @@ object RootUtils {
         return if (ShellUtils.isValidOutput(results)) {
             results.last().isNotEmpty()
         } else false
-    }
-
-    /**
-     * To be used when applying on boot
-     */
-    fun executeSync(vararg commands: String) : String {
-        val out = Shell.su(*commands).exec().out
-        return if (ShellUtils.isValidOutput(out)) out.last() else ""
-    }
-
-    /**
-     * To be used when applying on boot
-     */
-    fun executeAsync(vararg commands: String) {
-        GlobalScope.launch {
-            runCatching {
-                Shell.su(*commands).exec()
-            }.isSuccess
-        }
     }
 
     fun executeWithOutput(command: String, defaultOutput: String = "", forEachLine: ((String?) -> Unit)? = null): String {
