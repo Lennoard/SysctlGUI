@@ -19,3 +19,20 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class android.support.v7.widget.SearchView { *; }
+-keep class androidx.appcompat.widget.SearchView { *; }
+-keep class android.widget.SearchView { *; }
+
+-keepclassmembers enum * { *; }
+
+# GSON config
+-keep public class com.google.gson.**
+-keep public class com.google.gson.** {public private protected *;}
+-keepattributes *Annotation*,Signature
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.androidvip.sysctlgui.KernelParameter { *; }
