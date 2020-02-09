@@ -45,5 +45,9 @@ data class KernelParameter(var path: String = "", var name: String = "", var val
         return name.hashCode()
     }
 
+    override fun toString(): String {
+        if (name.isEmpty()) setNameFromPath(path)
+        return "$name = $value"
+    }
 
 }

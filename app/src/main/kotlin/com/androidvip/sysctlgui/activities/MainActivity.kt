@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -86,21 +85,20 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             OPEN_FILE_REQUEST_CODE -> {
-
-                if (resultCode != Activity.RESULT_OK) {
-                    return
-                }
+                if (resultCode != Activity.RESULT_OK) return
 
                 data?.data?.let { uri ->
+                    val fileExtension = uri.lastPathSegment
 
-                    // check if mime is json
-                    if (uri.lastPathSegment?.contains(".json")?.not() ?: run { false }) {
-                        toast(R.string.import_error_invalid_file_type)
-                        return
-                    }
-
-                    GlobalScope.launch {
-                        applyParamsFromUri(uri)
+                    fileExtension?.let { extension ->
+                        if (extension.endsWith(".json") or extension.endsWith(".conf")) {
+                            GlobalScope.launch {
+                                applyParamsFromUri(uri, extension)
+                            }
+                        } else {
+                            toast(R.string.import_error_invalid_file_type)
+                            return
+                        }
                     }
                 }
             }
@@ -108,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private suspend fun applyParamsFromUri(uri: Uri) = withContext(Dispatchers.Default) {
+    private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) = withContext(Dispatchers.Default) {
         val context = this@MainActivity
         val successfulParams: MutableList<KernelParameter> = mutableListOf()
 
@@ -125,7 +123,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            val params = KernelParamUtils(context).getParamsFromUri(uri)
+            val kernelParamUtils = KernelParamUtils(context)
+            val params: MutableList<KernelParameter>? = when {
+                fileExtension.endsWith(".json") -> kernelParamUtils.getParamsFromJsonUri(uri)
+                fileExtension.endsWith(".conf") -> kernelParamUtils.getParamsFromConfUri(uri)
+                else -> mutableListOf()
+            }
+
             if (params.isNullOrEmpty()) {
                 context.toast(R.string.no_parameters_found)
                 return@withContext
@@ -148,14 +152,14 @@ class MainActivity : AppCompatActivity() {
             val oldParams = Prefs.removeAllParams(context)
             if (Prefs.putParams(successfulParams, context)) {
                 runSafeOnUiThread {
-                    showResultDialog(getString(R.string.import_success_message, successfulParams.size), true)
+                    showResultDialog("${getString(R.string.import_success_message, successfulParams.size)}\n\n $successfulParams", true)
                     context.toast(R.string.done, Toast.LENGTH_LONG)
                 }
             } else {
                 // Probably an IO error, revert back
                 Prefs.putParams(oldParams, context)
                 runSafeOnUiThread {
-                    showResultDialog(getString(R.string.restore_parameters), false)
+                    showResultDialog("${getString(R.string.restore_parameters)}\n\n $successfulParams", false)
                 }
             }
         } catch (e: Exception) {

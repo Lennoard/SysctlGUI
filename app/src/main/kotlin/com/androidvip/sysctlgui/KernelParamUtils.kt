@@ -35,20 +35,41 @@ class KernelParamUtils(val context: Context) {
         }
     }
 
-    fun getParamsFromUri(uri: Uri): MutableList<KernelParameter>? {
-        val stringBuilder = StringBuilder()
-        context.contentResolver.openInputStream(uri).use { inputStream: InputStream? ->
-            inputStream?.bufferedReader().use {
-                var content: String? = it?.readLine()
-                while (content != null) {
-                    stringBuilder.append(content)
-                    content = it?.readLine()
+    fun getParamsFromJsonUri(uri: Uri): MutableList<KernelParameter>? {
+        val sb = StringBuilder()
+        readLines(uri) { sb.append(it) }
+
+        val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
+        return Gson().fromJson(sb.toString(), type)
+    }
+
+    fun getParamsFromConfUri(uri: Uri): MutableList<KernelParameter>? {
+        val readParams = mutableListOf<KernelParameter>()
+
+        readLines(uri) { line ->
+            if (!line.startsWith("#") and !line.startsWith(";") and line.isNotEmpty()) {
+                runCatching {
+                    readParams.add(KernelParameter().apply {
+                        name = line.split("=").first().trim()
+                        value = line.split("=")[1].trim()
+                        setPathFromName(this.name)
+                    })
                 }
             }
         }
 
-        val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
-        return Gson().fromJson(stringBuilder.toString(), type)
+        return readParams
+    }
+
+
+    private inline fun readLines(uri: Uri, forEachLine: (String) -> Unit) {
+        context.contentResolver.openInputStream(uri).use { inputStream: InputStream? ->
+            inputStream?.bufferedReader().use {
+                it?.readLines()?.forEach { line ->
+                    forEachLine(line)
+                }
+            }
+        }
     }
 
     suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Default) {
