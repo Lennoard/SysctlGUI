@@ -20,7 +20,7 @@
     <string name="list_folders_first_sum">Listar pastas primeiro ao usar a opção de navegador de parâmetros do kernel</string>
     <string name="operations">Operações</string>
     <string name="read_from_file">Ler valores do arquivo</string>
-    <string name="read_from_file_sum">Use esta opção para carregar parâmetros de um arquivo .conf selecionado</string>
+    <string name="read_from_file_sum">Use esta opção para carregar parâmetros de um arquivo .conf ou .json selecionado</string>
     <string name="settings">Configurações</string>
     <string name="show_variables">Mostrar variáveis</string>
     <string name="show_variables_sum">Exibir e editar todos os parâmetros do kernel em uma lista</string>

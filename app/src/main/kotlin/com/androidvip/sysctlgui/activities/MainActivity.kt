@@ -152,14 +152,16 @@ class MainActivity : AppCompatActivity() {
             val oldParams = Prefs.removeAllParams(context)
             if (Prefs.putParams(successfulParams, context)) {
                 runSafeOnUiThread {
-                    showResultDialog("${getString(R.string.import_success_message, successfulParams.size)}\n\n $successfulParams", true)
+                    val msg = "${getString(R.string.import_success_message, successfulParams.size)}\n\n ${successfulParams.joinToString()}"
+                    showResultDialog(msg, true)
                     context.toast(R.string.done, Toast.LENGTH_LONG)
                 }
             } else {
                 // Probably an IO error, revert back
                 Prefs.putParams(oldParams, context)
                 runSafeOnUiThread {
-                    showResultDialog("${getString(R.string.restore_parameters)}\n\n $successfulParams", false)
+                    val msg = "${getString(R.string.restore_parameters)}\n\n ${successfulParams.joinToString()}"
+                    showResultDialog(msg, false)
                 }
             }
         } catch (e: Exception) {
