@@ -10,7 +10,7 @@
     <string name="show_variables_sum">Kernel-Parameter in einer Liste anzeigen und verändern</string>
     <string name="sysctl_operations">Sysctl Operationen</string>
     <string name="read_from_file">Werte werden aus der Datei gelesen</string>
-    <string name="read_from_file_sum">Verwenden sie diese Option um aus einer .conf Datei die Parameter zu verwenden</string>
+    <string name="read_from_file_sum">Verwenden sie diese Option um aus einer .conf oder .json Datei die Parameter zu verwenden</string>
     <string name="exit">Beenden</string>
     <string name="kernel_params">Kernel Parameter</string>
     <string name="browse_variables">Variabeln durchstöbern</string>
