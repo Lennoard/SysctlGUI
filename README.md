@@ -1,4 +1,7 @@
-![](https://i.imgur.com/TPKCbg6.png)
+<p align="center">
+  <img src="https://i.imgur.com/TPKCbg6.png"/>
+</p>
+
 ## SysctlGUI
 A GUI application for Android `sysctl` to edit kernel variables
 
