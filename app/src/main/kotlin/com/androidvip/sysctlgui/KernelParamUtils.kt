@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.lang.reflect.Type
 
 class KernelParamUtils(val context: Context) {
@@ -37,7 +36,7 @@ class KernelParamUtils(val context: Context) {
 
     fun getParamsFromJsonUri(uri: Uri): MutableList<KernelParameter>? {
         val sb = StringBuilder()
-        readLines(uri) { sb.append(it) }
+        uri.readLines(context) { sb.append(it) }
 
         val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
         return Gson().fromJson(sb.toString(), type)
@@ -46,7 +45,7 @@ class KernelParamUtils(val context: Context) {
     fun getParamsFromConfUri(uri: Uri): MutableList<KernelParameter>? {
         val readParams = mutableListOf<KernelParameter>()
 
-        readLines(uri) { line ->
+        uri.readLines(context) { line ->
             if (!line.startsWith("#") and !line.startsWith(";") and line.isNotEmpty()) {
                 runCatching {
                     readParams.add(KernelParameter().apply {
@@ -59,17 +58,6 @@ class KernelParamUtils(val context: Context) {
         }
 
         return readParams
-    }
-
-
-    private inline fun readLines(uri: Uri, forEachLine: (String) -> Unit) {
-        context.contentResolver.openInputStream(uri).use { inputStream: InputStream? ->
-            inputStream?.bufferedReader().use {
-                it?.readLines()?.forEach { line ->
-                    forEachLine(line)
-                }
-            }
-        }
     }
 
     suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Default) {

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
+import android.util.Log
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,8 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.InputStream
+import java.lang.StringBuilder
 
 class EditKernelParamActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
@@ -32,14 +35,10 @@ class EditKernelParamActivity : AppCompatActivity() {
         val kernelParameter: KernelParameter? = intent.getSerializableExtra(extraParam) as KernelParameter?
 
         if (kernelParameter == null) {
-            editParamErrorText.show()
-            editParamScroll.goAway()
-            editParamApply.hide()
+            showInvalidParamError()
         } else {
             if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidName()) {
-                editParamErrorText.show()
-                editParamScroll.goAway()
-                editParamApply.hide()
+                showInvalidParamError()
             } else {
                 defineInputTypeForValue(kernelParameter.value)
                 editParamInput.setText(kernelParameter.value)
@@ -80,7 +79,7 @@ class EditKernelParamActivity : AppCompatActivity() {
         }, 100)
 
         Handler().postDelayed({
-            editParamInfo.text = findInfoForParam(paramName)
+            editParamInfo.text = findInfoForParam(kernelParameter)
             YoYo.with(Techniques.ZoomIn)
                 .duration(260)
                 .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
@@ -88,6 +87,12 @@ class EditKernelParamActivity : AppCompatActivity() {
 
             editParamApply.show()
         }, 300)
+    }
+
+    private fun showInvalidParamError() {
+        editParamErrorText.show()
+        editParamScroll.goAway()
+        editParamApply.hide()
     }
 
     private fun defineInputTypeForValue(paramValue: String) {
@@ -111,27 +116,66 @@ class EditKernelParamActivity : AppCompatActivity() {
         }
     }
 
-    private fun findInfoForParam(paramName: String): String {
+    private fun findInfoForParam(kernelParameter: KernelParameter): String {
+        val paramName = kernelParameter.name.split(".").last()
         val resId = resources.getIdentifier(paramName.replace("-", "_"), "string", packageName)
-        return if (resId != 0) {
+        val stringRes : String? = if (resId != 0) {
             runCatching {
                 getString(resId)
-            }.getOrDefault(getString(R.string.no_info_available))
-        } else {
-            getString(R.string.no_info_available)
+            }.getOrNull()
+        } else null
+
+        println("Stringres: $stringRes")
+
+        // Prefer the documented string resource
+        if (stringRes != null) return stringRes
+
+        if (!kernelParameter.path.startsWith("/")) {
+            return stringRes ?: getString(R.string.no_info_available)
         }
+
+        val subdirs = kernelParameter.path.split("/")
+        if (subdirs.isEmpty() || subdirs.size < 4) {
+            return stringRes ?: getString(R.string.no_info_available)
+        }
+
+        val rawInputStream : InputStream? = when(subdirs[3]) {
+            "abi" -> resources.openRawResource(R.raw.abi)
+            "fs" -> resources.openRawResource(R.raw.fs)
+            "kernel" -> resources.openRawResource(R.raw.kernel)
+            "net" -> resources.openRawResource(R.raw.net)
+            "vm" -> resources.openRawResource(R.raw.vm)
+            else -> null
+        }
+
+        val documentationBuilder = StringBuilder()
+        rawInputStream.readLines {
+            documentationBuilder.append(it).append("\n")
+        }
+
+        val documentation = documentationBuilder.toString()
+        if (documentation.isEmpty()) {
+            return stringRes ?: getString(R.string.no_info_available)
+        }
+
+        val info: String? = runCatching {
+            documentation.split("=+".toRegex()).last {
+                it.contains("$paramName\n")
+            }.split("$paramName\n").last()
+        }.getOrNull()
+
+        return if (info.isNullOrEmpty()) getString(R.string.no_info_available) else info
     }
 
     private suspend fun applyParam(kernelParameter: KernelParameter) {
-        val newValue = editParamInput.text.toString()
+        val kernelParamUtils = KernelParamUtils(this)
+        val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
 
+        val newValue = editParamInput.text.toString()
         val newKernelParameter = kernelParameter.copy().also {
             it.value = newValue
         }
 
-        val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
-
-        val kernelParamUtils = KernelParamUtils(this@EditKernelParamActivity)
         kernelParamUtils.applyParam(newKernelParameter, useCustomApply, object : KernelParamUtils.KernelParamApply {
             override fun onEmptyValue() {
                 Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
