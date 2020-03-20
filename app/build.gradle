@@ -21,8 +21,8 @@ android {
         applicationId "com.androidvip.sysctlgui"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
         resConfigs "en", "de", "pt-rBR"
     }
 
@@ -33,7 +33,7 @@ android {
         }
     }
 
-    sourceSets{
+    sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
@@ -61,7 +61,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
