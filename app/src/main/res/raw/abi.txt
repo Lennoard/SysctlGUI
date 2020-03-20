@@ -20,25 +20,25 @@ Here are the files featuring in 2.6 kernel :
 - trace
 
 ===========================================================
-defhandler_coff:
+defhandler_coff
 defined value :
 PER_SCOSVR3
 0x0003 | STICKY_TIMEOUTS | WHOLE_SECONDS | SHORT_INODE
 
 ===========================================================
-defhandler_elf:
+defhandler_elf
 defined value :
 PER_LINUX
 0
 
 ===========================================================
-defhandler_lcall7:
+defhandler_lcall7
 defined value :
 PER_SVR4
 0x0001 | STICKY_TIMEOUTS | MMAP_PAGE_ZERO,
 
 ===========================================================
-defhandler_libsco:
+defhandler_libsco
 defined value:
 PER_SVR4
 0x0001 | STICKY_TIMEOUTS | MMAP_PAGE_ZERO,

@@ -89,8 +89,9 @@ compiler in order to reject unprivileged JIT requests once it has
 been surpassed. bpf_jit_limit contains the value of the global limit
 in bytes.
 
+==============================================================
+
 dev_weight
---------------
 
 The maximum number of packets that kernel can handle on a NAPI interrupt,
 it's a Per-CPU variable. For drivers that support LRO or GRO_HW, a hardware
@@ -98,8 +99,9 @@ aggregated packet is counted as one packet in this context.
 
 Default: 64
 
+==============================================================
+
 dev_weight_rx_bias
---------------
 
 RPS (e.g. RFS, aRFS) processing is competing with the registered NAPI poll function
 of the driver for the per softirq cycle netdev_budget. This parameter influences
@@ -110,8 +112,9 @@ dev_weight adaptable for asymmetric CPU needs on RX/TX side of the network stack
 on dev_weight and is calculated multiplicative (dev_weight * dev_weight_rx_bias).
 Default: 1
 
+==============================================================
+
 dev_weight_tx_bias
---------------
 
 Scales the maximum number of packets that can be processed during a TX softirq cycle.
 Effective on a per CPU basis. Allows scaling of current dev_weight for asymmetric
@@ -119,8 +122,9 @@ net stack processing needs. Be careful to avoid making TX softirq processing a C
 Calculation is based on dev_weight (dev_weight * dev_weight_tx_bias).
 Default: 1
 
+==============================================================
+
 default_qdisc
---------------
 
 The default queuing discipline to use for network devices. This allows
 overriding the default of pfifo_fast with an alternative. Since the default
@@ -134,8 +138,10 @@ leaves. Virtual devices (like e.g. lo or veth) ignore this setting and instead
 default to noqueue.
 Default: pfifo_fast
 
+==============================================================
+
 busy_read
-----------------
+
 Low latency busy poll timeout for socket reads. (needs CONFIG_NET_RX_BUSY_POLL)
 Approximate time in us to busy loop waiting for packets on the device queue.
 This sets the default value of the SO_BUSY_POLL socket option.
@@ -145,8 +151,10 @@ globally via sysctl, a value of 50 is recommended.
 Will increase power usage.
 Default: 0 (off)
 
+==============================================================
+
 busy_poll
-----------------
+
 Low latency busy poll timeout for poll and select. (needs CONFIG_NET_RX_BUSY_POLL)
 Approximate time in us to busy loop waiting for events.
 Recommended value depends on the number of sockets you poll on.
@@ -158,18 +166,19 @@ sysctl.net.busy_read globally.
 Will increase power usage.
 Default: 0 (off)
 
+==============================================================
+
 rmem_default
-------------
 
 The default setting of the socket receive buffer in bytes.
 
+==============================================================
+
 rmem_max
---------
 
 The maximum receive socket buffer size in bytes.
 
 ==========================================================
-
 tstamp_allow_data
 
 Allow processes to receive tx timestamps looped together with the original
@@ -177,17 +186,18 @@ packet contents. If disabled, transmit timestamp requests from unprivileged
 processes are dropped unless socket option SOF_TIMESTAMPING_OPT_TSONLY is set.
 Default: 1 (on)
 
+==============================================================
 wmem_default
 
 The default setting (in bytes) of the socket send buffer.
 
+==============================================================
 wmem_max
---------
 
 The maximum send socket buffer size in bytes.
 
+==============================================================
 message_burst and message_cost
-------------------------------
 
 These parameters  are used to limit the warning messages written to the kernel
 log from  the  networking  code.  They  enforce  a  rate  limit  to  make  a
@@ -196,8 +206,8 @@ fewer messages that will be written. Message_burst controls when messages will
 be dropped.  The  default  settings  limit  warning messages to one every five
 seconds.
 
+==============================================================
 warnings
---------
 
 This sysctl is now unused.
 
@@ -208,8 +218,8 @@ checksums.
 These messages are now emitted at KERN_DEBUG and can generally be enabled
 and controlled by the dynamic_debug facility.
 
+==============================================================
 netdev_budget
--------------
 
 Maximum number of packets taken from all interfaces in one polling cycle (NAPI
 poll). In one polling cycle interfaces which are registered to polling are
@@ -217,21 +227,21 @@ probed in a round-robin manner. Also, a polling cycle may not exceed
 netdev_budget_usecs microseconds, even if netdev_budget has not been
 exhausted.
 
+==============================================================
 netdev_budget_usecs
----------------------
 
 Maximum number of microseconds in one NAPI polling cycle. Polling
 will exit when either netdev_budget_usecs have elapsed during the
 poll cycle or the number of packets processed reaches netdev_budget.
 
+==============================================================
 netdev_max_backlog
-------------------
 
 Maximum number  of  packets,  queued  on  the  INPUT  side, when the interface
 receives packets faster than kernel can process them.
 
+==============================================================
 netdev_rss_key
---------------
 
 RSS (Receive Side Scaling) enabled drivers use a 40 bytes host key that is
 randomly generated.
@@ -252,8 +262,8 @@ RX flow hash indirection table for eth0 with 8 RX ring(s):
 RSS hash key:
 84:50:f4:00:a8:15:d1:a7:e9:7f:1d:60:35:c7:47:25:42:97:74:ca:56:bb:b6:a1:d8:43:e3:c9:0c:fd:17:55:c2:3a:4d:69:ed:f1:42:89
 
+==============================================================
 netdev_tstamp_prequeue
-----------------------
 
 If set to 0, RX packet timestamps can be sampled after RPS processing, when
 the target CPU processes packets. It might give some delay on timestamps, but
@@ -262,14 +272,14 @@ permit to distribute the load on several cpus.
 If set to 1 (default), timestamps are sampled as soon as possible, before
 queueing.
 
+==============================================================
 optmem_max
-----------
 
 Maximum ancillary buffer size allowed per socket. Ancillary data is a sequence
 of struct cmsghdr structures with appended data.
 
+==============================================================
 fb_tunnels_only_for_init_net
-----------------------------
 
 Controls if fallback tunnels (like tunl0, gre0, gretap0, erspan0,
 sit0, ip6tnl0, ip6gre0) are automatically created when a new
@@ -280,8 +290,8 @@ user space is responsible for creating them if needed.
 
 Default : 0  (for compatibility reasons)
 
+==============================================================
 devconf_inherit_init_net
-----------------------------
 
 Controls if a new network namespace should inherit all current
 settings under /proc/sys/net/{ipv4,ipv6}/conf/{all,default}/. By
@@ -294,19 +304,26 @@ forced to reset to their default values.
 
 Default : 0  (for compatibility reasons)
 
+==============================================================
+
 2. /proc/sys/net/unix - Parameters for Unix domain sockets
--------------------------------------------------------
 
 There is only one file in this directory.
-unix_dgram_qlen limits the max number of datagrams queued in Unix domain
+
+==============================================================
+unix_dgram_qlen
+
+Limits the max number of datagrams queued in Unix domain
 socket's buffer. It will not take effect unless PF_UNIX flag is specified.
 
+==============================================================
 
 3. /proc/sys/net/ipv4 - IPV4 settings
 -------------------------------------------------------
 Please see: Documentation/networking/ip-sysctl.txt and ipvs-sysctl.txt for
 descriptions of these entries.
 
+==============================================================
 
 4. Appletalk
 -------------------------------------------------------
@@ -314,75 +331,33 @@ descriptions of these entries.
 The /proc/sys/net/appletalk  directory  holds the Appletalk configuration data
 when Appletalk is loaded. The configurable parameters are:
 
+==============================================================
 aarp-expiry-time
-----------------
 
 The amount  of  time  we keep an ARP entry before expiring it. Used to age out
 old hosts.
 
+==============================================================
 aarp-resolve-time
------------------
 
 The amount of time we will spend trying to resolve an Appletalk address.
 
+==============================================================
 aarp-retransmit-limit
----------------------
 
 The number of times we will retransmit a query before giving up.
 
+==============================================================
 aarp-tick-time
---------------
 
 Controls the rate at which expires are checked.
 
-The directory  /proc/net/appletalk  holds the list of active Appletalk sockets
-on a machine.
-
-The fields  indicate  the DDP type, the local address (in network:node format)
-the remote  address,  the  size of the transmit pending queue, the size of the
-received queue  (bytes waiting for applications to read) the state and the uid
-owning the socket.
-
-/proc/net/atalk_iface lists  all  the  interfaces  configured for appletalk.It
-shows the  name  of the interface, its Appletalk address, the network range on
-that address  (or  network number for phase 1 networks), and the status of the
-interface.
-
-/proc/net/atalk_route lists  each  known  network  route.  It lists the target
-(network) that the route leads to, the router (may be directly connected), the
-route flags, and the device the route is using.
-
-
-5. IPX
--------------------------------------------------------
-
-The IPX protocol has no tunable values in proc/sys/net.
-
-The IPX  protocol  does,  however,  provide  proc/net/ipx. This lists each IPX
-socket giving  the  local  and  remote  addresses  in  Novell  format (that is
-network:node:port). In  accordance  with  the  strange  Novell  tradition,
-everything but the port is in hex. Not_Connected is displayed for sockets that
-are not  tied to a specific remote address. The Tx and Rx queue sizes indicate
-the number  of  bytes  pending  for  transmission  and  reception.  The  state
-indicates the  state  the  socket  is  in and the uid is the owning uid of the
-socket.
-
-The /proc/net/ipx_interface  file lists all IPX interfaces. For each interface
-it gives  the network number, the node number, and indicates if the network is
-the primary  network.  It  also  indicates  which  device  it  is bound to (or
-Internal for  internal  networks)  and  the  Frame  Type if appropriate. Linux
-supports 802.3,  802.2,  802.2  SNAP  and DIX (Blue Book) ethernet framing for
-IPX.
-
-The /proc/net/ipx_route  table  holds  a list of IPX routes. For each route it
-gives the  destination  network, the router node (or Directly) and the network
-address of the router (or Connected) for internal networks.
+==============================================================
 
 6. TIPC
--------------------------------------------------------
 
+==============================================================
 tipc_rmem
-----------
 
 The TIPC protocol now has a tunable for the receive memory, similar to the
 tcp_rmem - i.e. a vector of 3 INTEGERs: (min, default, max)
@@ -396,8 +371,8 @@ are scaled (shifted) versions of that same value.  Note that the min value
 is not at this point in time used in any meaningful way, but the triplet is
 preserved in order to be consistent with things like tcp_rmem.
 
+==============================================================
 named_timeout
---------------
 
 TIPC name table updates are distributed asynchronously in a cluster, without
 any form of transaction handling. This means that different race scenarios are

@@ -15,35 +15,6 @@ kernel. Since some of the files _can_ be used to screw up your
 system, it is advisable to read both documentation and source
 before actually making adjustments.
 
-1. /proc/sys/fs
-----------------------------------------------------------
-
-Currently, these files are in /proc/sys/fs:
-- aio-max-nr
-- aio-nr
-- dentry-state
-- dquot-max
-- dquot-nr
-- file-max
-- file-nr
-- inode-max
-- inode-nr
-- inode-state
-- nr_open
-- overflowuid
-- overflowgid
-- pipe-user-pages-hard
-- pipe-user-pages-soft
-- protected_fifos
-- protected_hardlinks
-- protected_regular
-- protected_symlinks
-- suid_dumpable
-- super-max
-- super-nr
-
-==============================================================
-
 aio-nr
 
 aio-nr is the running total of the number of events specified on the
