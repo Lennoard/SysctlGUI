@@ -56,7 +56,6 @@ Values :
 	2 - enable the JIT and ask the compiler to emit traces on kernel log.
 
 ==========================================================
-
 bpf_jit_harden
 
 This enables hardening for the BPF JIT compiler. Supported are eBPF
