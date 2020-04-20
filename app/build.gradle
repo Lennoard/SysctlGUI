@@ -21,8 +21,8 @@ android {
         applicationId "com.androidvip.sysctlgui"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
         resConfigs "en", "de", "pt-rBR"
     }
 
@@ -33,7 +33,7 @@ android {
         }
     }
 
-    sourceSets{
+    sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 

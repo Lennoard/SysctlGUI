@@ -1,7 +1,9 @@
 package com.androidvip.sysctlgui.activities
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -12,6 +14,7 @@ import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.receivers.BootReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -111,6 +114,23 @@ class SettingsActivity : AppCompatActivity() {
                         useBusyboxPref?.isEnabled = false
                     }
                 }
+            }
+
+            val startUpPref = findPreference<Preference?>(Prefs.RUN_ON_START_UP)
+            startUpPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+
+                val receiver = ComponentName(context!!, BootReceiver::class.java)
+
+                context!!.packageManager.setComponentEnabledSetting(
+                    receiver,
+                    if (newValue == true) {
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                    } else {
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                    },
+                    PackageManager.DONT_KILL_APP
+                )
+                true
             }
         }
     }
