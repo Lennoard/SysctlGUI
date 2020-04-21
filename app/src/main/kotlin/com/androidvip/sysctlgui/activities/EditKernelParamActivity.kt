@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.InputType
-import android.util.Log
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.InputStream
-import java.lang.StringBuilder
 
 class EditKernelParamActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
@@ -53,8 +51,8 @@ class EditKernelParamActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
@@ -124,8 +122,6 @@ class EditKernelParamActivity : AppCompatActivity() {
                 getString(resId)
             }.getOrNull()
         } else null
-
-        println("Stringres: $stringRes")
 
         // Prefer the documented string resource
         if (stringRes != null) return stringRes

@@ -1,18 +1,23 @@
 package com.androidvip.sysctlgui.helpers
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter.RemovableViewHolder
+import com.androidvip.sysctlgui.goAway
+import com.androidvip.sysctlgui.show
 import kotlin.math.abs
+
 
 class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START or ItemTouchHelper.END) {
@@ -31,7 +36,7 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
-        adapter.deleteItem(position)
+        adapter.removeItem(position, (viewHolder as RemovableViewHolder).removableView)
     }
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
@@ -51,6 +56,7 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
         val isCancelled = dX == 0f && !isCurrentlyActive
         if (isCancelled) {
             clearCanvas(c, itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
+            (viewHolder as RemovableViewHolder).popupIcon.show()
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, false)
             return
         }
@@ -65,7 +71,12 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
         deleteDrawable?.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
 
         background.draw(c)
-        deleteDrawable?.draw(c)
+        if (dX < (-48F).dpToPx(recyclerView.context)) {
+            deleteDrawable?.draw(c)
+            (viewHolder as RemovableViewHolder).popupIcon.goAway()
+        } else {
+            (viewHolder as RemovableViewHolder).popupIcon.show()
+        }
 
         val alpha = 1 - abs(dX) / viewHolder.itemView.width.toFloat()
         viewHolder.itemView.alpha = alpha
@@ -80,5 +91,9 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
 
     private fun clearCanvas(c: Canvas, left: Float, top: Float, right: Float, bottom: Float) {
         c.drawRect(left, top, right, bottom, clearPaint)
+    }
+
+    private fun Float.dpToPx(context: Context) : Float {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, context.resources.displayMetrics)
     }
 }
