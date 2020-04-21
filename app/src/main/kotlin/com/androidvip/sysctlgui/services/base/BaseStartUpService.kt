@@ -6,14 +6,13 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
+import android.os.Handler
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
 class BaseStartUpService(
@@ -33,57 +32,93 @@ class BaseStartUpService(
         if (weakContext.get() != null) {
 
             // call the .conf file and make an notification for android >= O
-            GlobalScope.launch(Dispatchers.Main) {
-                showNotification()
+            showNotificationAndThen {
+                GlobalScope.launch(Dispatchers.Main) {
+                    if (checkRequirements()) {
+                        applyConfig()
+                    }
 
-                if (checkRequirements()) {
-                    applyConfig()
+                    if (handler != null) {
+                        handler?.onStopForeground(true)
+                    } else {
+                       NotificationManagerCompat.from(weakContext.get()!!).apply {
+                           cancel(SERVICE_ID)
+                       }
+                    }
+                    onCleanUp()
                 }
-
-                handler?.onStopForeground(true)
-                onCleanUp()
             }
         }
     }
 
-    private fun showNotification() {
+    private fun showNotificationAndThen(onShow: () -> Unit) {
         weakContext.get()?.let { context ->
             val resources = context.resources
             val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, NOTIFICATION_ID)
                 .setSmallIcon(R.drawable.app_icon_foreground)
                 .setContentTitle(resources.getString(R.string.notification_start_up_title))
-                .setContentText(resources.getString(R.string.notification_start_up_description))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-            val notification: Notification = builder.build()
+                .setOnlyAlertOnce(true)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
                 val notificationManager: NotificationManager =
                     context.getSystemService(NotificationManager::class.java)
 
-                val notificationChannel = NotificationChannel(
+                NotificationChannel(
                     NOTIFICATION_ID,
                     resources.getString(R.string.notification_start_up_channel_name),
                     NotificationManager.IMPORTANCE_DEFAULT
-                )
-                notificationChannel.description =
-                    resources.getString(R.string.notification_start_up_channel_description)
-                notificationManager.createNotificationChannel(notificationChannel)
+                ).apply {
+                    description = resources.getString(R.string.notification_start_up_channel_description)
+                    notificationManager.createNotificationChannel(this)
+                }
+            }
 
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            val startupDelay = prefs.getInt(Prefs.START_UP_DELAY, 0)
 
-                handler?.onStartForeground(SERVICE_ID, notification)
+            if (startupDelay > 0) {
+                builder.setContentTitle(context.getString(R.string.notification_start_up_description_delay, startupDelay))
+                builder.setProgress(startupDelay, 0, true)
+
+                GlobalScope.launch(Dispatchers.Main) {
+                    NotificationManagerCompat.from(context).apply {
+                        var delayCount = 0
+                        for (i in startupDelay downTo 0) {
+                            if (i == 0) {
+                                builder.setProgress(0, 0, true)
+                                builder.setContentTitle(context.getString(R.string.notification_start_up_title))
+                                builder.setContentText(context.getString(R.string.notification_start_up_description))
+
+                                notify(SERVICE_ID, builder.build())
+                                handler?.onStartForeground(SERVICE_ID, builder.build())
+                                onShow()
+                            } else {
+                                builder.setContentTitle(context.getString(R.string.notification_start_up_description_delay, i))
+                                builder.setProgress(startupDelay, delayCount, false)
+                                notify(SERVICE_ID, builder.build())
+                                delay(1100)
+                                delayCount++
+                            }
+                        }
+                    }
+                }
             } else {
-                handler?.onStartForeground(SERVICE_ID, notification)
+                builder.setContentText(context.getString(R.string.notification_start_up_description))
+                handler?.onStartForeground(SERVICE_ID, builder.build())
+                onShow()
             }
         }
     }
 
     private suspend fun applyConfig() = withContext(Dispatchers.IO) {
-        val params: List<KernelParameter> = Prefs.getUserParamsSet(weakContext.get())
+        weakContext.get()?.let { context ->
+            val params: List<KernelParameter> = Prefs.getUserParamsSet(context)
+            val kernelParamUtils = KernelParamUtils(context)
 
-        params.forEach { kernelParam: KernelParameter ->
-            KernelParamUtils(weakContext.get()!!).commitChanges(kernelParam)
+            params.forEach { kernelParam: KernelParameter ->
+                kernelParamUtils.commitChanges(kernelParam)
+            }
         }
     }
 
@@ -96,8 +131,12 @@ class BaseStartUpService(
     private fun onCleanUp() {
         // avoid memory leaks
         this.handler = null
+        RootUtils.finishProcess()
     }
 
+    private inline fun <T> T.runDelayed(delay: Long, crossinline block: () -> Unit) {
+        Handler().postDelayed({ block() }, delay)
+    }
 
     interface ServiceHandler {
         fun onStartForeground(id: Int, notification: Notification)

@@ -58,4 +58,8 @@
     <string name="open_documentation">Abrir documentação</string>
     <string name="remove">Remover</string>
     <string name="edit">Editar</string>
+    <string name="startup_delay">Atraso de inicialização</string>
+    <string name="startup_delay_sum">A execução será atrasada em %d segundos</string>
+    <string name="startup_delay_disabled">A execução não será atrasada</string>
+    <string name="notification_start_up_description_delay">Aplicando em %d segundos…</string>
 </resources>

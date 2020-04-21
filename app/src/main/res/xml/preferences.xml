@@ -45,7 +45,16 @@
         <SwitchPreferenceCompat
             app:key="run_on_start_up"
             app:title="@string/start_up_sum"
-            app:defaultValue="false"/>
+            app:defaultValue="false"
+            app:singleLineTitle="false"/>
+
+        <SeekBarPreference
+            app:key="startup_delay"
+            app:title="@string/startup_delay"
+            app:summary="@string/startup_delay_disabled"
+            app:defaultValue="0"
+            android:max="10"
+            app:dependency="run_on_start_up"/>
 
         <PreferenceScreen
             app:title="@string/manage_parameters"

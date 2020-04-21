@@ -8,7 +8,7 @@ object RootUtils {
     fun isBusyboxAvailable(): Boolean {
         val results: List<String> = Shell.sh("which busybox").exec().out
         return if (ShellUtils.isValidOutput(results)) {
-            results.last().isNotEmpty()
+            results.first().isNotEmpty()
         } else false
     }
 

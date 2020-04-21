@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_exit -> {
-                RootUtils.finishProcess()
                 moveTaskToBack(true)
                 finish()
             }
@@ -78,8 +77,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         RootUtils.finishProcess()
+        super.onDestroy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

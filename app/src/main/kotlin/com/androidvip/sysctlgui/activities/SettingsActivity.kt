@@ -81,7 +81,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    class SettingsFragment : PreferenceFragmentCompat() {
+    class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
 
@@ -94,16 +94,15 @@ class SettingsActivity : AppCompatActivity() {
             else
                 "Use echo 'value' > /proc/sys/…"
 
-            commitModePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-                commitModePref?.summary = if (newValue == "sysctl")
-                    "Use sysctl -w"
-                else
-                    "Use echo 'value' > /proc/sys/…"
-                true
+            val startupDelay = prefs.getInt(Prefs.START_UP_DELAY, 0)
+            val startupDelayPref = findPreference<Preference?>(Prefs.START_UP_DELAY)
+            if (startupDelay > 0) {
+                startupDelayPref?.summary = getString(R.string.startup_delay_sum, startupDelay)
+            } else {
+                startupDelayPref?.summary = getString(R.string.startup_delay_disabled)
             }
-
+            
             val useBusyboxPref = findPreference(Prefs.USE_BUSYBOX) as SwitchPreferenceCompat?
-
             GlobalScope.launch(Dispatchers.IO) {
                 val isBusyboxAvailable = RootUtils.isBusyboxAvailable()
                 activity.runSafeOnUiThread {
@@ -116,22 +115,47 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
 
-            val startUpPref = findPreference<Preference?>(Prefs.RUN_ON_START_UP)
-            startUpPref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+            commitModePref?.onPreferenceChangeListener = this
+            startupDelayPref?.onPreferenceChangeListener = this
+            findPreference<Preference?>(Prefs.RUN_ON_START_UP)?.onPreferenceChangeListener = this
+        }
 
-                val receiver = ComponentName(context!!, BootReceiver::class.java)
-
-                context!!.packageManager.setComponentEnabledSetting(
-                    receiver,
-                    if (newValue == true) {
+        override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+            when (preference?.key) {
+                Prefs.RUN_ON_START_UP -> {
+                    val receiver = ComponentName(context!!, BootReceiver::class.java)
+                    val state = if (newValue == true) {
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                     } else {
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                    },
-                    PackageManager.DONT_KILL_APP
-                )
-                true
+                    }
+
+                    context!!.packageManager.setComponentEnabledSetting(
+                        receiver,
+                        state,
+                        PackageManager.DONT_KILL_APP
+                    )
+                }
+
+                Prefs.COMMIT_MODE -> {
+                    preference.summary = if (newValue == "sysctl")
+                        "Use sysctl -w"
+                    else
+                        "Use echo 'value' > /proc/sys/…"
+                }
+
+                Prefs.START_UP_DELAY -> {
+                    val selectedValue = newValue as Int
+
+                    if (selectedValue > 0) {
+                        preference.summary = getString(R.string.startup_delay_sum, selectedValue)
+                    } else {
+                        preference.summary = getString(R.string.startup_delay_disabled)
+                    }
+                }
             }
+
+            return true
         }
     }
 }

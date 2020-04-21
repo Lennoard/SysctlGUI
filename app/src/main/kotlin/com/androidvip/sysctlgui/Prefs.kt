@@ -15,6 +15,7 @@ object Prefs {
     const val ALLOW_BLANK = "allow_blank_values"
     const val USE_BUSYBOX = "use_busybox"
     const val RUN_ON_START_UP = "run_on_start_up"
+    const val START_UP_DELAY = "startup_delay"
 
     fun getUserParamsSet(context: Context?): MutableList<KernelParameter> {
         if (context == null) return mutableListOf()
