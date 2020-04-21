@@ -97,7 +97,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:visibility="invisible"
-        android:tint="#432e12"
-        android:src="@drawable/ic_check" />
+        android:src="@drawable/ic_check"
+        app:backgroundTint="?attr/colorAccent"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
