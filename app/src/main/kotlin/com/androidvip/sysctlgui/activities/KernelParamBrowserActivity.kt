@@ -104,7 +104,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         if (currentPath == "/proc/sys") {
             finish()
         } else {
-            onDirectoryChanged(File(currentPath).parentFile)
+            onDirectoryChanged(File(currentPath).parentFile!!)
             refreshList()
         }
     }
@@ -118,8 +118,8 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.action_documentation -> openDocumentationUrl()
         }
@@ -151,7 +151,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
     private suspend fun getCurrentPathFiles() : Array<File>? = withContext(Dispatchers.IO) {
         runCatching {
             File(currentPath).listFiles()
-        }.getOrDefault(arrayOf<File>())
+        }.getOrDefault(arrayOf())
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -214,12 +214,6 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
 
         dialog.show()
     }
-
-    private val recyclerViewColumns: Int
-        get() {
-            val isLandscape = resources.getBoolean(R.bool.is_landscape)
-            return if (isLandscape) 2 else 1
-        }
 }
 
 interface DirectoryChangedListener {

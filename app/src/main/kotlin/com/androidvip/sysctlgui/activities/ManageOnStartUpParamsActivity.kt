@@ -20,7 +20,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class ManageOnStartUpParamsActivity : BaseSearchActivity() {
 
     private val removableParamAdapter: RemovableParamAdapter by lazy {
@@ -57,15 +56,18 @@ class ManageOnStartUpParamsActivity : BaseSearchActivity() {
         updateRecyclerViewData()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun updateRecyclerViewData() {
-        val snackbar = Snackbar.make(applyOnStartUpRecyclerView, R.string.no_parameters_found, Snackbar.LENGTH_INDEFINITE)
+        val snackbar = Snackbar.make(applyOnStartUpRecyclerView,
+            R.string.no_parameters_found,
+            Snackbar.LENGTH_INDEFINITE
+        )
 
         GlobalScope.launch {
             var kernelParams = getSavedKernelParams()
@@ -93,10 +95,4 @@ class ManageOnStartUpParamsActivity : BaseSearchActivity() {
     private suspend fun getSavedKernelParams() = withContext(Dispatchers.IO) {
         Prefs.getUserParamsSet(this@ManageOnStartUpParamsActivity)
     }
-
-    private val recyclerViewColumns: Int
-        get() {
-            val isLandscape = resources.getBoolean(R.bool.is_landscape)
-            return if (isLandscape) 2 else 1
-        }
 }

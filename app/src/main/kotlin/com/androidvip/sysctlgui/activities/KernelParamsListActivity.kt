@@ -12,7 +12,10 @@ import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class KernelParamsListActivity : BaseSearchActivity() {
 
@@ -48,8 +51,8 @@ class KernelParamsListActivity : BaseSearchActivity() {
         updateRecyclerViewData()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
@@ -88,10 +91,4 @@ class KernelParamsListActivity : BaseSearchActivity() {
         }
         kernelParams
     }
-
-    private val recyclerViewColumns: Int
-        get() {
-            val isLandscape = resources.getBoolean(R.bool.is_landscape)
-            return if (isLandscape) 2 else 1
-        }
 }

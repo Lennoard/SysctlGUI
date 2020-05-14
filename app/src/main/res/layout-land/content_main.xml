@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_weight="0.5"
-            android:layout_marginEnd="8dp">
+            android:layout_marginEnd="8dp"
+            android:paddingBottom="16dp">
 
             <TextView
                 style="@style/CategoryText"

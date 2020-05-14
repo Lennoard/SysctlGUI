@@ -38,7 +38,7 @@ abstract class BaseSearchActivity : AppCompatActivity() {
             })
 
             // expand and show keyboard
-            setIconifiedByDefault(false)
+            isIconifiedByDefault = false
             onActionViewExpanded()
         }
     }
@@ -47,4 +47,8 @@ abstract class BaseSearchActivity : AppCompatActivity() {
         searchExpression = ""
         searchView?.setQuery("", false)
     }
+
+    val recyclerViewColumns : Int
+        get() = if (resources.getBoolean(R.bool.is_landscape)) 2 else 1
+
 }
