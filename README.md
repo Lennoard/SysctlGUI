@@ -1,4 +1,8 @@
 <p align="center">
+  <img width="72" height="72" src="https://i.imgur.com/TPKCbg6.png"/>
+</p>
+
+<p align="center">
   <img height="360" src="https://lh3.googleusercontent.com/luyywOfv_SnPURTVwcdMY3v-frlpcVA4yUipvRbYlrUvh0hDJx0GXNnxQLIkmeSBRg"/>
   <img height="360" src="https://lh3.googleusercontent.com/jI8jHuxbZqv3p8tLw3NcPh2_B5PT-PzcMhcnpgngLxyIr4bm5WPgJaXeAQJ6jFWKMJU"/>
   <img height="360" src="https://lh3.googleusercontent.com/rrMwJB_wtyX9lxw6S6qN2FODG8WulUzMrppWHQ-UNHscoXCVK6wHkGbt5eXiY-dCYNsN"/>
@@ -6,10 +10,7 @@
 </p>
 
 ## SysctlGUI
-<p>
-  <img width="72" height="72" src="https://i.imgur.com/TPKCbg6.png"/>
-  <span>A GUI application for Android <code>sysctl</code> to edit kernel variables</span>
-</p>
+A GUI application for Android <code>sysctl</code> to edit kernel variables
 
 ### Features
 
