@@ -43,6 +43,7 @@
     <string name="start_up_sum">Beim Systemstart die Parameter übernehmen</string>
     <string name="notification_start_up_title">wende Parameter an</string>
     <string name="notification_start_up_description">Ihre Parameter werden angewendet</string>
+    <string name="notification_start_up_description_delay">Wende in %d Sekunden an…</string>
     <string name="notification_start_up_channel_name">Startbenachrichtigung</string>
     <string name="notification_start_up_channel_description">Ihre Parameter werden angewendet</string>
     <string name="manage_parameters">Parameter verwalten</string>
@@ -56,4 +57,9 @@
     <string name="import_error_invalid_file_type">Datei konnte nicht geöffnet werden: ungültiger Dateityp.</string>
     <string name="import_success_message">%d Parameter angewendet</string>
     <string name="open_documentation">Dokumentation öffnen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="remove">Löschen</string>
+    <string name="startup_delay">Startup Verzögerung</string>
+    <string name="startup_delay_sum">Die Ausführung wird auf %d Sekunden verzögert</string>
+    <string name="startup_delay_disabled">Ausführung findet sofort statt</string>
 </resources>
