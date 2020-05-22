@@ -21,8 +21,8 @@ android {
         applicationId "com.androidvip.sysctlgui"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 7
-        versionName "1.0.6"
+        versionCode 8
+        versionName "1.0.8"
         resConfigs "en", "de", "pt-rBR"
     }
 
