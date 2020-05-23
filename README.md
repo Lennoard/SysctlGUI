@@ -14,11 +14,16 @@ A GUI application for Android <code>sysctl</code> to edit kernel variables
 
 ### Features
 
-- Browse filesystem for specifc kernel parameters
+- Browse filesystem for specific kernel parameters
 - Select parameters from a searchable list
 - Information about known parameters
 - Load parameters from a configuration file
 - Reapply parameters at startup
+
+### Download
+<a href='https://apt.izzysoft.de/fdroid/index/apk/com.androidvip.sysctlgui'><img alt='Get it on IzzyOnDroid' height="64" src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>
+<a href='https://labs.xda-developers.com/store/app/com.androidvip.sysctlgui'><img alt='Get it on Labs' height="64" src='https://i.imgur.com/Pz29bXH.png'/></a>
+<a href='https://play.google.com/store/apps/details?id=com.androidvip.sysctlgui&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height="64" src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
 ### License
 This project is licensed under the terms of the MIT license.
