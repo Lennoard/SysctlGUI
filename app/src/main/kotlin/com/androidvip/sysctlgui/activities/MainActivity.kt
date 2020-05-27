@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
             params.forEach {
                 // apply the param to check if valid
-                KernelParamUtils(context).applyParam(it, false, object : KernelParamUtils.KernelParamApply {
+                kernelParamUtils.applyParam(it, false, object : KernelParamUtils.KernelParamApply {
                     override fun onEmptyValue() { }
                     override fun onFeedBack(feedback: String) { }
 

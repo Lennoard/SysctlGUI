@@ -85,7 +85,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
 
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context!!)
+            val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
             val currCommitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
             val commitModePref = findPreference<Preference?>(Prefs.COMMIT_MODE)
@@ -96,10 +96,11 @@ class SettingsActivity : AppCompatActivity() {
 
             val startupDelay = prefs.getInt(Prefs.START_UP_DELAY, 0)
             val startupDelayPref = findPreference<Preference?>(Prefs.START_UP_DELAY)
-            if (startupDelay > 0) {
-                startupDelayPref?.summary = getString(R.string.startup_delay_sum, startupDelay)
+
+            startupDelayPref?.summary = if (startupDelay > 0) {
+                getString(R.string.startup_delay_sum, startupDelay)
             } else {
-                startupDelayPref?.summary = getString(R.string.startup_delay_disabled)
+                getString(R.string.startup_delay_disabled)
             }
             
             val useBusyboxPref = findPreference(Prefs.USE_BUSYBOX) as SwitchPreferenceCompat?
@@ -123,14 +124,14 @@ class SettingsActivity : AppCompatActivity() {
         override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
             when (preference?.key) {
                 Prefs.RUN_ON_START_UP -> {
-                    val receiver = ComponentName(context!!, BootReceiver::class.java)
+                    val receiver = ComponentName(requireContext(), BootReceiver::class.java)
                     val state = if (newValue == true) {
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                     } else {
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED
                     }
 
-                    context!!.packageManager.setComponentEnabledSetting(
+                    requireContext().packageManager.setComponentEnabledSetting(
                         receiver,
                         state,
                         PackageManager.DONT_KILL_APP
@@ -147,10 +148,10 @@ class SettingsActivity : AppCompatActivity() {
                 Prefs.START_UP_DELAY -> {
                     val selectedValue = newValue as Int
 
-                    if (selectedValue > 0) {
-                        preference.summary = getString(R.string.startup_delay_sum, selectedValue)
+                    preference.summary = if (selectedValue > 0) {
+                         getString(R.string.startup_delay_sum, selectedValue)
                     } else {
-                        preference.summary = getString(R.string.startup_delay_disabled)
+                        getString(R.string.startup_delay_disabled)
                     }
                 }
             }
