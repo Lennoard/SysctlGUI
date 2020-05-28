@@ -61,4 +61,5 @@
     <string name="startup_delay">Startup delay</string>
     <string name="startup_delay_sum">Execution will be delayed by %d seconds</string>
     <string name="startup_delay_disabled">Execution will not delayed</string>
+    <string name="set_favorite">Set as favorite</string>
 </resources>

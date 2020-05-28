@@ -14,6 +14,7 @@ import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.receivers.BootReceiver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

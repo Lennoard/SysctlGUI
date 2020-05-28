@@ -6,7 +6,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.androidvip.sysctlgui.Prefs
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter

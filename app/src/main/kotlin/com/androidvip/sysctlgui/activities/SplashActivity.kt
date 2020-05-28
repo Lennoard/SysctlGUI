@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.*

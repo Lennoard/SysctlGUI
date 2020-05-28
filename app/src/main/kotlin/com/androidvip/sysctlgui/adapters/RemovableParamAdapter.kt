@@ -13,7 +13,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.Prefs
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.activities.EditKernelParamActivity
 import com.androidvip.sysctlgui.toast

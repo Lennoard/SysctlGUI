@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
