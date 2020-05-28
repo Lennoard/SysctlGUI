@@ -135,6 +135,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
             if (searchExpression.isNotEmpty()) {
                 files = files?.filter { file ->
                     file.name.toLowerCase(defaultLocale)
+                        .replace(".", "")
                         .contains(searchExpression.toLowerCase(defaultLocale))
                 }?.toTypedArray()
             }

@@ -65,6 +65,7 @@ class KernelParamsListActivity : BaseSearchActivity() {
             if (searchExpression.isNotEmpty()) {
                 kernelParams = kernelParams.filter { kernelParameter ->
                     kernelParameter.name.toLowerCase(defaultLocale)
+                        .replace(".", "")
                         .contains(searchExpression.toLowerCase(defaultLocale))
                 }.toMutableList()
             }
