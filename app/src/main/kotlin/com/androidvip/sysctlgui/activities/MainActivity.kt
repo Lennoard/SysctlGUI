@@ -51,6 +51,16 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, OPEN_FILE_REQUEST_CODE)
         }
 
+        mainFavorites.setOnClickListener {
+            Intent(this, ManageFavoritesParamsActivity::class.java).apply {
+                startActivity(this)
+            }
+            // todo navigate to favorites view
+            // and edit view
+            // search in favorites
+            // favorites widgets
+        }
+
         mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
     }
 

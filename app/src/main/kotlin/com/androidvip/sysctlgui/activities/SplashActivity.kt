@@ -48,7 +48,7 @@ class SplashActivity : AppCompatActivity() {
                     AlertDialog.Builder(this@SplashActivity)
                         .setTitle(R.string.error)
                         .setMessage(getString(R.string.root_not_found_sum))
-                        .setPositiveButton("OK") { _, _ ->  }
+                        .setPositiveButton("OK") { _, _ -> finish() }
                         .setCancelable(false)
                         .show()
                 }
