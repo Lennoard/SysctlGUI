@@ -27,7 +27,7 @@ abstract class BaseManageParamsActivity: BaseSearchActivity() {
     }
 
     private val removableParamAdapter: RemovableParamAdapter by lazy {
-        RemovableParamAdapter(this, mutableListOf())
+        RemovableParamAdapter(this, mutableListOf(), prefs)
     }
 
     override fun onQueryTextChanged() {

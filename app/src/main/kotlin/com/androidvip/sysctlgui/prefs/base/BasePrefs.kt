@@ -36,6 +36,7 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
 
             val paramsFile = File(context.filesDir, fileName)
             paramsFile.writeText(Gson().toJson(list))
+            changeListener()?.onChanged()
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -54,6 +55,7 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
 
                 val paramsFile = File(context.filesDir, fileName)
                 paramsFile.writeText(Gson().toJson(list))
+                changeListener()?.onChanged()
                 true
             } else {
                 return false
@@ -67,7 +69,9 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
     fun putParams(params: MutableList<KernelParameter>): Boolean {
         return params.map { kernelParameter: KernelParameter ->
             putParam(kernelParameter)
-        }.contains(false).not()
+        }.contains(false).not().also {
+            changeListener()?.onChanged()
+        }
     }
 
     fun removeAllParams(): MutableList<KernelParameter> {
@@ -75,6 +79,7 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
         try {
             val paramFile = File(context?.filesDir, fileName)
             paramFile.writeText("[]")
+            changeListener()?.onChanged()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -85,8 +90,14 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
         return params.containsParam(param)
     }
 
+    abstract fun changeListener() : ChangeListener?
+
     private fun List<KernelParameter>.containsParam(param: KernelParameter): Boolean {
         for (p in this) if (p.name == param.name) return true
         return false
+    }
+
+    interface ChangeListener {
+        fun onChanged()
     }
 }

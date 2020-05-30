@@ -16,6 +16,7 @@ import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.activities.EditKernelParamActivity
+import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.toast
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
@@ -24,15 +25,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RemovableParamAdapter(val context: Context, private val dataSet: MutableList<KernelParameter>) :
+class RemovableParamAdapter(val context: Context, private val dataSet: MutableList<KernelParameter>, private val paramPrefs: BasePrefs) :
     RecyclerView.Adapter<RemovableParamAdapter.RemovableViewHolder>() {
 
     companion object {
         const val EXTRA_EDIT_SAVED_PARAM = "edit_saved_param"
-    }
-
-    private val paramPrefs by lazy {
-        Prefs(context)
     }
 
     class RemovableViewHolder(v: View) : RecyclerView.ViewHolder(v) {

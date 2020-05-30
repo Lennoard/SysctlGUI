@@ -65,4 +65,5 @@
     <string name="startup_delay_sum">Die Ausführung wird auf %d Sekunden verzögert</string>
     <string name="startup_delay_disabled">Ausführung findet sofort statt</string>
     <string name="set_favorite">Als Favorit auswählen</string>
+    <string name="empty_favorites_widget">keine Favoriten ausgewählt</string>
 </resources>
