@@ -26,6 +26,10 @@ class MainActivity : AppCompatActivity() {
         private const val OPEN_FILE_REQUEST_CODE: Int = 1
     }
 
+    private val paramPrefs by lazy {
+        Prefs(applicationContext)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -55,10 +59,6 @@ class MainActivity : AppCompatActivity() {
             Intent(this, ManageFavoritesParamsActivity::class.java).apply {
                 startActivity(this)
             }
-            // todo navigate to favorites view
-            // and edit view
-            // search in favorites
-            // favorites widgets
         }
 
         mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            val kernelParamUtils = KernelParamUtils(context)
+            val kernelParamUtils = KernelParamUtils(application)
             val params: MutableList<KernelParameter>? = when {
                 fileExtension.endsWith(".json") -> kernelParamUtils.getParamsFromJsonUri(uri)
                 fileExtension.endsWith(".conf") -> kernelParamUtils.getParamsFromConfUri(uri)
@@ -159,8 +159,8 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 
-            val oldParams = Prefs.removeAllParams(context)
-            if (Prefs.putParams(successfulParams, context)) {
+            val oldParams = paramPrefs.removeAllParams()
+            if (paramPrefs.putParams(successfulParams)) {
                 runSafeOnUiThread {
                     val msg = "${getString(R.string.import_success_message, successfulParams.size)}\n\n ${successfulParams.joinToString()}"
                     showResultDialog(msg, true)
@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 // Probably an IO error, revert back
-                Prefs.putParams(oldParams, context)
+                paramPrefs.putParams(oldParams)
                 runSafeOnUiThread {
                     val msg = "${getString(R.string.restore_parameters)}\n\n ${successfulParams.joinToString()}"
                     showResultDialog(msg, false)

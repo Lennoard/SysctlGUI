@@ -17,12 +17,16 @@ import java.lang.reflect.Type
 class KernelParamUtils(val context: Context) {
     private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
 
+    private val paramPrefs by lazy {
+        Prefs(context)
+    }
+
     fun exportParamsToUri(uri: Uri): Boolean {
 
         return try {
             context.contentResolver.openFileDescriptor(uri, "w")?.use {
                 FileOutputStream(it.fileDescriptor).use { fileOutputStream ->
-                    fileOutputStream.write(Gson().toJson(Prefs.getUserParamsSet(context)).toByteArray())
+                    fileOutputStream.write(Gson().toJson(paramPrefs.getUserParamsSet()).toByteArray())
                 }
             }
             true
@@ -118,7 +122,7 @@ class KernelParamUtils(val context: Context) {
                 // Fire onSuccess and onFeedBack on Main thread
                 withContext(Dispatchers.Main) {
                     if (success) {
-                        Prefs.putParam(kernelParameter, context)
+                        paramPrefs.putParam(kernelParameter)
                         kernelParamApply.onSuccess()
                     }
                     kernelParamApply.onFeedBack(feedback)

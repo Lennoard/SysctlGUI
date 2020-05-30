@@ -22,9 +22,9 @@ import kotlinx.coroutines.withContext
 
 abstract class BaseManageParamsActivity: BaseSearchActivity() {
 
-//    val prefs: BasePrefs by lazy {
-//        setPrefs()
-//    }
+    val prefs: BasePrefs by lazy {
+        setPrefs()
+    }
 
     private val removableParamAdapter: RemovableParamAdapter by lazy {
         RemovableParamAdapter(this, mutableListOf())
@@ -103,8 +103,8 @@ abstract class BaseManageParamsActivity: BaseSearchActivity() {
 
     // todo abstract here
     private suspend fun getSavedKernelParams() = withContext(Dispatchers.IO) {
-        Prefs.getUserParamsSet(this@BaseManageParamsActivity)
+        prefs.getUserParamsSet()
     }
 
-//    abstract fun setPrefs(): BasePrefs
+    abstract fun setPrefs(): BasePrefs
 }

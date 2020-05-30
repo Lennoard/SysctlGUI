@@ -31,6 +31,10 @@ class RemovableParamAdapter(val context: Context, private val dataSet: MutableLi
         const val EXTRA_EDIT_SAVED_PARAM = "edit_saved_param"
     }
 
+    private val paramPrefs by lazy {
+        Prefs(context)
+    }
+
     class RemovableViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         var name: TextView = v.findViewById(R.id.listKernelParamName)
         var value: TextView = v.findViewById(R.id.listKernelParamValue)
@@ -86,7 +90,7 @@ class RemovableParamAdapter(val context: Context, private val dataSet: MutableLi
         if (position < 0 || position >= dataSet.size) return
 
         GlobalScope.launch(Dispatchers.IO) {
-            val success = Prefs.removeParam(dataSet[position], context)
+            val success = paramPrefs.removeParam(dataSet[position])
 
             withContext(Dispatchers.Main) {
                 if (success) {

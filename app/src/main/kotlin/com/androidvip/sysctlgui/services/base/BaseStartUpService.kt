@@ -29,6 +29,10 @@ class BaseStartUpService(
         PreferenceManager.getDefaultSharedPreferences(weakContext.get())
     }
 
+    private val paramPrefs by lazy {
+        Prefs(weakContext.get())
+    }
+
     fun onStart() {
         if (weakContext.get() != null) {
 
@@ -114,7 +118,7 @@ class BaseStartUpService(
 
     private suspend fun applyConfig() = withContext(Dispatchers.IO) {
         weakContext.get()?.let { context ->
-            val params: List<KernelParameter> = Prefs.getUserParamsSet(context)
+            val params: List<KernelParameter> = paramPrefs.getUserParamsSet()
             val kernelParamUtils = KernelParamUtils(context)
 
             params.forEach { kernelParam: KernelParameter ->

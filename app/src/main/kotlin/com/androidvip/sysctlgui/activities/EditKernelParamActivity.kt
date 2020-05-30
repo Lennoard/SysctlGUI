@@ -26,6 +26,14 @@ import java.io.InputStream
 class EditKernelParamActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
+    private val favoritePrefs by lazy {
+        FavoritePrefs(applicationContext)
+    }
+
+    private val paramPrefs by lazy {
+        Prefs(applicationContext)
+    }
+
     private var kernelParameter: KernelParameter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +68,7 @@ class EditKernelParamActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_edit_params, menu)
         menu?.findItem(R.id.action_favorite)?.let {
             kernelParameter?.let {param ->
-                if (FavoritePrefs.isFavorite(param, baseContext)) {
+                if (favoritePrefs.isFavorite(param)) {
                     it.setIcon(R.drawable.ic_favorite_selected)
                 } else {
                     it.setIcon(R.drawable.ic_favorite_unselected)
@@ -75,12 +83,12 @@ class EditKernelParamActivity : AppCompatActivity() {
             android.R.id.home -> finish()
             R.id.action_favorite -> {
                 kernelParameter?.let {
-                    return if (FavoritePrefs.isFavorite(it, baseContext)) {
-                        FavoritePrefs.removeParam(it, baseContext)
+                    return if (favoritePrefs.isFavorite(it)) {
+                        favoritePrefs.removeParam(it)
                         item.setIcon(R.drawable.ic_favorite_unselected)
                         true
                     } else {
-                        FavoritePrefs.putParam(it, baseContext)
+                        favoritePrefs.putParam(it)
                         item.setIcon(R.drawable.ic_favorite_selected)
                         true
                     }
@@ -196,7 +204,7 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private suspend fun applyParam(kernelParameter: KernelParameter) {
-        val kernelParamUtils = KernelParamUtils(this)
+        val kernelParamUtils = KernelParamUtils(this.application)
         val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
 
         val newValue = editParamInput.text.toString()
@@ -218,7 +226,7 @@ class EditKernelParamActivity : AppCompatActivity() {
             }
 
             override suspend fun onCustomApply(kernelParam: KernelParameter) {
-                val success = Prefs.putParam(kernelParam, this@EditKernelParamActivity)
+                val success = paramPrefs.putParam(kernelParam)
 
                 runSafeOnUiThread {
                     if (success) {
