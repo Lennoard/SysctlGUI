@@ -11,6 +11,8 @@
     <string name="sysctl_operations">Sysctl Operationen</string>
     <string name="read_from_file">Werte werden aus der Datei gelesen</string>
     <string name="read_from_file_sum">Verwenden sie diese Option um aus einer .conf oder .json Datei die Parameter zu verwenden</string>
+    <string name="show_favorites">Favoriten anzeigen</string>
+    <string name="show_favorites_sum">Erreichen sie ihre favorisierten Kernel-Parameter mit dieser Liste</string>
     <string name="exit">Beenden</string>
     <string name="kernel_params">Kernel Parameter</string>
     <string name="browse_variables">Variabeln durchstöbern</string>
@@ -62,4 +64,6 @@
     <string name="startup_delay">Startup Verzögerung</string>
     <string name="startup_delay_sum">Die Ausführung wird auf %d Sekunden verzögert</string>
     <string name="startup_delay_disabled">Ausführung findet sofort statt</string>
+    <string name="set_favorite">Als Favorit auswählen</string>
+    <string name="empty_favorites_widget">keine Favoriten ausgewählt</string>
 </resources>

@@ -17,9 +17,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <receiver android:name=".widgets.FavoritesWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/favorites_widget_info" />
+        </receiver>
+
+        <activity android:name=".activities.ManageFavoritesParamsActivity" />
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/settings"/>
+            android:label="@string/settings" />
         <activity
             android:name=".activities.EditKernelParamActivity"
             android:label="@string/edit_params"
@@ -45,9 +56,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.shortcuts"
+
+            <meta-data
+                android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+
         <receiver
             android:name=".receivers.BootReceiver"
             android:enabled="false">
@@ -55,10 +69,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <service android:name=".services.StartUpService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-        <service android:name=".services.LegacyStartUpService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service
+            android:name=".services.StartUpService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".services.LegacyStartUpService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name=".widgets.FavoritesWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            />
     </application>
 
 </manifest>

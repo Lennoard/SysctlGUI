@@ -30,7 +30,7 @@ abstract class BaseSearchActivity : AppCompatActivity() {
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    searchExpression = newText.orEmpty()
+                    searchExpression = newText.orEmpty().replace(".", "")
 
                     this@BaseSearchActivity.onQueryTextChanged()
                     return true

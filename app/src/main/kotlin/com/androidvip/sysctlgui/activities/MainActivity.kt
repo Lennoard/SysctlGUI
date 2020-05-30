@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,6 +24,10 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val OPEN_FILE_REQUEST_CODE: Int = 1
+    }
+
+    private val paramPrefs by lazy {
+        Prefs(applicationContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +53,12 @@ class MainActivity : AppCompatActivity() {
                 type = "*/*"
             }
             startActivityForResult(intent, OPEN_FILE_REQUEST_CODE)
+        }
+
+        mainFavorites.setOnClickListener {
+            Intent(this, ManageFavoritesParamsActivity::class.java).apply {
+                startActivity(this)
+            }
         }
 
         mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
@@ -122,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            val kernelParamUtils = KernelParamUtils(context)
+            val kernelParamUtils = KernelParamUtils(application)
             val params: MutableList<KernelParameter>? = when {
                 fileExtension.endsWith(".json") -> kernelParamUtils.getParamsFromJsonUri(uri)
                 fileExtension.endsWith(".conf") -> kernelParamUtils.getParamsFromConfUri(uri)
@@ -148,8 +159,8 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 
-            val oldParams = Prefs.removeAllParams(context)
-            if (Prefs.putParams(successfulParams, context)) {
+            val oldParams = paramPrefs.removeAllParams()
+            if (paramPrefs.putParams(successfulParams)) {
                 runSafeOnUiThread {
                     val msg = "${getString(R.string.import_success_message, successfulParams.size)}\n\n ${successfulParams.joinToString()}"
                     showResultDialog(msg, true)
@@ -157,7 +168,7 @@ class MainActivity : AppCompatActivity() {
                 }
             } else {
                 // Probably an IO error, revert back
-                Prefs.putParams(oldParams, context)
+                paramPrefs.putParams(oldParams)
                 runSafeOnUiThread {
                     val msg = "${getString(R.string.restore_parameters)}\n\n ${successfulParams.joinToString()}"
                     showResultDialog(msg, false)

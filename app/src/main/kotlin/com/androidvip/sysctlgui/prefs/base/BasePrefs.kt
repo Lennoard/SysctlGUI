@@ -1,37 +1,31 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.prefs.base
 
+import android.app.Presentation
 import android.content.Context
-import com.androidvip.sysctlgui.Prefs.containsParam
+import com.androidvip.sysctlgui.KernelParameter
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.lang.reflect.Type
 
-object Prefs {
-    private const val USER_PARAMS_FILENAME = "user-params.json"
-    const val LIST_FOLDERS_FIRST = "list_folders_first"
-    const val GUESS_INPUT_TYPE = "guess_input_type"
-    const val COMMIT_MODE = "commit_mode"
-    const val ALLOW_BLANK = "allow_blank_values"
-    const val USE_BUSYBOX = "use_busybox"
-    const val RUN_ON_START_UP = "run_on_start_up"
-    const val START_UP_DELAY = "startup_delay"
+abstract class BasePrefs(val context: Context?, val fileName: String) {
 
-    fun getUserParamsSet(context: Context?): MutableList<KernelParameter> {
+    fun getUserParamsSet(): MutableList<KernelParameter> {
         if (context == null) return mutableListOf()
 
-        val paramsFile = File(context.filesDir, USER_PARAMS_FILENAME)
+        val paramsFile = File(context.filesDir, fileName)
         if (!paramsFile.exists()) return mutableListOf()
 
-        val type: Type = object : TypeToken<List<KernelParameter>>(){}.type
+        val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
         return Gson().fromJson(paramsFile.readText(), type)
     }
 
-    fun putParam(param: KernelParameter, context: Context?): Boolean {
+    fun putParam(param: KernelParameter): Boolean {
         if (context == null) return false
 
         return try {
-            val list = getUserParamsSet(context).apply {
+            val list = getUserParamsSet().apply {
                 if (this.containsParam(param)) {
                     val index = indexOf(param)
                     if (index >= 0) this[index] = param
@@ -40,8 +34,9 @@ object Prefs {
                 }
             }
 
-            val paramsFile = File(context.filesDir, USER_PARAMS_FILENAME)
+            val paramsFile = File(context.filesDir, fileName)
             paramsFile.writeText(Gson().toJson(list))
+            changeListener()?.onChanged()
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,17 +44,18 @@ object Prefs {
         }
     }
 
-    fun removeParam(param: KernelParameter, context: Context?): Boolean {
+    fun removeParam(param: KernelParameter): Boolean {
         if (context == null) return false
 
         return try {
-            val list = getUserParamsSet(context)
+            val list = getUserParamsSet()
             if (list.containsParam(param)) {
                 val index = list.indexOf(param)
                 list.removeAt(index)
 
-                val paramsFile = File(context.filesDir, USER_PARAMS_FILENAME)
+                val paramsFile = File(context.filesDir, fileName)
                 paramsFile.writeText(Gson().toJson(list))
+                changeListener()?.onChanged()
                 true
             } else {
                 return false
@@ -70,25 +66,38 @@ object Prefs {
         }
     }
 
-    fun putParams(params: MutableList<KernelParameter>, context: Context?) : Boolean {
+    fun putParams(params: MutableList<KernelParameter>): Boolean {
         return params.map { kernelParameter: KernelParameter ->
-            putParam(kernelParameter, context)
-        }.contains(false).not()
+            putParam(kernelParameter)
+        }.contains(false).not().also {
+            changeListener()?.onChanged()
+        }
     }
 
-    fun removeAllParams(context: Context?): MutableList<KernelParameter> {
-        val oldParams = getUserParamsSet(context)
+    fun removeAllParams(): MutableList<KernelParameter> {
+        val oldParams = getUserParamsSet()
         try {
-            val paramFile = File(context?.filesDir, USER_PARAMS_FILENAME)
+            val paramFile = File(context?.filesDir, fileName)
             paramFile.writeText("[]")
+            changeListener()?.onChanged()
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return oldParams
     }
 
+    fun paramExists(param: KernelParameter, params: List<KernelParameter>): Boolean {
+        return params.containsParam(param)
+    }
+
+    abstract fun changeListener() : ChangeListener?
+
     private fun List<KernelParameter>.containsParam(param: KernelParameter): Boolean {
         for (p in this) if (p.name == param.name) return true
         return false
+    }
+
+    interface ChangeListener {
+        fun onChanged()
     }
 }

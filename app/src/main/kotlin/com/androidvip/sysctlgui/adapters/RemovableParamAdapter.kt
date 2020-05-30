@@ -13,9 +13,10 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.Prefs
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.activities.EditKernelParamActivity
+import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.toast
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
@@ -24,7 +25,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RemovableParamAdapter(val context: Context, private val dataSet: MutableList<KernelParameter>) :
+class RemovableParamAdapter(val context: Context, private val dataSet: MutableList<KernelParameter>, private val paramPrefs: BasePrefs) :
     RecyclerView.Adapter<RemovableParamAdapter.RemovableViewHolder>() {
 
     companion object {
@@ -86,7 +87,7 @@ class RemovableParamAdapter(val context: Context, private val dataSet: MutableLi
         if (position < 0 || position >= dataSet.size) return
 
         GlobalScope.launch(Dispatchers.IO) {
-            val success = Prefs.removeParam(dataSet[position], context)
+            val success = paramPrefs.removeParam(dataSet[position])
 
             withContext(Dispatchers.Main) {
                 if (success) {

@@ -10,4 +10,5 @@
     <color name="iconColor">#abb8c3</color>
     <color name="error">#B00020</color>
     <color name="warning">#ff9100</color>
+    <color name="white">#FFFFFF</color>
 </resources>

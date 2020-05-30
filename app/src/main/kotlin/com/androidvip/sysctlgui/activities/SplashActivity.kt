@@ -9,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
+import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.*
@@ -47,7 +50,7 @@ class SplashActivity : AppCompatActivity() {
                     AlertDialog.Builder(this@SplashActivity)
                         .setTitle(R.string.error)
                         .setMessage(getString(R.string.root_not_found_sum))
-                        .setPositiveButton("OK") { _, _ ->  }
+                        .setPositiveButton("OK") { _, _ -> finish() }
                         .setCancelable(false)
                         .show()
                 }
@@ -77,6 +80,19 @@ class SplashActivity : AppCompatActivity() {
 
             Actions.SettingsActivity.name -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
+            }
+
+            Actions.EditParam.name -> {
+                startActivity(Intent(this, EditKernelParamActivity::class.java).apply {
+                    putExtra(
+                        KernelParamListAdapter.EXTRA_PARAM,
+                        intent.getSerializableExtra(KernelParamListAdapter.EXTRA_PARAM)
+                    )
+                    putExtra(
+                        RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
+                        intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
+                    )
+                })
             }
 
             else -> {
