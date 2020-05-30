@@ -19,6 +19,7 @@ A GUI application for Android <code>sysctl</code> to edit kernel variables
 - Information about known parameters
 - Load parameters from a configuration file
 - Reapply parameters at startup
+- mark parameters as favorite for easy access
 
 ### Download
 <a href='https://apt.izzysoft.de/fdroid/index/apk/com.androidvip.sysctlgui'><img alt='Get it on IzzyOnDroid' height="64" src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>
