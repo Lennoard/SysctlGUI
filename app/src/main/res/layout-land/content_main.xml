@@ -190,13 +190,13 @@
                             style="@style/CardTitleSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/read_from_file"/>
+                            android:text="@string/show_favorites"/>
 
                         <TextView
                             style="@style/CardContentText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/read_from_file_sum" />
+                            android:text="@string/show_favorites_sum" />
 
                     </LinearLayout>
 

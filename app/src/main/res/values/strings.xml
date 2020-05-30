@@ -10,6 +10,8 @@
     <string name="sysctl_operations">Sysctl operations</string>
     <string name="read_from_file">Read values from file</string>
     <string name="read_from_file_sum">Use this option to load parameters from a selected .conf or .json file</string>
+    <string name="show_favorites">Show favorites</string>
+    <string name="show_favorites_sum">Access your favorite kernel parameters from this list</string>
     <string name="exit">Exit</string>
     <string name="kernel_params">Kernel parameters</string>
     <string name="browse_variables">Browse variables</string>
