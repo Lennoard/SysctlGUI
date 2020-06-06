@@ -9,7 +9,12 @@
   <img height="360" src="https://lh3.googleusercontent.com/CkvWjRqI6j7NcYP6s2eK2jpI2-B4MQJMfsmirlvNhqyrzcL_lj_NGUAUVifHmZoGmGs"/>
 </p>
 
-## SysctlGUI
+# SysctlGUI
+
+![](https://img.shields.io/github/languages/top/Lennoard/SysctlGUI)
+![](https://img.shields.io/github/downloads/Lennoard/SysctlGUI/total)
+![](https://img.shields.io/github/contributors/Lennoard/SysctlGUI)
+
 A GUI application for Android <code>sysctl</code> to edit kernel variables
 
 ### Features
