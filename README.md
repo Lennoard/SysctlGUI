@@ -12,8 +12,10 @@
 # SysctlGUI
 
 ![](https://img.shields.io/github/languages/top/Lennoard/SysctlGUI)
-![](https://img.shields.io/github/downloads/Lennoard/SysctlGUI/total)
 ![](https://img.shields.io/github/contributors/Lennoard/SysctlGUI)
+![](https://img.shields.io/github/downloads/Lennoard/SysctlGUI/total)
+![](https://img.shields.io/github/v/release/Lennoard/SysctlGUI)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Lennoard/SysctlGUI/latest/master)
 
 A GUI application for Android <code>sysctl</code> to edit kernel variables
 
