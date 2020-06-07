@@ -15,6 +15,7 @@ import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.prefs.Prefs
+import com.androidvip.sysctlgui.prefs.TaskerPrefs
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
@@ -27,14 +28,9 @@ class EditKernelParamActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
-
-    private val favoritePrefs by lazy {
-        FavoritePrefs(applicationContext)
-    }
-
-    private val paramPrefs by lazy {
-        Prefs(applicationContext)
-    }
+    private val favoritePrefs by lazy { FavoritePrefs(applicationContext) }
+    private val taskerPrefs by lazy { TaskerPrefs(applicationContext) }
+    private val paramPrefs by lazy { Prefs(applicationContext) }
 
     private var kernelParameter: KernelParameter? = null
 
@@ -77,6 +73,19 @@ class EditKernelParamActivity : AppCompatActivity() {
                 }
             }
         }
+
+        if (isTaskerInstalled()) {
+            menu?.findItem(R.id.action_tasker)?.let {
+                kernelParameter?.let { param ->
+                    if (taskerPrefs.isTaskerParam(param)) {
+                        it.setIcon(R.drawable.ic_action_tasker_remove)
+                    } else {
+                        it.setIcon(R.drawable.ic_action_tasker_add)
+                    }
+                }
+            }
+        }
+
         return true
     }
 
@@ -92,6 +101,20 @@ class EditKernelParamActivity : AppCompatActivity() {
                     } else {
                         favoritePrefs.putParam(it)
                         item.setIcon(R.drawable.ic_favorite_selected)
+                        true
+                    }
+                }
+            }
+
+            R.id.action_tasker -> {
+                kernelParameter?.let {
+                    return if (taskerPrefs.isTaskerParam(it)) {
+                        taskerPrefs.removeParam(it)
+                        item.setIcon(R.drawable.ic_action_tasker_add)
+                        true
+                    } else {
+                        taskerPrefs.putParam(it)
+                        item.setIcon(R.drawable.ic_action_tasker_remove)
                         true
                     }
                 }
@@ -242,5 +265,12 @@ class EditKernelParamActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun isTaskerInstalled(): Boolean {
+        return runCatching {
+            packageManager.getPackageInfo("net.dinglisch.android.taskerm", 0)
+            true
+        }.getOrDefault(false)
     }
 }

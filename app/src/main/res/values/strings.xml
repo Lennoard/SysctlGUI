@@ -65,4 +65,5 @@
     <string name="startup_delay_disabled">Execution will not delayed</string>
     <string name="set_favorite">Set as favorite</string>
     <string name="empty_favorites_widget">no favorites selected</string>
+    <string name="add_to_tasker_list">Add to Tasker list</string>
 </resources>
