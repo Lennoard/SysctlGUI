@@ -178,8 +178,12 @@ class MainActivity : AppCompatActivity() {
             runSafeOnUiThread {
                 when (e) {
                     is JsonParseException,
-                    is JsonSyntaxException -> showResultDialog(getString(R.string.import_error_invalid_json), false)
-                    else -> showResultDialog(getString(R.string.import_error), false)
+                    is JsonSyntaxException -> {
+                        showResultDialog(getString(R.string.import_error_invalid_json), false)
+                    }
+                    else -> {
+                        showResultDialog(getString(R.string.import_error), false)
+                    }
                 }
             }
         }

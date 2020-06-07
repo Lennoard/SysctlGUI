@@ -24,7 +24,9 @@ import kotlinx.coroutines.launch
 import java.io.InputStream
 
 class EditKernelParamActivity : AppCompatActivity() {
-    private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private val prefs: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this)
+    }
 
     private val favoritePrefs by lazy {
         FavoritePrefs(applicationContext)

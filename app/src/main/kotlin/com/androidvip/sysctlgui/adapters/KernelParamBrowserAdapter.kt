@@ -34,7 +34,9 @@ class KernelParamBrowserAdapter(
 ) : RecyclerView.Adapter<KernelParamBrowserAdapter.ViewHolder>() {
 
     private val dataSet = mutableListOf<File>()
-    private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    private val prefs: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
     companion object {
         const val EXTRA_PARAM = "kernel_param"
@@ -51,7 +53,11 @@ class KernelParamBrowserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(context).inflate(R.layout.list_item_kernel_file_browser, parent, false)
+        val v = LayoutInflater.from(context).inflate(
+            R.layout.list_item_kernel_file_browser,
+            parent,
+            false
+        )
         return ViewHolder(v)
     }
 

@@ -13,13 +13,15 @@ import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EXTRA_ITEM
 
 class FavoritesWidgetService : RemoteViewsService() {
 
-    override fun onGetViewFactory(p0: Intent?): RemoteViewsFactory {
-        return FavoritesRemoteViewsFactory(applicationContext, p0!!)
+    override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
+        return FavoritesRemoteViewsFactory(applicationContext, intent!!)
     }
 }
 
-class FavoritesRemoteViewsFactory(val context: Context, val intent: Intent) :
-    RemoteViewsService.RemoteViewsFactory {
+class FavoritesRemoteViewsFactory(
+    val context: Context,
+    val intent: Intent
+) : RemoteViewsService.RemoteViewsFactory {
 
     private var widgetId: Any = intent.getIntExtra(
         AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -34,8 +36,8 @@ class FavoritesRemoteViewsFactory(val context: Context, val intent: Intent) :
 
     override fun getLoadingView(): RemoteViews? = null
 
-    override fun getItemId(p0: Int): Long {
-        return p0.toLong()
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     override fun onDataSetChanged() {
@@ -44,19 +46,18 @@ class FavoritesRemoteViewsFactory(val context: Context, val intent: Intent) :
 
     override fun hasStableIds(): Boolean = true
 
-    override fun getViewAt(p0: Int): RemoteViews {
+    override fun getViewAt(position: Int): RemoteViews {
         val views = RemoteViews(
             context.packageName,
             R.layout.list_item_kernel_param_widget_list
         )
 
-        val param = params[p0]
+        val param = params[position]
         views.setTextViewText(R.id.listKernelParamName, param.name)
         views.setTextViewText(R.id.listKernelParamValue, param.value)
 
-
         val fillInIntent = Intent().apply {
-            putExtra(EXTRA_ITEM, p0)
+            putExtra(EXTRA_ITEM, position)
         }
 
         views.setOnClickFillInIntent(R.id.listKernelParamLayout, fillInIntent)

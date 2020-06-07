@@ -23,8 +23,14 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START or ItemTouchHelper.END) {
 
     private val clearPaint: Paint = Paint()
-    private val deleteDrawable: Drawable? = ContextCompat.getDrawable(adapter.context, R.drawable.ic_delete_sweep)
-    private val background: ColorDrawable = ColorDrawable(ContextCompat.getColor(adapter.context, R.color.error))
+    private val deleteDrawable: Drawable? = ContextCompat.getDrawable(
+        adapter.context,
+        R.drawable.ic_delete_sweep
+    )
+    private val background: ColorDrawable = ColorDrawable(ContextCompat.getColor(
+        adapter.context,
+        R.color.error
+    ))
     private val intrinsicWidth: Int
     private val intrinsicHeight: Int
 
@@ -45,20 +51,37 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
         } else 0
     }
 
-    override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+    override fun onMove(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
         return false
     }
 
-    override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+    override fun onChildDraw(
+        canvas: Canvas,
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder,
+        dX: Float,
+        dY: Float,
+        actionState: Int,
+        isCurrentlyActive: Boolean
+    ) {
         val itemView = viewHolder.itemView
         val itemHeight = itemView.height
 
         val isCancelled = dX == 0f && !isCurrentlyActive
         if (isCancelled) {
-            clearCanvas(c, itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
+            clearCanvas(
+                canvas,
+                itemView.right + dX,
+                itemView.top.toFloat(),
+                itemView.right.toFloat(),
+                itemView.bottom.toFloat()
+            )
             (viewHolder as RemovableViewHolder).popupIcon.show()
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, false)
-            return
+            return super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, false)
         }
 
         val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
@@ -67,12 +90,17 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
         val deleteIconRight = itemView.right - deleteIconMargin
         val deleteIconBottom = deleteIconTop + intrinsicHeight
 
-        background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+        background.setBounds(
+            itemView.right + dX.toInt(),
+            itemView.top,
+            itemView.right,
+            itemView.bottom
+        )
         deleteDrawable?.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
 
-        background.draw(c)
+        background.draw(canvas)
         if (dX < (-48F).dpToPx(recyclerView.context)) {
-            deleteDrawable?.draw(c)
+            deleteDrawable?.draw(canvas)
             (viewHolder as RemovableViewHolder).popupIcon.goAway()
         } else {
             (viewHolder as RemovableViewHolder).popupIcon.show()
@@ -82,7 +110,7 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
         viewHolder.itemView.alpha = alpha
         viewHolder.itemView.translationX = dX
 
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
@@ -94,6 +122,10 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
     }
 
     private fun Float.dpToPx(context: Context) : Float {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this, context.resources.displayMetrics)
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this,
+            context.resources.displayMetrics
+        )
     }
 }

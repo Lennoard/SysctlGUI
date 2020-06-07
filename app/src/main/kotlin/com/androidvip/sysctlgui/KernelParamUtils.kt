@@ -15,7 +15,9 @@ import java.io.IOException
 import java.lang.reflect.Type
 
 class KernelParamUtils(val context: Context) {
-    private val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(context) }
+    private val prefs: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(context)
+    }
 
     private val paramPrefs by lazy {
         Prefs(context)

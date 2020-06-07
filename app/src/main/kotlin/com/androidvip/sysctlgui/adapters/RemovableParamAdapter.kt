@@ -13,7 +13,6 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.activities.EditKernelParamActivity
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
@@ -25,8 +24,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RemovableParamAdapter(val context: Context, private val dataSet: MutableList<KernelParameter>, private val paramPrefs: BasePrefs) :
-    RecyclerView.Adapter<RemovableParamAdapter.RemovableViewHolder>() {
+class RemovableParamAdapter(
+    val context: Context,
+    private val dataSet: MutableList<KernelParameter>,
+    private val paramPrefs: BasePrefs
+) : RecyclerView.Adapter<RemovableParamAdapter.RemovableViewHolder>() {
 
     companion object {
         const val EXTRA_EDIT_SAVED_PARAM = "edit_saved_param"
@@ -40,7 +42,11 @@ class RemovableParamAdapter(val context: Context, private val dataSet: MutableLi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RemovableViewHolder {
-        val v = LayoutInflater.from(context).inflate(R.layout.list_item_removable_kernel_param, parent, false).apply {  }
+        val v = LayoutInflater.from(context).inflate(
+            R.layout.list_item_removable_kernel_param,
+            parent,
+            false
+        )
         return RemovableViewHolder(v).apply {
             setIsRecyclable(false)
         }

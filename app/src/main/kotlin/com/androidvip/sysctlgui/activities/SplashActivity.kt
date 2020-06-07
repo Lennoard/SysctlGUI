@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
@@ -25,7 +26,8 @@ class SplashActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(this,
+            window.statusBarColor = ContextCompat.getColor(
+                this,
                 R.color.colorPrimaryLight
             )
         }
@@ -41,7 +43,9 @@ class SplashActivity : AppCompatActivity() {
             runSafeOnUiThread {
                 if (isRootAccessGiven) {
                     if (!isBusyBoxAvailable) {
-                        prefs.edit().putBoolean(Prefs.USE_BUSYBOX, false).apply()
+                        prefs.edit {
+                            putBoolean(Prefs.USE_BUSYBOX, false)
+                        }
                     }
                     navigate()
                     finish()
@@ -69,21 +73,21 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun navigate() {
-        when(this.intent.action) {
+        val navigationIntent = when (this.intent.action) {
             Actions.KernelParamBrowserActivity.name -> {
-                startActivity(Intent(this, KernelParamBrowserActivity::class.java))
+                Intent(this, KernelParamBrowserActivity::class.java)
             }
 
             Actions.KernelParamsListActivity.name -> {
-                startActivity(Intent(this, KernelParamsListActivity::class.java))
+                Intent(this, KernelParamsListActivity::class.java)
             }
 
             Actions.SettingsActivity.name -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                Intent(this, SettingsActivity::class.java)
             }
 
             Actions.EditParam.name -> {
-                startActivity(Intent(this, EditKernelParamActivity::class.java).apply {
+                Intent(this, EditKernelParamActivity::class.java).apply {
                     putExtra(
                         KernelParamListAdapter.EXTRA_PARAM,
                         intent.getSerializableExtra(KernelParamListAdapter.EXTRA_PARAM)
@@ -92,12 +96,14 @@ class SplashActivity : AppCompatActivity() {
                         RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
                         intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
                     )
-                })
+                }
             }
 
             else -> {
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                Intent(this, MainActivity::class.java)
             }
         }
+
+        startActivity(navigationIntent)
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import com.androidvip.sysctlgui.services.base.BaseStartUpService
 import java.lang.RuntimeException
 import java.lang.ref.WeakReference
@@ -34,7 +35,9 @@ class LegacyStartUpService : Service(), BaseStartUpService.ServiceHandler {
             val intent = Intent(context, LegacyStartUpService::class.java)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                throw RuntimeException("This service is only for legacy systems")
+                Log.wtf(context.packageName, "Legacy service called on wrong API level").also {
+                    throw RuntimeException("This service is only for legacy systems")
+                }
             } else {
                 context.startService(intent)
             }

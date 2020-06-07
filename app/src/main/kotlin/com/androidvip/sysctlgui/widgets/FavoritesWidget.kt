@@ -41,7 +41,9 @@ class FavoritesWidget : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent!!.action == EDIT_PARAM_EXTRA) {
+        if (context == null || intent == null) return super.onReceive(context, intent)
+
+        if (intent.action == EDIT_PARAM_EXTRA) {
             val params = FavoritePrefs(context).getUserParamsSet()
             if (params.isEmpty()) {
                 return
@@ -52,7 +54,7 @@ class FavoritesWidget : AppWidgetProvider() {
                 action = Actions.EditParam.name
                 putExtra(KernelParamListAdapter.EXTRA_PARAM, param)
                 putExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, true)
-                context!!.startActivity(this)
+                context.startActivity(this)
             }
 
         }

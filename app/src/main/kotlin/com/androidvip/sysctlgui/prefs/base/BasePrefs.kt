@@ -1,9 +1,7 @@
 package com.androidvip.sysctlgui.prefs.base
 
-import android.app.Presentation
 import android.content.Context
 import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File

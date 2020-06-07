@@ -17,7 +17,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class KernelParamListAdapter(private val context: Context, private val dataSet: MutableList<KernelParameter>) : RecyclerView.Adapter<KernelParamListAdapter.ViewHolder>() {
+class KernelParamListAdapter(
+    private val context: Context,
+    private val dataSet: MutableList<KernelParameter>
+) : RecyclerView.Adapter<KernelParamListAdapter.ViewHolder>() {
 
     companion object {
         const val EXTRA_PARAM = "kernel_param"
@@ -30,7 +33,11 @@ class KernelParamListAdapter(private val context: Context, private val dataSet: 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(context).inflate(R.layout.list_item_kernel_param_list, parent, false)
+        val v = LayoutInflater.from(context).inflate(
+            R.layout.list_item_kernel_param_list,
+            parent,
+            false
+        )
         return ViewHolder(v).apply { setIsRecyclable(false) }
     }
 
