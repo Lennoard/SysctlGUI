@@ -62,4 +62,8 @@
     <string name="startup_delay_sum">A execução será atrasada em %d segundos</string>
     <string name="startup_delay_disabled">A execução não será atrasada</string>
     <string name="notification_start_up_description_delay">Aplicando em %d segundos…</string>
+    <string name="show_favorites">Mostrar favoritos</string>
+    <string name="show_favorites_sum">Acesse os seus parâmetros favoritos a partir desta lista</string>
+    <string name="set_favorite">Definir como favorito</string>
+    <string name="empty_favorites_widget">nenhum favorito selecionado</string>
 </resources>
