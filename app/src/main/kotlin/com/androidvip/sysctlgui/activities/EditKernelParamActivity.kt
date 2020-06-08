@@ -8,6 +8,7 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
@@ -29,8 +30,8 @@ class EditKernelParamActivity : AppCompatActivity() {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
     private val favoritePrefs by lazy { FavoritePrefs(applicationContext) }
-    private val taskerPrefs by lazy { TaskerPrefs(applicationContext) }
     private val paramPrefs by lazy { Prefs(applicationContext) }
+    private var taskerPrefs : TaskerPrefs? = null
 
     private var kernelParameter: KernelParameter? = null
 
@@ -78,11 +79,14 @@ class EditKernelParamActivity : AppCompatActivity() {
             if (isTaskerInstalled()) {
                 it.isVisible = true
                 kernelParameter?.let { param ->
-                    if (taskerPrefs.isTaskerParam(param)) {
-                        it.setIcon(R.drawable.ic_action_tasker_remove)
-                    } else {
-                        it.setIcon(R.drawable.ic_action_tasker_add)
+                    if (taskerPrefs != null) {
+                        if (taskerPrefs!!.isTaskerParam(param)) {
+                            it.setIcon(R.drawable.ic_action_tasker_remove)
+                        } else {
+                            it.setIcon(R.drawable.ic_action_tasker_add)
+                        }
                     }
+
                 }
             } else {
                 it.isVisible = false
@@ -110,17 +114,23 @@ class EditKernelParamActivity : AppCompatActivity() {
             }
 
             R.id.action_tasker -> {
-                kernelParameter?.let {
-                    return if (taskerPrefs.isTaskerParam(it)) {
-                        taskerPrefs.removeParam(it)
-                        item.setIcon(R.drawable.ic_action_tasker_add)
-                        true
-                    } else {
-                        taskerPrefs.putParam(it)
-                        item.setIcon(R.drawable.ic_action_tasker_remove)
-                        true
+                selectTaskerListAsDialog { taskerList ->
+                    taskerPrefs = TaskerPrefs(applicationContext, taskerList)
+                    kernelParameter?.let { param ->
+                        taskerPrefs?.let {
+                            if (it.isTaskerParam(param)) {
+                                it.removeParam(param)
+                                item.setIcon(R.drawable.ic_action_tasker_add)
+                                toast(getString(R.string.removed_from_tasker_list, taskerList))
+                            } else {
+                                it.putParam(param)
+                                item.setIcon(R.drawable.ic_action_tasker_remove)
+                                toast(getString(R.string.added_to_tasker_list, taskerList))
+                            }
+                        }
                     }
                 }
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
@@ -168,6 +178,16 @@ class EditKernelParamActivity : AppCompatActivity() {
         editParamErrorText.show()
         editParamScroll.goAway()
         editParamApply.hide()
+    }
+
+    private fun selectTaskerListAsDialog(block: (Int) -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.select_tasker_list)
+            .setNegativeButton(android.R.string.cancel) { _, _ -> }
+            .setSingleChoiceItems(R.array.tasker_lists, -1) { dialog, which ->
+                block(which + 1)
+                dialog.dismiss()
+            }.show()
     }
 
     private fun defineInputTypeForValue(paramValue: String) {

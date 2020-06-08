@@ -66,4 +66,8 @@
     <string name="set_favorite">Set as favorite</string>
     <string name="empty_favorites_widget">no favorites selected</string>
     <string name="tasker_list">Tasker list</string>
+    <string name="tasker_toast">SysctlGUI: Tasker profile #%d applied</string>
+    <string name="select_tasker_list">Select tasker list</string>
+    <string name="removed_from_tasker_list">Removed from tasker list #%d</string>
+    <string name="added_to_tasker_list">Added to tasker list #%d</string>
 </resources>
