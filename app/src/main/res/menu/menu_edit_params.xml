@@ -7,7 +7,7 @@
         android:id="@+id/action_tasker"
         android:orderInCategory="100"
         android:icon="@drawable/ic_action_tasker_add"
-        android:title="@string/add_to_tasker_list"
+        android:title="@string/tasker_list"
         android:visible="false"
         app:showAsAction="ifRoom" />
 

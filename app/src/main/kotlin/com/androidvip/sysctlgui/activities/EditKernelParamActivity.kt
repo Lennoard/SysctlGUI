@@ -74,8 +74,9 @@ class EditKernelParamActivity : AppCompatActivity() {
             }
         }
 
-        if (isTaskerInstalled()) {
-            menu?.findItem(R.id.action_tasker)?.let {
+        menu?.findItem(R.id.action_tasker)?.let {
+            if (isTaskerInstalled()) {
+                it.isVisible = true
                 kernelParameter?.let { param ->
                     if (taskerPrefs.isTaskerParam(param)) {
                         it.setIcon(R.drawable.ic_action_tasker_remove)
@@ -83,6 +84,8 @@ class EditKernelParamActivity : AppCompatActivity() {
                         it.setIcon(R.drawable.ic_action_tasker_add)
                     }
                 }
+            } else {
+                it.isVisible = false
             }
         }
 
@@ -129,13 +132,19 @@ class EditKernelParamActivity : AppCompatActivity() {
 
         YoYo.with(Techniques.SlideInLeft)
             .duration(600)
-            .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
+            .interpolate(AnimationUtils.loadInterpolator(
+                this,
+                android.R.anim.accelerate_decelerate_interpolator)
+            )
             .playOn(editParamName)
 
         Handler().postDelayed({
             YoYo.with(Techniques.SlideInLeft)
                 .duration(600)
-                .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
+                .interpolate(AnimationUtils.loadInterpolator(
+                    this,
+                    android.R.anim.accelerate_decelerate_interpolator)
+                )
                 .playOn(editParamSub)
 
             editParamSub.text = kernelParameter.name.removeSuffix(paramName).removeSuffix(".")
@@ -145,7 +154,10 @@ class EditKernelParamActivity : AppCompatActivity() {
             editParamInfo.text = findInfoForParam(kernelParameter)
             YoYo.with(Techniques.ZoomIn)
                 .duration(260)
-                .interpolate(AnimationUtils.loadInterpolator(this, android.R.anim.accelerate_decelerate_interpolator))
+                .interpolate(AnimationUtils.loadInterpolator(
+                    this,
+                    android.R.anim.accelerate_decelerate_interpolator)
+                )
                 .playOn(editParamInfo)
 
             editParamApply.show()
@@ -167,13 +179,16 @@ class EditKernelParamActivity : AppCompatActivity() {
         } else {
             try {
                 paramValue.toInt()
-                editParamInput.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
+                editParamInput.inputType =
+                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
             } catch (e: Exception) {
                 try {
                     paramValue.toDouble()
-                    editParamInput.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                    editParamInput.inputType =
+                        InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 } catch (e: Exception) {
-                    editParamInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+                    editParamInput.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
                 }
             }
         }
@@ -181,7 +196,11 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     private fun findInfoForParam(kernelParameter: KernelParameter): String {
         val paramName = kernelParameter.name.split(".").last()
-        val resId = resources.getIdentifier(paramName.replace("-", "_"), "string", packageName)
+        val resId = resources.getIdentifier(
+            paramName.replace("-", "_"),
+            "string",
+            packageName
+        )
         val stringRes : String? = if (resId != 0) {
             runCatching {
                 getString(resId)
@@ -230,14 +249,17 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     private suspend fun applyParam(kernelParameter: KernelParameter) {
         val kernelParamUtils = KernelParamUtils(this.application)
-        val useCustomApply = intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
+        val useCustomApply = intent.getBooleanExtra(
+            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
+            false
+        )
 
         val newValue = editParamInput.text.toString()
-        val newKernelParameter = kernelParameter.copy().also {
+        val newParam = kernelParameter.copy().also {
             it.value = newValue
         }
 
-        kernelParamUtils.applyParam(newKernelParameter, useCustomApply, object : KernelParamUtils.KernelParamApply {
+        kernelParamUtils.applyParam(newParam, useCustomApply, object : KernelParamUtils.KernelParamApply {
             override fun onEmptyValue() {
                 Snackbar.make(editParamApply, R.string.error_empty_input_field, Snackbar.LENGTH_LONG).showAsLight()
             }
