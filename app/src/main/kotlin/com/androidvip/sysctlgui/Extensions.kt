@@ -4,14 +4,18 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun View.goAway() { this.visibility = View.GONE }
 fun View.hide() { this.visibility = View.INVISIBLE }
@@ -50,6 +54,14 @@ fun InputStream?.readLines(forEachLine: (String) -> Unit) {
             }
         }
     }
+}
+
+@ExperimentalContracts
+fun Bundle?.isValidTaskerBundle() : Boolean {
+    contract {
+        returns(true) implies (this@isValidTaskerBundle != null)
+    }
+    return this != null && containsKey(TaskerReceiver.BUNDLE_EXTRA_LIST_NUMBER)
 }
 
 suspend inline fun Activity?.runSafeOnUiThread(crossinline uiBlock: () -> Unit) {

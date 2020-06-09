@@ -185,7 +185,7 @@ class EditKernelParamActivity : AppCompatActivity() {
             .setTitle(R.string.select_tasker_list)
             .setNegativeButton(android.R.string.cancel) { _, _ -> }
             .setSingleChoiceItems(R.array.tasker_lists, -1) { dialog, which ->
-                block(which + 1)
+                block(which)
                 dialog.dismiss()
             }.show()
     }
