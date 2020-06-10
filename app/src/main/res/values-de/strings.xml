@@ -66,4 +66,12 @@
     <string name="startup_delay_disabled">Ausführung findet sofort statt</string>
     <string name="set_favorite">Als Favorit auswählen</string>
     <string name="empty_favorites_widget">keine Favoriten ausgewählt</string>
+    <string name="tasker_list">Tasker Liste</string>
+    <string name="tasker_toast">SysctlGUI: Tasker Profil #%d angewendet</string>
+    <string name="select_tasker_list">Wähle Tasker Liste aus</string>
+    <string name="removed_from_tasker_list">Lösche von Tasker Liste #%d</string>
+    <string name="added_to_tasker_list">#%d wurde zur Tasker Liste hinzugefügt</string>
+    <string name="tasker_select_list">Wähle eine Liste aus die mit Tasker verwendet werden soll</string>
+    <string name="tasker_plugin_description">Wenn Tasker dieses Plugin ausführt, werden alle Parameter dieser Liste mit ihren Werten angewendet.</string>
+    <string name="tasker_settings">Tasker Einstellungen</string>
 </resources>
