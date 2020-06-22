@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sysctl GUI</string>
+    <string name="app_name" translatable="false">Sysctl GUI</string>
     <string name="splash_status_checking_root">Checking for root access</string>
     <string name="splash_status_checking_busybox">Checking for busybox</string>
     <string name="error">Error</string>
@@ -66,11 +66,17 @@
     <string name="set_favorite">Set as favorite</string>
     <string name="empty_favorites_widget">no favorites selected</string>
     <string name="tasker_list">Tasker list</string>
+    <string name="tasker_list_primary">Primary list</string>
+    <string name="tasker_list_secondary">Secondary list</string>
+    <string name="tasker_list_plugin_primary">Primary Tasker list</string>
+    <string name="tasker_list_plugin_secondary">Secondary Tasker list</string>
+    <string name="tasker_list_plugin_favorites">Favorites list</string>
+    <string name="tasker_list_plugin_apply_on_boot">Apply on boot list</string>
     <string name="tasker_toast">SysctlGUI: Tasker profile #%d applied</string>
-    <string name="select_tasker_list">Select tasker list</string>
-    <string name="removed_from_tasker_list">Removed from tasker list #%d</string>
-    <string name="added_to_tasker_list">Added to tasker list #%d</string>
+    <string name="select_tasker_list">Select a Tasker list</string>
+    <string name="removed_from_tasker_list">Removed from Tasker list #%d</string>
+    <string name="added_to_tasker_list">Added to Tasker list #%d</string>
     <string name="tasker_select_list">Select a list to be used with Tasker</string>
-    <string name="tasker_plugin_description">Once triggered by Tasker, the plugin will immediately reapply all parameters of the selected list with their respective values.</string>
+    <string name="tasker_plugin_description">Once triggered by Tasker, the plugin will immediately reapply all parameters from the selected list with their respective values.</string>
     <string name="tasker_settings">Tasker settings</string>
 </resources>

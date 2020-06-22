@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sysctl GUI</string>
     <string name="splash_status_checking_root">Überprüfe Rootstatus</string>
     <string name="splash_status_checking_busybox">Überprüfe busybox</string>
     <string name="error">Fehler</string>

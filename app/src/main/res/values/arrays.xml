@@ -4,20 +4,20 @@
         <item>Use echo \'value\' > /proc/sys/…</item>
     </string-array>
 
-    <string-array name="commit_modes_values">
+    <string-array name="commit_modes_values" translatable="false">
         <item>sysctl</item>
         <item>echo</item>
     </string-array>
 
-    <string-array name="tasker_lists">
-        <item>Primary list</item>
-        <item>Secondary list</item>
+    <string-array name="tasker_lists" translatable="false">
+        <item>@string/tasker_list_primary</item>
+        <item>@string/tasker_list_secondary</item>
     </string-array>
 
-    <string-array name="tasker_plugins_lists">
-        <item>Primary Tasker list</item>
-        <item>Secondary Tasker list</item>
-        <item>Favorites list</item>
-        <item>Apply on boot list</item>
+    <string-array name="tasker_plugins_lists" translatable="false">
+        <item>@string/tasker_list_plugin_primary</item>
+        <item>@string/tasker_list_plugin_secondary</item>
+        <item>@string/tasker_list_plugin_favorites</item>
+        <item>@string/tasker_list_plugin_apply_on_boot</item>
     </string-array>
 </resources>
