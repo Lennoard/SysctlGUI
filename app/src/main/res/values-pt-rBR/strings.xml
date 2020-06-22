@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sysctl GUI</string>
     <string name="about">Sobre</string>
     <string name="allow_blank_values">Permitir valores em branco</string>
     <string name="app">Aplicativo</string>
@@ -66,4 +65,18 @@
     <string name="show_favorites_sum">Acesse os seus parâmetros favoritos a partir desta lista</string>
     <string name="set_favorite">Definir como favorito</string>
     <string name="empty_favorites_widget">nenhum favorito selecionado</string>
+    <string name="tasker_list">Lista do Tasker</string>
+    <string name="tasker_toast">SysctlGUI: Perfil Tasker  #%d aplicado</string>
+    <string name="select_tasker_list">Selecione a lista do Tasker</string>
+    <string name="removed_from_tasker_list">Removido da lista do Tasker #%d</string>
+    <string name="added_to_tasker_list">Adicionado à lista do Tasker #%d</string>
+    <string name="tasker_select_list">Selecione uma lista para ser usada com o Tasker</string>
+    <string name="tasker_plugin_description">Uma vez acionado pelo Tasker, o plugin reaplicará imediatamente todos os parâmetros da lista selecionada com seus respectivos valores.</string>
+    <string name="tasker_settings">Configurações do Tasker</string>
+    <string name="tasker_list_primary">Lista primária</string>
+    <string name="tasker_list_secondary">Lista secundária</string>
+    <string name="tasker_list_plugin_primary">Lista primária do Tasker</string>
+    <string name="tasker_list_plugin_secondary">Lista secundária do Tasker</string>
+    <string name="tasker_list_plugin_favorites">Lista de favoritos</string>
+    <string name="tasker_list_plugin_apply_on_boot">Lista de aplicar na inicialização</string>
 </resources>
