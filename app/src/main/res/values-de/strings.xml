@@ -66,6 +66,12 @@
     <string name="set_favorite">Als Favorit auswählen</string>
     <string name="empty_favorites_widget">keine Favoriten ausgewählt</string>
     <string name="tasker_list">Tasker Liste</string>
+    <string name="tasker_list_primary">Primäre Liste</string>
+    <string name="tasker_list_secondary">Sekundäre Liste</string>
+    <string name="tasker_list_plugin_primary">Primäre Tasker Liste</string>
+    <string name="tasker_list_plugin_secondary">Sekundäre Tasker Liste</string>
+    <string name="tasker_list_plugin_favorites">Favoritenliste</string>
+    <string name="tasker_list_plugin_apply_on_boot">Beim Systemstart angewendete Liste</string>
     <string name="tasker_toast">SysctlGUI: Tasker Profil #%d angewendet</string>
     <string name="select_tasker_list">Wähle Tasker Liste aus</string>
     <string name="removed_from_tasker_list">Lösche von Tasker Liste #%d</string>
