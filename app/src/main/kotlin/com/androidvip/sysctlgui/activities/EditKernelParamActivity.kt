@@ -9,9 +9,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.activities.base.BaseActivity
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
@@ -21,11 +21,10 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.InputStream
 
-class EditKernelParamActivity : AppCompatActivity() {
+class EditKernelParamActivity : BaseActivity() {
     private val prefs: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this)
     }
@@ -55,7 +54,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 Handler().postDelayed({ updateTextUi(kernelParameter!!) }, 100)
 
                 editParamApply.setOnClickListener {
-                    GlobalScope.launch {
+                    launch {
                         applyParam(kernelParameter!!)
                     }
                 }

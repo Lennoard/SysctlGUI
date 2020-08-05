@@ -5,20 +5,25 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.RootUtils
+import com.androidvip.sysctlgui.activities.base.BaseActivity
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
+import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,43 +38,37 @@ class SplashActivity : AppCompatActivity() {
         }
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        GlobalScope.launch {
+        launch {
             val isRootAccessGiven = checkRootAccess()
-            runSafeOnUiThread {
-                splashStatusText.setText(R.string.splash_status_checking_busybox)
-            }
 
+            splashStatusText.setText(R.string.splash_status_checking_busybox)
             val isBusyBoxAvailable = checkBusyBox()
-            runSafeOnUiThread {
-                if (isRootAccessGiven) {
-                    if (!isBusyBoxAvailable) {
-                        prefs.edit {
-                            putBoolean(Prefs.USE_BUSYBOX, false)
-                        }
-                    }
-                    navigate()
-                    finish()
-                } else {
-                    splashProgress.goAway()
-                    AlertDialog.Builder(this@SplashActivity)
-                        .setTitle(R.string.error)
-                        .setMessage(getString(R.string.root_not_found_sum))
-                        .setPositiveButton("OK") { _, _ -> finish() }
-                        .setCancelable(false)
-                        .show()
+
+            if (isRootAccessGiven) {
+                if (!isBusyBoxAvailable) {
+                    prefs.edit { putBoolean(Prefs.USE_BUSYBOX, false) }
                 }
+                navigate()
+                finish()
+            } else {
+                splashProgress.goAway()
+                AlertDialog.Builder(this@SplashActivity)
+                    .setTitle(R.string.error)
+                    .setMessage(getString(R.string.root_not_found_sum))
+                    .setPositiveButton(android.R.string.ok) { _, _ -> finish() }
+                    .setCancelable(false)
+                    .show()
             }
         }
     }
 
-    private suspend fun checkRootAccess() = withContext(Dispatchers.IO) {
+    private suspend fun checkRootAccess() = withContext(Dispatchers.Default) {
         delay(500)
         Shell.rootAccess()
     }
 
-    private suspend fun checkBusyBox() = withContext(Dispatchers.IO) {
+    private suspend fun checkBusyBox() = RootUtils.isBusyboxAvailable().also {
         delay(500)
-        RootUtils.isBusyboxAvailable()
     }
 
     private fun navigate() {

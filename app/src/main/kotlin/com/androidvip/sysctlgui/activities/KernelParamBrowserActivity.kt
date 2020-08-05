@@ -20,17 +20,17 @@ import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
 import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.ref.WeakReference
 
 class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListener {
     private var actionBarMenu: Menu? = null
     private var documentationUrl = "https://www.kernel.org/doc/Documentation"
     private var currentPath = "/proc/sys"
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
-        KernelParamBrowserAdapter(arrayOf(), this, this)
+        KernelParamBrowserAdapter(arrayOf(), WeakReference(this), this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,10 +129,10 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
     private fun refreshList() {
         paramBrowserSwipeLayout.isRefreshing = true
 
-        GlobalScope.launch {
+        launch {
             var files = getCurrentPathFiles()
 
-            if (searchExpression.isNotEmpty()) {
+            withContext(Dispatchers.Default) {
                 files = files?.filter { file ->
                     file.name.toLowerCase(defaultLocale)
                         .replace(".", "")
@@ -140,11 +140,9 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
                 }?.toTypedArray()
             }
 
-            runSafeOnUiThread {
-                paramBrowserSwipeLayout.isRefreshing = false
-                files?.let {
-                    paramsBrowserAdapter.updateData(it)
-                }
+            paramBrowserSwipeLayout.isRefreshing = false
+            files?.let {
+                paramsBrowserAdapter.updateData(it)
             }
         }
     }

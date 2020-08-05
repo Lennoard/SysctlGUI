@@ -4,26 +4,23 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.activities.base.BaseActivity
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.receivers.BootReceiver
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class SettingsActivity : AppCompatActivity() {
-    companion object {
-        private const val CREATE_FILE_REQUEST_CODE: Int = 2
-    }
+class SettingsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +58,8 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
                 data?.data?.let { uri ->
-
-                    GlobalScope.launch(Dispatchers.IO) {
-                        val message: String = if (KernelParamUtils(this@SettingsActivity).exportParamsToUri(uri)) {
+                    launch {
+                        val message: String = if (exportParams(uri)) {
                             getString(R.string.done)
                         } else {
                             getString(R.string.failed)
@@ -81,7 +77,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+    private suspend fun exportParams(uri: Uri) = withContext(Dispatchers.IO) {
+        return@withContext KernelParamUtils(this@SettingsActivity).exportParamsToUri(uri)
+    }
+
+    class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, CoroutineScope {
+        override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
 
@@ -104,15 +106,12 @@ class SettingsActivity : AppCompatActivity() {
             }
             
             val useBusyboxPref = findPreference(Prefs.USE_BUSYBOX) as SwitchPreferenceCompat?
-            GlobalScope.launch(Dispatchers.IO) {
-                val isBusyboxAvailable = RootUtils.isBusyboxAvailable()
-                activity.runSafeOnUiThread {
-                    if (isBusyboxAvailable) {
-                        useBusyboxPref?.isEnabled = true
-                    } else {
-                        useBusyboxPref?.isChecked = false
-                        useBusyboxPref?.isEnabled = false
-                    }
+            launch {
+                if (RootUtils.isBusyboxAvailable()) {
+                    useBusyboxPref?.isEnabled = true
+                } else {
+                    useBusyboxPref?.isChecked = false
+                    useBusyboxPref?.isEnabled = false
                 }
             }
 
@@ -158,5 +157,14 @@ class SettingsActivity : AppCompatActivity() {
 
             return true
         }
+
+        override fun onDestroy() {
+            super.onDestroy()
+            coroutineContext[Job]?.cancel()
+        }
+    }
+
+    companion object {
+        private const val CREATE_FILE_REQUEST_CODE: Int = 2
     }
 }

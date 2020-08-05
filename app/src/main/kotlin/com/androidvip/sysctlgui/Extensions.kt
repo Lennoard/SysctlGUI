@@ -5,13 +5,13 @@ import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import kotlin.contracts.ExperimentalContracts
@@ -36,9 +36,12 @@ fun Context?.toast(message: String?, length: Int = Toast.LENGTH_SHORT) {
     if (message == null || this == null) return
     val ctx = this
 
-    // Just in case :P
-    GlobalScope.launch(Dispatchers.Main) {
-        Toast.makeText(ctx, message, length).show()
+    runOnUiThread { Toast.makeText(ctx, message, length).show() }
+}
+
+fun Context.runOnUiThread(f: Context.() -> Unit) {
+    if (Looper.getMainLooper() === Looper.myLooper()) f() else Handler(Looper.getMainLooper()).post {
+        f()
     }
 }
 

@@ -19,16 +19,16 @@ import com.androidvip.sysctlgui.show
 import kotlin.math.abs
 
 
-class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
-    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START or ItemTouchHelper.END) {
-
+class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) : ItemTouchHelper.SimpleCallback(
+    0, ItemTouchHelper.START or ItemTouchHelper.END
+) {
     private val clearPaint: Paint = Paint()
     private val deleteDrawable: Drawable? = ContextCompat.getDrawable(
-        adapter.context,
+        adapter.activityRef.get()!!,
         R.drawable.ic_delete_sweep
     )
     private val background: ColorDrawable = ColorDrawable(ContextCompat.getColor(
-        adapter.context,
+        adapter.activityRef.get()!!,
         R.color.error
     ))
     private val intrinsicWidth: Int
@@ -42,7 +42,7 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) :
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
-        adapter.removeItem(position, (viewHolder as RemovableViewHolder).removableView)
+        adapter.removeItem(position, (viewHolder as RemovableViewHolder).removableView, adapter.activityRef.get())
     }
 
     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {

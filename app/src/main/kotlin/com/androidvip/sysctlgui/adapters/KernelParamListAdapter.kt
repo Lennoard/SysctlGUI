@@ -1,6 +1,5 @@
 package com.androidvip.sysctlgui.adapters
 
-import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +11,14 @@ import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
 import com.androidvip.sysctlgui.activities.EditKernelParamActivity
+import com.androidvip.sysctlgui.activities.base.BaseActivity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
 
 class KernelParamListAdapter(
-    private val context: Context,
+    private val activityRef: WeakReference<BaseActivity>,
     private val dataSet: MutableList<KernelParameter>
 ) : RecyclerView.Adapter<KernelParamListAdapter.ViewHolder>() {
 
@@ -33,7 +33,7 @@ class KernelParamListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(context).inflate(
+        val v = LayoutInflater.from(activityRef.get()).inflate(
             R.layout.list_item_kernel_param_list,
             parent,
             false
@@ -42,20 +42,21 @@ class KernelParamListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val activity = activityRef.get()
         val kernelParam = dataSet[holder.adapterPosition]
 
         holder.name.text = kernelParam.name
         holder.itemLayout.setOnClickListener(null)
 
-        GlobalScope.launch(Dispatchers.Main) {
+        activity?.launch {
             val paramValue = getParamValue(kernelParam.path)
 
             kernelParam.value = paramValue
             holder.value.text = paramValue
             holder.itemLayout.setOnClickListener {
-                Intent(context, EditKernelParamActivity::class.java).apply {
+                Intent(activity, EditKernelParamActivity::class.java).apply {
                     putExtra(EXTRA_PARAM, kernelParam)
-                    context.startActivity(this)
+                    activity.startActivity(this)
                 }
             }
         }

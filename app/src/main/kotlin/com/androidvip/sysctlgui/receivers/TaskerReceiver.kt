@@ -11,13 +11,12 @@ import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.prefs.TaskerPrefs
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlin.contracts.ExperimentalContracts
+import kotlin.coroutines.CoroutineContext
 
-class TaskerReceiver : BroadcastReceiver() {
+class TaskerReceiver : BroadcastReceiver(), CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
     @ExperimentalContracts
     override fun onReceive(context: Context?, intent: Intent) {
@@ -26,7 +25,7 @@ class TaskerReceiver : BroadcastReceiver() {
         val bundle: Bundle? = intent.getBundleExtra(EXTRA_BUNDLE)
         if (bundle.isValidTaskerBundle()) {
             val taskerList = bundle.getInt(BUNDLE_EXTRA_LIST_NUMBER, LIST_NUMBER_INVALID)
-            GlobalScope.launch(Dispatchers.Main) {
+            launch {
                 with (context) {
                     applyParams(this.applicationContext, taskerList)
                     toast(getString(R.string.tasker_toast, taskerList), Toast.LENGTH_LONG)

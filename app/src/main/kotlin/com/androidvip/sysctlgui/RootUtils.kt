@@ -2,17 +2,23 @@ package com.androidvip.sysctlgui
 
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ShellUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 object RootUtils {
 
-    fun isBusyboxAvailable(): Boolean {
+    suspend fun isBusyboxAvailable(): Boolean = withContext(Dispatchers.Default) {
         val results: List<String> = Shell.sh("which busybox").exec().out
-        return if (ShellUtils.isValidOutput(results)) {
+        return@withContext if (ShellUtils.isValidOutput(results)) {
             results.first().isNotEmpty()
         } else false
     }
 
-    fun executeWithOutput(command: String, defaultOutput: String = "", forEachLine: ((String?) -> Unit)? = null): String {
+    suspend fun executeWithOutput(
+        command: String,
+        defaultOutput: String = "",
+        forEachLine: ((String?) -> Unit)? = null
+    ): String = withContext(Dispatchers.Default) {
         val sb = StringBuilder()
 
         try {
@@ -28,10 +34,10 @@ object RootUtils {
                 }
             }
         } catch (e: Exception) {
-            return defaultOutput
+            return@withContext defaultOutput
         }
 
-        return sb.toString().trim().removeSuffix("\n")
+        return@withContext sb.toString().trim().removeSuffix("\n")
     }
 
     fun finishProcess() {

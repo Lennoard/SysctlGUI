@@ -2,11 +2,10 @@ package com.androidvip.sysctlgui.activities.base
 
 import android.view.Menu
 import android.widget.SearchView
-import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.R
 import java.util.*
 
-abstract class BaseSearchActivity : AppCompatActivity() {
+abstract class BaseSearchActivity : BaseActivity() {
     protected var searchExpression: String = ""
     protected var defaultLocale: Locale = Locale.getDefault()
     private var searchView: SearchView? = null

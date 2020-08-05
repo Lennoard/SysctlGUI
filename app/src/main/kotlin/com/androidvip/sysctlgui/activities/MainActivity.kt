@@ -16,16 +16,11 @@ import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity() {
-    companion object {
-        private const val OPEN_FILE_REQUEST_CODE: Int = 1
-    }
-
+class MainActivity : AppCompatActivity(), CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
     private val paramPrefs by lazy {
         Prefs(applicationContext)
     }
@@ -89,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         RootUtils.finishProcess()
+        coroutineContext[Job]?.cancelChildren()
         super.onDestroy()
     }
 
@@ -102,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
                     fileExtension?.let { extension ->
                         if (extension.endsWith(".json") or extension.endsWith(".conf")) {
-                            GlobalScope.launch {
+                            launch {
                                 applyParamsFromUri(uri, extension)
                             }
                         } else {
@@ -187,5 +183,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val OPEN_FILE_REQUEST_CODE: Int = 1
     }
 }

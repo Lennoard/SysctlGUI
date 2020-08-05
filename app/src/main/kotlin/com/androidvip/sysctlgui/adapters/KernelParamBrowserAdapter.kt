@@ -1,6 +1,5 @@
 package com.androidvip.sysctlgui.adapters
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -16,26 +15,27 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
 import com.androidvip.sysctlgui.activities.DirectoryChangedListener
 import com.androidvip.sysctlgui.activities.EditKernelParamActivity
+import com.androidvip.sysctlgui.activities.base.BaseActivity
+import com.androidvip.sysctlgui.prefs.Prefs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.ref.WeakReference
 
 class KernelParamBrowserAdapter(
     allFiles: Array<File>,
-    private val context: Context,
+    private val activityRef: WeakReference<BaseActivity>,
     private val directoryChangedListener: DirectoryChangedListener
 ) : RecyclerView.Adapter<KernelParamBrowserAdapter.ViewHolder>() {
 
     private val dataSet = mutableListOf<File>()
     private val prefs: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(context)
+        PreferenceManager.getDefaultSharedPreferences(activityRef.get())
     }
 
     companion object {
@@ -53,7 +53,7 @@ class KernelParamBrowserAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(context).inflate(
+        val v = LayoutInflater.from(activityRef.get()).inflate(
             R.layout.list_item_kernel_file_browser,
             parent,
             false
@@ -62,6 +62,7 @@ class KernelParamBrowserAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val activity = activityRef.get()
         val kernelFile = dataSet[position]
         val kernelParam = KernelParameter(path = kernelFile.absolutePath).apply {
             setNameFromPath(this.path)
@@ -73,7 +74,7 @@ class KernelParamBrowserAdapter(
                 name.setTextColor(Color.WHITE)
                 icon.setImageResource(R.drawable.ic_folder_outline)
                 icon.setBackgroundResource(R.drawable.circle_folder)
-                icon.setColorFilter(ContextCompat.getColor(context,
+                icon.setColorFilter(ContextCompat.getColor(activityRef.get()!!,
                     R.color.colorAccentLight
                 ), PorterDuff.Mode.SRC_IN)
             }
@@ -89,9 +90,8 @@ class KernelParamBrowserAdapter(
         holder.name.text = kernelFile.nameWithoutExtension
         holder.itemLayout.setOnClickListener(null)
 
-        GlobalScope.launch(Dispatchers.Main) {
+        activity?.launch {
             val paramValue = getParamValue(kernelFile.path)
-
             kernelParam.value = paramValue
 
             if (kernelFile.isDirectory) {
@@ -100,9 +100,9 @@ class KernelParamBrowserAdapter(
                 }
             } else {
                 holder.itemLayout.setOnClickListener {
-                    Intent(context, EditKernelParamActivity::class.java).apply {
+                    Intent(activity, EditKernelParamActivity::class.java).apply {
                         putExtra(EXTRA_PARAM, kernelParam)
-                        context.startActivity(this)
+                        activity.startActivity(this)
                     }
                 }
             }

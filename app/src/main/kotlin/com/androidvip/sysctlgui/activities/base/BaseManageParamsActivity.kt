@@ -9,16 +9,14 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
 import com.androidvip.sysctlgui.helpers.SwipeToDeleteCallback
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
-import com.androidvip.sysctlgui.runSafeOnUiThread
 import com.androidvip.sysctlgui.showAsLight
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_manage_param_set.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
 
 abstract class BaseManageParamsActivity: BaseSearchActivity() {
 
@@ -27,7 +25,7 @@ abstract class BaseManageParamsActivity: BaseSearchActivity() {
     }
 
     private val removableParamAdapter: RemovableParamAdapter by lazy {
-        RemovableParamAdapter(this, mutableListOf(), prefs)
+        RemovableParamAdapter(WeakReference(this), mutableListOf(), prefs)
     }
 
     override fun onQueryTextChanged() {
@@ -58,26 +56,26 @@ abstract class BaseManageParamsActivity: BaseSearchActivity() {
             Snackbar.LENGTH_INDEFINITE
         )
 
-        GlobalScope.launch {
+        launch {
             var kernelParams = getSavedKernelParams()
 
             if (searchExpression.isNotEmpty()) {
-                kernelParams = kernelParams.filter { kernelParameter ->
-                    kernelParameter.name.toLowerCase(defaultLocale)
-                        .replace(".", "")
-                        .contains(searchExpression.toLowerCase(defaultLocale))
-                }.toMutableList()
+                withContext(Dispatchers.Default) {
+                    kernelParams = kernelParams.filter { kernelParameter ->
+                        kernelParameter.name.toLowerCase(defaultLocale)
+                            .replace(".", "")
+                            .contains(searchExpression.toLowerCase(defaultLocale))
+                    }.toMutableList()
+                }
             }
 
-            runSafeOnUiThread {
-                applyOnStartUpSwipeLayout.isRefreshing = false
-                removableParamAdapter.updateData(kernelParams)
+            applyOnStartUpSwipeLayout.isRefreshing = false
+            removableParamAdapter.updateData(kernelParams)
 
-                if (kernelParams.isEmpty()) {
-                    snackbar.showAsLight()
-                } else {
-                    snackbar.dismiss()
-                }
+            if (kernelParams.isEmpty()) {
+                snackbar.showAsLight()
+            } else {
+                snackbar.dismiss()
             }
         }
     }

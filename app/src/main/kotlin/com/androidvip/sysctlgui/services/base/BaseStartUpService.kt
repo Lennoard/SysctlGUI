@@ -6,20 +6,24 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.os.Handler
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.KernelParamUtils
+import com.androidvip.sysctlgui.KernelParameter
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.RootUtils
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
+import kotlin.coroutines.CoroutineContext
 
 class BaseStartUpService(
     private var weakContext: WeakReference<Context?>,
     private var handler: ServiceHandler?
-) {
+) : CoroutineScope {
+    override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
     /**
      * important: implement method to check if the device keep crashing on boot and disable start up
@@ -37,7 +41,7 @@ class BaseStartUpService(
         weakContext.get()?.let { context ->
             // call the .conf file and make an notification for android >= O
             showNotificationAndThen {
-                GlobalScope.launch(Dispatchers.Main) {
+                launch {
                     if (checkRequirements()) {
                         applyConfig()
                     }
@@ -86,7 +90,7 @@ class BaseStartUpService(
             ))
             builder.setProgress(startupDelay, 0, true)
 
-            GlobalScope.launch(Dispatchers.Main) {
+            launch {
                 NotificationManagerCompat.from(context).apply {
                     var delayCount = 0
                     for (i in startupDelay downTo 0) {
@@ -135,6 +139,7 @@ class BaseStartUpService(
     private fun onCleanUp() {
         // avoid memory leaks
         this.handler = null
+        coroutineContext[Job]?.cancelChildren()
         RootUtils.finishProcess()
     }
 

@@ -10,17 +10,16 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.RootUtils
 import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
 import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
-import com.androidvip.sysctlgui.runSafeOnUiThread
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
 
 class KernelParamsListActivity : BaseSearchActivity() {
 
     private val paramsListAdapter: KernelParamListAdapter by lazy {
-        KernelParamListAdapter(this, mutableListOf())
+        KernelParamListAdapter(WeakReference(this), mutableListOf())
     }
 
     override fun onQueryTextChanged() {
@@ -58,23 +57,21 @@ class KernelParamsListActivity : BaseSearchActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun updateRecyclerViewData() {
-        GlobalScope.launch {
-            var kernelParams = getKernelParams()
+    private fun updateRecyclerViewData() = launch {
+        var kernelParams = getKernelParams()
 
-            if (searchExpression.isNotEmpty()) {
+        if (searchExpression.isNotEmpty()) {
+            withContext(Dispatchers.Default) {
                 kernelParams = kernelParams.filter { kernelParameter ->
                     kernelParameter.name.toLowerCase(defaultLocale)
                         .replace(".", "")
                         .contains(searchExpression.toLowerCase(defaultLocale))
                 }.toMutableList()
             }
-
-            runSafeOnUiThread {
-                paramsListSwipeLayout.isRefreshing = false
-                paramsListAdapter.updateData(kernelParams)
-            }
         }
+
+        paramsListSwipeLayout.isRefreshing = false
+        paramsListAdapter.updateData(kernelParams)
     }
 
     private suspend fun getKernelParams() = withContext(Dispatchers.IO) {
