@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities
+package com.androidvip.sysctlgui.ui
 
 import android.app.Activity
 import android.content.SharedPreferences
@@ -11,12 +11,13 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
-import com.androidvip.sysctlgui.activities.base.BaseActivity
-import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
-import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.base.BaseActivity
+import com.androidvip.sysctlgui.ui.paramlist.KernelParamListAdapter
+import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.prefs.TaskerPrefs
+import com.androidvip.sysctlgui.utils.KernelParamUtils
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
@@ -267,7 +268,8 @@ class EditKernelParamActivity : BaseActivity() {
     }
 
     private suspend fun applyParam(kernelParameter: KernelParameter) {
-        val kernelParamUtils = KernelParamUtils(this.application)
+        val kernelParamUtils =
+            KernelParamUtils(this.application)
         val useCustomApply = intent.getBooleanExtra(
             RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
             false

@@ -12,8 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
-import com.androidvip.sysctlgui.adapters.RemovableParamAdapter.RemovableViewHolder
+import com.androidvip.sysctlgui.helpers.RemovableParamAdapter.RemovableViewHolder
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
 import kotlin.math.abs

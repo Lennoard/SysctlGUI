@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities
+package com.androidvip.sysctlgui.ui.paramlist
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,9 +7,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
-import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
-import com.androidvip.sysctlgui.adapters.KernelParamListAdapter
+import com.androidvip.sysctlgui.utils.RootUtils
+import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import kotlinx.android.synthetic.main.activity_kernel_params_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +18,10 @@ import java.lang.ref.WeakReference
 class KernelParamsListActivity : BaseSearchActivity() {
 
     private val paramsListAdapter: KernelParamListAdapter by lazy {
-        KernelParamListAdapter(WeakReference(this), mutableListOf())
+        KernelParamListAdapter(
+            WeakReference(this),
+            mutableListOf()
+        )
     }
 
     override fun onQueryTextChanged() {

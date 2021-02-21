@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities.base
+package com.androidvip.sysctlgui.ui.base
 
 import android.view.Menu
 import android.widget.SearchView

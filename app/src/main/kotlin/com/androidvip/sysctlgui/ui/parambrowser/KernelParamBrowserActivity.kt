@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities
+package com.androidvip.sysctlgui.ui.parambrowser
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -16,8 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.*
-import com.androidvip.sysctlgui.activities.base.BaseSearchActivity
-import com.androidvip.sysctlgui.adapters.KernelParamBrowserAdapter
+import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,12 +24,17 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.lang.ref.WeakReference
 
-class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListener {
+class KernelParamBrowserActivity : BaseSearchActivity(),
+    DirectoryChangedListener {
     private var actionBarMenu: Menu? = null
     private var documentationUrl = "https://www.kernel.org/doc/Documentation"
     private var currentPath = "/proc/sys"
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
-        KernelParamBrowserAdapter(arrayOf(), WeakReference(this), this)
+        KernelParamBrowserAdapter(
+            arrayOf(),
+            WeakReference(this),
+            this
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

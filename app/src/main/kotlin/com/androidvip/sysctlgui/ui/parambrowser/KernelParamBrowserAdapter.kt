@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.adapters
+package com.androidvip.sysctlgui.ui.parambrowser
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,10 +16,9 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
-import com.androidvip.sysctlgui.activities.DirectoryChangedListener
-import com.androidvip.sysctlgui.activities.EditKernelParamActivity
-import com.androidvip.sysctlgui.activities.base.BaseActivity
+import com.androidvip.sysctlgui.utils.RootUtils
+import com.androidvip.sysctlgui.ui.EditKernelParamActivity
+import com.androidvip.sysctlgui.ui.base.BaseActivity
 import com.androidvip.sysctlgui.prefs.Prefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +57,9 @@ class KernelParamBrowserAdapter(
             parent,
             false
         )
-        return ViewHolder(v)
+        return ViewHolder(
+            v
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

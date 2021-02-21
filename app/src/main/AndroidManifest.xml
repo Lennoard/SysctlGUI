@@ -9,8 +9,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="false"
-        android:fullBackupContent="false"
+        android:name=".SysctlGuiApp"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -18,29 +19,29 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".activities.ManageFavoritesParamsActivity" />
+        <activity android:name=".ui.ManageFavoritesParamsActivity" />
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings" />
         <activity
-            android:name=".activities.EditKernelParamActivity"
+            android:name=".ui.EditKernelParamActivity"
             android:label="@string/edit_params"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activities.KernelParamsListActivity"
+            android:name=".ui.paramlist.KernelParamsListActivity"
             android:label="@string/kernel_params" />
         <activity
-            android:name=".activities.KernelParamBrowserActivity"
+            android:name=".ui.parambrowser.KernelParamBrowserActivity"
             android:label="@string/browse_variables" />
         <activity
-            android:name=".activities.ManageOnStartUpParamsActivity"
+            android:name=".ui.settings.ManageOnStartUpParamsActivity"
             android:label="@string/manage_parameters" />
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".ui.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +53,9 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name=".activities.TaskerPluginActivity" android:label="@string/tasker_settings">
+        <activity
+            android:name=".ui.tasker.TaskerPluginActivity"
+            android:label="@string/tasker_settings">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
             </intent-filter>
@@ -88,9 +91,9 @@
         <service
             android:name=".services.LegacyStartUpService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service android:name=".widgets.FavoritesWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            />
+        <service
+            android:name=".widgets.FavoritesWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

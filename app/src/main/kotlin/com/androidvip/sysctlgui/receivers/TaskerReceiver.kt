@@ -11,6 +11,7 @@ import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.prefs.TaskerPrefs
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
+import com.androidvip.sysctlgui.utils.KernelParamUtils
 import kotlinx.coroutines.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.coroutines.CoroutineContext
@@ -45,7 +46,8 @@ class TaskerReceiver : BroadcastReceiver(), CoroutineScope {
             else -> return@withContext
         }
 
-        val kernelParamUtils = KernelParamUtils(context)
+        val kernelParamUtils =
+            KernelParamUtils(context)
 
         prefs.getUserParamsSet().forEach { param ->
             kernelParamUtils.commitChanges(param)

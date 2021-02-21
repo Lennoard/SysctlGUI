@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities.base
+package com.androidvip.sysctlgui.ui.base
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.adapters.RemovableParamAdapter
+import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
 import com.androidvip.sysctlgui.helpers.SwipeToDeleteCallback
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.showAsLight
@@ -25,7 +25,11 @@ abstract class BaseManageParamsActivity: BaseSearchActivity() {
     }
 
     private val removableParamAdapter: RemovableParamAdapter by lazy {
-        RemovableParamAdapter(WeakReference(this), mutableListOf(), prefs)
+        RemovableParamAdapter(
+            WeakReference(this),
+            mutableListOf(),
+            prefs
+        )
     }
 
     override fun onQueryTextChanged() {

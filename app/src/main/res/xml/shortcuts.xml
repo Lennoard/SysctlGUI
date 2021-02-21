@@ -10,11 +10,11 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.androidvip.sysctlgui"
-            android:targetClass="com.androidvip.sysctlgui.activities.MainActivity" />
+            android:targetClass="com.androidvip.sysctlgui.ui.MainActivity" />
         <intent
             android:action="KernelParamsListActivity"
             android:targetPackage="com.androidvip.sysctlgui"
-            android:targetClass="com.androidvip.sysctlgui.activities.SplashActivity" />
+            android:targetClass="com.androidvip.sysctlgui.ui.SplashActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 
@@ -28,11 +28,11 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.androidvip.sysctlgui"
-            android:targetClass="com.androidvip.sysctlgui.activities.MainActivity" />
+            android:targetClass="com.androidvip.sysctlgui.ui.MainActivity" />
         <intent
             android:action="KernelParamBrowserActivity"
             android:targetPackage="com.androidvip.sysctlgui"
-            android:targetClass="com.androidvip.sysctlgui.activities.SplashActivity" />
+            android:targetClass="com.androidvip.sysctlgui.ui.SplashActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 
@@ -46,11 +46,11 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.androidvip.sysctlgui"
-            android:targetClass="com.androidvip.sysctlgui.activities.MainActivity" />
+            android:targetClass="com.androidvip.sysctlgui.ui.MainActivity" />
         <intent
             android:action="SettingsActivity"
             android:targetPackage="com.androidvip.sysctlgui"
-            android:targetClass="com.androidvip.sysctlgui.activities.SplashActivity" />
+            android:targetClass="com.androidvip.sysctlgui.ui.SplashActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>
 </shortcuts>

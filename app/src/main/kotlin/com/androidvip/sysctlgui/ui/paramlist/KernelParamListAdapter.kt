@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.adapters
+package com.androidvip.sysctlgui.ui.paramlist
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,9 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.RootUtils
-import com.androidvip.sysctlgui.activities.EditKernelParamActivity
-import com.androidvip.sysctlgui.activities.base.BaseActivity
+import com.androidvip.sysctlgui.utils.RootUtils
+import com.androidvip.sysctlgui.ui.EditKernelParamActivity
+import com.androidvip.sysctlgui.ui.base.BaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,7 +38,9 @@ class KernelParamListAdapter(
             parent,
             false
         )
-        return ViewHolder(v).apply { setIsRecyclable(false) }
+        return ViewHolder(
+            v
+        ).apply { setIsRecyclable(false) }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

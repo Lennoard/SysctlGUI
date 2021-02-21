@@ -7,7 +7,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:paddingLeft="@dimen/text_margin"
     android:paddingRight="@dimen/text_margin"
-    tools:context=".activities.MainActivity">
+    tools:context=".ui.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

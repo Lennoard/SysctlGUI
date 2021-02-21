@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.adapters
+package com.androidvip.sysctlgui.helpers
 
 import android.content.Intent
 import android.os.Handler
@@ -13,10 +13,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.activities.EditKernelParamActivity
-import com.androidvip.sysctlgui.activities.base.BaseActivity
+import com.androidvip.sysctlgui.ui.EditKernelParamActivity
+import com.androidvip.sysctlgui.ui.base.BaseActivity
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.toast
+import com.androidvip.sysctlgui.ui.paramlist.KernelParamListAdapter
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,9 @@ class RemovableParamAdapter(
             parent,
             false
         )
-        return RemovableViewHolder(v).apply {
+        return RemovableViewHolder(
+            v
+        ).apply {
             setIsRecyclable(false)
         }
     }

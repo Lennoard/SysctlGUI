@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities.base
+package com.androidvip.sysctlgui.ui.base
 
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.*

@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui
+package com.androidvip.sysctlgui.utils
 
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ShellUtils

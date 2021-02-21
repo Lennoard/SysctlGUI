@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.activities
+package com.androidvip.sysctlgui.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -12,6 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.prefs.Prefs
+import com.androidvip.sysctlgui.ui.parambrowser.KernelParamBrowserActivity
+import com.androidvip.sysctlgui.ui.paramlist.KernelParamsListActivity
+import com.androidvip.sysctlgui.ui.settings.SettingsActivity
+import com.androidvip.sysctlgui.utils.KernelParamUtils
+import com.androidvip.sysctlgui.utils.RootUtils
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
@@ -47,7 +52,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "*/*"
             }
-            startActivityForResult(intent, OPEN_FILE_REQUEST_CODE)
+            startActivityForResult(intent,
+                OPEN_FILE_REQUEST_CODE
+            )
         }
 
         mainFavorites.setOnClickListener {
@@ -129,7 +136,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
 
         try {
-            val kernelParamUtils = KernelParamUtils(application)
+            val kernelParamUtils =
+                KernelParamUtils(application)
             val params: MutableList<KernelParameter>? = when {
                 fileExtension.endsWith(".json") -> kernelParamUtils.getParamsFromJsonUri(uri)
                 fileExtension.endsWith(".conf") -> kernelParamUtils.getParamsFromConfUri(uri)
