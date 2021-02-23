@@ -10,8 +10,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.utils.KernelParamUtils
-import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.utils.RootUtils
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.topjohnwu.superuser.Shell
@@ -121,11 +121,11 @@ class BaseStartUpService(
 
     private suspend fun applyConfig() = withContext(Dispatchers.IO) {
         weakContext.get()?.let { context ->
-            val params: List<KernelParameter> = paramPrefs.getUserParamsSet()
+            val params: List<KernelParam> = paramPrefs.getUserParamsSet()
             val kernelParamUtils =
                 KernelParamUtils(context)
 
-            params.forEach { kernelParam: KernelParameter ->
+            params.forEach { kernelParam: KernelParam ->
                 kernelParamUtils.commitChanges(kernelParam)
             }
         }

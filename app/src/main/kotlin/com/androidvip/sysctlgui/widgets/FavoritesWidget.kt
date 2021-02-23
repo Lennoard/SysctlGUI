@@ -10,7 +10,7 @@ import android.net.Uri
 import android.widget.RemoteViews
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.ui.SplashActivity
-import com.androidvip.sysctlgui.ui.paramlist.KernelParamListAdapter
+import com.androidvip.sysctlgui.ui.params.list.KernelParamListAdapter
 import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
@@ -52,7 +52,7 @@ class FavoritesWidget : AppWidgetProvider() {
             Intent(context, SplashActivity::class.java).apply {
                 flags = FLAG_ACTIVITY_NEW_TASK
                 action = Actions.EditParam.name
-                putExtra(KernelParamListAdapter.EXTRA_PARAM, param)
+                putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
                 putExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, true)
                 context.startActivity(this)
             }

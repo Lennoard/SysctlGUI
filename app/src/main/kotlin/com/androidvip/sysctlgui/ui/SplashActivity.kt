@@ -9,16 +9,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.utils.RootUtils
-import com.androidvip.sysctlgui.ui.base.BaseActivity
-import com.androidvip.sysctlgui.ui.paramlist.KernelParamListAdapter
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.ui.parambrowser.KernelParamBrowserActivity
-import com.androidvip.sysctlgui.ui.paramlist.KernelParamsListActivity
+import com.androidvip.sysctlgui.ui.base.BaseActivity
+import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
+import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
+import com.androidvip.sysctlgui.utils.RootUtils
 import com.topjohnwu.superuser.Shell
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +81,7 @@ class SplashActivity : BaseActivity() {
             }
 
             Actions.KernelParamsListActivity.name -> {
-                Intent(this, KernelParamsListActivity::class.java)
+                Intent(this, KernelParamListActivity::class.java)
             }
 
             Actions.SettingsActivity.name -> {
@@ -91,8 +91,8 @@ class SplashActivity : BaseActivity() {
             Actions.EditParam.name -> {
                 Intent(this, EditKernelParamActivity::class.java).apply {
                     putExtra(
-                        KernelParamListAdapter.EXTRA_PARAM,
-                        intent.getSerializableExtra(KernelParamListAdapter.EXTRA_PARAM)
+                        RemovableParamAdapter.EXTRA_PARAM,
+                        intent.getSerializableExtra(RemovableParamAdapter.EXTRA_PARAM)
                     )
                     putExtra(
                         RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,

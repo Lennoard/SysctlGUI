@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:orientation="vertical"
-    android:id="@+id/listKernelParamLayout"
-    android:background="?attr/selectableItemBackground">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/listKernelParamName"
+    <data>
+
+        <variable
+            name="param"
+            type="com.androidvip.sysctlgui.data.models.KernelParam" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/paramLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="16sp" />
+        android:background="?attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/listKernelParamValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="2dp"
-        android:text="…"
-        android:textSize="14sp" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/paramName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{param.name}"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="16sp"
+            tools:text="@tools:sample/cities" />
 
-</LinearLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/paramValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="4dp"
+            android:text="@{param.value}"
+            tools:text="@tools:sample/last_names" />
+
+    </LinearLayout>
+</layout>

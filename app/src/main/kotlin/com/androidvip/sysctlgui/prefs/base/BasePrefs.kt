@@ -1,7 +1,7 @@
 package com.androidvip.sysctlgui.prefs.base
 
 import android.content.Context
-import com.androidvip.sysctlgui.KernelParameter
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -9,17 +9,17 @@ import java.lang.reflect.Type
 
 abstract class BasePrefs(val context: Context?, val fileName: String) {
 
-    fun getUserParamsSet(): MutableList<KernelParameter> {
+    fun getUserParamsSet(): MutableList<KernelParam> {
         if (context == null) return mutableListOf()
 
         val paramsFile = File(context.filesDir, fileName)
         if (!paramsFile.exists()) return mutableListOf()
 
-        val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
+        val type: Type = object : TypeToken<List<KernelParam>>() {}.type
         return Gson().fromJson(paramsFile.readText(), type)
     }
 
-    fun putParam(param: KernelParameter): Boolean {
+    fun putParam(param: KernelParam): Boolean {
         if (context == null) return false
 
         return try {
@@ -42,7 +42,7 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
         }
     }
 
-    fun removeParam(param: KernelParameter): Boolean {
+    fun removeParam(param: KernelParam): Boolean {
         if (context == null) return false
 
         return try {
@@ -64,15 +64,15 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
         }
     }
 
-    fun putParams(params: MutableList<KernelParameter>): Boolean {
-        return params.map { kernelParameter: KernelParameter ->
+    fun putParams(params: MutableList<KernelParam>): Boolean {
+        return params.map { kernelParameter: KernelParam ->
             putParam(kernelParameter)
         }.contains(false).not().also {
             changeListener()?.onChanged()
         }
     }
 
-    fun removeAllParams(): MutableList<KernelParameter> {
+    fun removeAllParams(): MutableList<KernelParam> {
         val oldParams = getUserParamsSet()
         try {
             val paramFile = File(context?.filesDir, fileName)
@@ -84,13 +84,13 @@ abstract class BasePrefs(val context: Context?, val fileName: String) {
         return oldParams
     }
 
-    fun paramExists(param: KernelParameter, params: List<KernelParameter>): Boolean {
+    fun paramExists(param: KernelParam, params: List<KernelParam>): Boolean {
         return params.containsParam(param)
     }
 
     abstract fun changeListener() : ChangeListener?
 
-    private fun List<KernelParameter>.containsParam(param: KernelParameter): Boolean {
+    private fun List<KernelParam>.containsParam(param: KernelParam): Boolean {
         for (p in this) if (p.name == param.name) return true
         return false
     }

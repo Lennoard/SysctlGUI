@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EXTRA_ITEM
 
@@ -28,7 +28,7 @@ class FavoritesRemoteViewsFactory(
         AppWidgetManager.INVALID_APPWIDGET_ID
     )
 
-    private var params: MutableList<KernelParameter> = mutableListOf()
+    private var params: MutableList<KernelParam> = mutableListOf()
 
     override fun onCreate() {
         params = FavoritePrefs(context).getUserParamsSet()

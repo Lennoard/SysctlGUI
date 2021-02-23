@@ -1,8 +1,10 @@
-package com.androidvip.sysctlgui.ui.parambrowser
+package com.androidvip.sysctlgui.ui.params.browse
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
@@ -12,47 +14,93 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.KernelParam
+import com.androidvip.sysctlgui.databinding.ActivityKernelParamBrowserBinding
+import com.androidvip.sysctlgui.goAway
+import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
+import com.androidvip.sysctlgui.show
+import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
-import kotlinx.android.synthetic.main.activity_kernel_param_browser.*
+import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
+import com.androidvip.sysctlgui.ui.params.ParamsViewModel
+import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.inject
 import java.io.File
-import java.lang.ref.WeakReference
 
-class KernelParamBrowserActivity : BaseSearchActivity(),
-    DirectoryChangedListener {
+class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListener,
+    OnParamItemClickedListener {
     private var actionBarMenu: Menu? = null
     private var documentationUrl = "https://www.kernel.org/doc/Documentation"
     private var currentPath = "/proc/sys"
+    private lateinit var binding: ActivityKernelParamBrowserBinding
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
-        KernelParamBrowserAdapter(
-            arrayOf(),
-            WeakReference(this),
-            this
-        )
+        KernelParamBrowserAdapter(this, this)
     }
+    private val paramViewModel: ParamsViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_kernel_param_browser)
+        binding = ActivityKernelParamBrowserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        paramBrowserSwipeLayout.apply {
+        binding.swipeLayout.apply {
             setColorSchemeResources(R.color.colorAccent)
             setOnRefreshListener { refreshList() }
         }
 
-        paramBrowserRecyclerView.apply {
+        binding.recyclerView.apply {
             setHasFixedSize(true)
             addItemDecoration(DividerItemDecoration(this.context, LinearLayout.VERTICAL))
             layoutManager = GridLayoutManager(this.context, recyclerViewColumns)
             adapter = paramsBrowserAdapter
         }
+
+        paramViewModel.loading.observe(this, Observer {
+            binding.swipeLayout.isRefreshing = it
+        })
+
+        paramViewModel.browsableKernelParams.observe(this, Observer {
+            lifecycleScope.launch {
+                paramsBrowserAdapter.updateData(filterList(it))
+            }
+        })
+
+        refreshList()
+    }
+
+    override fun onBackPressed() {
+        if (currentPath == "/proc/sys") {
+            finish()
+        } else {
+            onDirectoryChanged(File(currentPath).parentFile ?: File("/proc/sys"))
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_browse_params, menu)
+        actionBarMenu = menu
+
+        setUpSearchView(menu)
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            R.id.action_documentation -> openDocumentationUrl()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDirectoryChanged(newDir: File) {
@@ -91,70 +139,34 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
         }
 
         resetSearchExpression()
-
         refreshList()
     }
 
-    override fun onStart() {
-        super.onStart()
-        refreshList()
+    override fun onParamItemClicked(param: KernelParam) {
+        Intent(this, EditKernelParamActivity::class.java).apply {
+            putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
+            startActivity(this)
+        }
     }
 
     override fun onQueryTextChanged() {
         refreshList()
     }
 
-    override fun onBackPressed() {
-        if (currentPath == "/proc/sys") {
-            finish()
-        } else {
-            onDirectoryChanged(File(currentPath).parentFile!!)
-            refreshList()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_browse_params, menu)
-        actionBarMenu = menu
-
-        setUpSearchView(menu)
-
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-            R.id.action_documentation -> openDocumentationUrl()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun refreshList() {
-        paramBrowserSwipeLayout.isRefreshing = true
-
-        launch {
-            var files = getCurrentPathFiles()
-
-            withContext(Dispatchers.Default) {
-                files = files?.filter { file ->
-                    file.name.toLowerCase(defaultLocale)
-                        .replace(".", "")
-                        .contains(searchExpression.toLowerCase(defaultLocale))
-                }?.toTypedArray()
-            }
-
-            paramBrowserSwipeLayout.isRefreshing = false
-            files?.let {
-                paramsBrowserAdapter.updateData(it)
-            }
+        lifecycleScope.launch {
+            paramViewModel.setPath(File(currentPath))
         }
     }
 
-    private suspend fun getCurrentPathFiles() : Array<File>? = withContext(Dispatchers.IO) {
-        runCatching {
-            File(currentPath).listFiles()
-        }.getOrDefault(arrayOf())
+    private suspend fun filterList(list: List<KernelParam>) = withContext(Dispatchers.Default) {
+        if (searchExpression.isEmpty()) return@withContext list.toMutableList()
+
+        return@withContext list.filter { param ->
+            param.name.toLowerCase(defaultLocale)
+                .replace(".", "")
+                .contains(searchExpression.toLowerCase(defaultLocale))
+        }.toMutableList()
     }
 
     @SuppressLint("SetJavaScriptEnabled")

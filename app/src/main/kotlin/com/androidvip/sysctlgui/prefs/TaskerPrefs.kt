@@ -1,7 +1,7 @@
 package com.androidvip.sysctlgui.prefs
 
 import android.content.Context
-import com.androidvip.sysctlgui.KernelParameter
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
 
@@ -14,7 +14,7 @@ import com.androidvip.sysctlgui.receivers.TaskerReceiver
 class TaskerPrefs(context: Context?, listNumber: Int) :
     BasePrefs(context, fileName = "tasker-params-$listNumber.json") {
 
-    fun isTaskerParam(param: KernelParameter): Boolean {
+    fun isTaskerParam(param: KernelParam): Boolean {
         return paramExists(param, getUserParamsSet())
     }
 

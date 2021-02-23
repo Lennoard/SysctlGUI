@@ -10,10 +10,14 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.ui.parambrowser.KernelParamBrowserActivity
-import com.androidvip.sysctlgui.ui.paramlist.KernelParamsListActivity
+import com.androidvip.sysctlgui.runSafeOnUiThread
+import com.androidvip.sysctlgui.toast
+import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
+import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
+import com.androidvip.sysctlgui.ui.settings.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
 import com.androidvip.sysctlgui.utils.KernelParamUtils
 import com.androidvip.sysctlgui.utils.RootUtils
@@ -36,7 +40,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setSupportActionBar(toolbar)
 
         mainParamsList.setOnClickListener {
-            Intent(this, KernelParamsListActivity::class.java).apply {
+            Intent(this, KernelParamListActivity::class.java).apply {
                 startActivity(this)
             }
         }
@@ -121,7 +125,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) = withContext(Dispatchers.Default) {
         val context = this@MainActivity
-        val successfulParams: MutableList<KernelParameter> = mutableListOf()
+        val successfulParams: MutableList<KernelParam> = mutableListOf()
 
         fun showResultDialog(message: String, success: Boolean) {
             val dialog = AlertDialog.Builder(context)
@@ -138,7 +142,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         try {
             val kernelParamUtils =
                 KernelParamUtils(application)
-            val params: MutableList<KernelParameter>? = when {
+            val params: MutableList<KernelParam>? = when {
                 fileExtension.endsWith(".json") -> kernelParamUtils.getParamsFromJsonUri(uri)
                 fileExtension.endsWith(".conf") -> kernelParamUtils.getParamsFromConfUri(uri)
                 else -> mutableListOf()
@@ -159,7 +163,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         successfulParams.add(it)
                     }
 
-                    override suspend fun onCustomApply(kernelParam: KernelParameter) { }
+                    override suspend fun onCustomApply(kernelParam: KernelParam) { }
                 })
             }
 

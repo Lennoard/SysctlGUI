@@ -4,17 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.readLines
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.IOException
 import java.lang.reflect.Type
 
 class KernelParamUtils(val context: Context) {
@@ -26,41 +24,38 @@ class KernelParamUtils(val context: Context) {
         Prefs(context)
     }
 
-    fun exportParamsToUri(uri: Uri): Boolean {
-
-        return try {
-            context.contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use { fileOutputStream ->
-                    fileOutputStream.write(Gson().toJson(paramPrefs.getUserParamsSet()).toByteArray())
-                }
+    fun exportParamsToUri(uri: Uri): Boolean = runCatching {
+        context.contentResolver.openFileDescriptor(uri, "w")?.use {
+            FileOutputStream(it.fileDescriptor).use { fileOutputStream ->
+                fileOutputStream.write(Gson().toJson(paramPrefs.getUserParamsSet()).toByteArray())
             }
-            true
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-            false
-        } catch (e: IOException) {
-            e.printStackTrace()
-            false
         }
+        true
+    }.getOrElse {
+        it.printStackTrace()
+        false
     }
 
-    fun getParamsFromJsonUri(uri: Uri): MutableList<KernelParameter>? {
+    fun getParamsFromJsonUri(uri: Uri): MutableList<KernelParam>? {
         val sb = StringBuilder()
         uri.readLines(context) { sb.append(it) }
 
-        val type: Type = object : TypeToken<List<KernelParameter>>() {}.type
+        val type: Type = object : TypeToken<List<KernelParam>>() {}.type
         return Gson().fromJson(sb.toString(), type)
     }
 
-    fun getParamsFromConfUri(uri: Uri): MutableList<KernelParameter>? {
-        val readParams = mutableListOf<KernelParameter>()
+    fun getParamsFromConfUri(uri: Uri): MutableList<KernelParam>? {
+        val readParams = mutableListOf<KernelParam>()
 
+        var cont = 0
         uri.readLines(context) { line ->
-            if (!line.startsWith("#") and !line.startsWith(";") and line.isNotEmpty()) {
+            if (!line.startsWith("#") && !line.startsWith(";") && line.isNotEmpty()) {
                 runCatching {
-                    readParams.add(KernelParameter().apply {
-                        name = line.split("=").first().trim()
+                    readParams.add(KernelParam(
+                        id = ++cont,
+                        name = line.split("=").first().trim(),
                         value = line.split("=")[1].trim()
+                    ).apply {
                         setPathFromName(this.name)
                     })
                 }
@@ -70,10 +65,10 @@ class KernelParamUtils(val context: Context) {
         return readParams
     }
 
-    suspend fun commitChanges(kernelParam: KernelParameter) = withContext(Dispatchers.Default) {
-        val commandPrefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
+    suspend fun commitChanges(kernelParam: KernelParam) = withContext(Dispatchers.Default) {
+        val prefix = if (prefs.getBoolean(Prefs.USE_BUSYBOX, false)) "busybox " else ""
         val command = when (prefs.getString(Prefs.COMMIT_MODE, "sysctl")) {
-            "sysctl" -> "${commandPrefix}sysctl -w ${kernelParam.name}=${kernelParam.value}"
+            "sysctl" -> "${prefix}sysctl -w ${kernelParam.name}=${kernelParam.value}"
             "echo" -> "echo '${kernelParam.value}' > ${kernelParam.path}"
             else -> "busybox sysctl -w ${kernelParam.name}=${kernelParam.value}"
         }
@@ -85,17 +80,17 @@ class KernelParamUtils(val context: Context) {
      * Suspend function to apply kernel parameters. Should be called with [Dispatchers.Default]
      * as it will swap dispatchers according to the result/operation
      *
-     * @param kernelParameter: parameter to apply
+     * @param kernelParam: parameter to apply
      * @param kernelParamApply: callback interface
      * @param customApply whether or not to delegate this application of parameters
      */
     suspend fun applyParam(
-        kernelParameter: KernelParameter,
+        kernelParam: KernelParam,
         customApply: Boolean,
         kernelParamApply: KernelParamApply
     ) = withContext(Dispatchers.Default) {
 
-        val newValue = kernelParameter.value
+        val newValue = kernelParam.value
         val commitMode = prefs.getString(Prefs.COMMIT_MODE, "sysctl")
 
         if (!prefs.getBoolean(Prefs.ALLOW_BLANK, false) && newValue.isEmpty()) {
@@ -104,12 +99,12 @@ class KernelParamUtils(val context: Context) {
             withContext(Dispatchers.Main) { kernelParamApply.onEmptyValue() }
         } else {
             if (customApply) {
-                kernelParamApply.onCustomApply(kernelParameter) // Keeping the current dispatcher
+                kernelParamApply.onCustomApply(kernelParam) // Keeping the current dispatcher
             } else {
-                val result = commitChanges(kernelParameter) // IO suspend
+                val result = commitChanges(kernelParam) // IO suspend
                 var success = true
                 val feedback = if (commitMode == "sysctl") {
-                    if (result == "error" || !result.contains(kernelParameter.name)) {
+                    if (result == "error" || !result.contains(kernelParam.name)) {
                         success = false
                         context.getString(R.string.failed)
                     } else {
@@ -127,7 +122,7 @@ class KernelParamUtils(val context: Context) {
                 // Fire onSuccess and onFeedBack on Main thread
                 withContext(Dispatchers.Main) {
                     if (success) {
-                        paramPrefs.putParam(kernelParameter)
+                        paramPrefs.putParam(kernelParam)
                         kernelParamApply.onSuccess()
                     }
                     kernelParamApply.onFeedBack(feedback)
@@ -140,6 +135,6 @@ class KernelParamUtils(val context: Context) {
         fun onEmptyValue()
         fun onFeedBack(feedback: String)
         fun onSuccess()
-        suspend fun onCustomApply(kernelParam: KernelParameter)
+        suspend fun onCustomApply(kernelParam: KernelParam)
     }
 }

@@ -6,11 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.androidvip.sysctlgui.*
+import androidx.preference.PreferenceManager
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.isValidTaskerBundle
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.prefs.TaskerPrefs
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
+import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.utils.KernelParamUtils
 import kotlinx.coroutines.*
 import kotlin.contracts.ExperimentalContracts
@@ -29,7 +32,10 @@ class TaskerReceiver : BroadcastReceiver(), CoroutineScope {
             launch {
                 with (context) {
                     applyParams(this.applicationContext, taskerList)
-                    toast(getString(R.string.tasker_toast, taskerList), Toast.LENGTH_LONG)
+                    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                    if (prefs.getBoolean(Prefs.SHOW_TASKER_TOAST, true)) {
+                        toast(getString(R.string.tasker_toast, taskerList), Toast.LENGTH_LONG)
+                    }
                 }
             }
         } else {

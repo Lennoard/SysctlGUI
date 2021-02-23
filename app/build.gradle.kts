@@ -42,10 +42,10 @@ android {
         }
     }
 
-    /*buildFeatures {
+    buildFeatures {
         viewBinding = true
         dataBinding = true
-    }*/
+    }
 
     sourceSets {
         maybeCreate("main").java.srcDir("src/main/kotlin")
@@ -83,11 +83,18 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7")
 
+    implementation("org.koin:koin-android:2.1.6")
+    implementation("org.koin:koin-androidx-scope:2.1.6")
+    implementation("org.koin:koin-androidx-viewmodel:2.1.6")
+
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.room:room-ktx:2.2.6")
+    implementation("androidx.room:room-runtime:2.2.6")
 
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.code.gson:gson:2.8.6")
@@ -96,4 +103,6 @@ dependencies {
     implementation("com.daimajia.easing:library:2.1@aar")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.11.0")
     implementation("com.github.topjohnwu.libsu:core:2.5.1")
+
+    kapt("androidx.room:room-compiler:2.2.6")
 }

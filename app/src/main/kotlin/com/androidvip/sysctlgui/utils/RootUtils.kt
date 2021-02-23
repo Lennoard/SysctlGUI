@@ -17,19 +17,19 @@ object RootUtils {
     suspend fun executeWithOutput(
         command: String,
         defaultOutput: String = "",
-        forEachLine: ((String?) -> Unit)? = null
+        forEachLine: ((String) -> Unit)? = null
     ): String = withContext(Dispatchers.Default) {
         val sb = StringBuilder()
 
         try {
             val outputs = Shell.su(command).exec().out
             if (ShellUtils.isValidOutput(outputs)) {
-                outputs.forEach {
+                outputs.forEach { line ->
                     if (forEachLine != null) {
-                        forEachLine(it)
-                        sb.append(it).append("\n")
+                        forEachLine(line ?: "")
+                        sb.append(line ?: "").append("\n")
                     } else {
-                        sb.append(it).append("\n")
+                        sb.append(line ?: "").append("\n")
                     }
                 }
             }

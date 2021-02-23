@@ -11,13 +11,12 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.androidvip.sysctlgui.KernelParameter
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.ui.EditKernelParamActivity
-import com.androidvip.sysctlgui.ui.base.BaseActivity
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.toast
-import com.androidvip.sysctlgui.ui.paramlist.KernelParamListAdapter
+import com.androidvip.sysctlgui.ui.base.BaseActivity
+import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import kotlinx.coroutines.Dispatchers
@@ -27,12 +26,13 @@ import java.lang.ref.WeakReference
 
 class RemovableParamAdapter(
     val activityRef: WeakReference<BaseActivity>,
-    private val dataSet: MutableList<KernelParameter>,
+    private val dataSet: MutableList<KernelParam>,
     private val paramPrefs: BasePrefs
 ) : RecyclerView.Adapter<RemovableParamAdapter.RemovableViewHolder>() {
 
     companion object {
         const val EXTRA_EDIT_SAVED_PARAM = "edit_saved_param"
+        const val EXTRA_PARAM = "param"
     }
 
     class RemovableViewHolder(v: View) : RecyclerView.ViewHolder(v) {
@@ -87,7 +87,7 @@ class RemovableParamAdapter(
         return dataSet.size
     }
 
-    fun updateData(newData: List<KernelParameter>) {
+    fun updateData(newData: List<KernelParam>) {
         dataSet.clear()
         dataSet.addAll(newData)
         notifyDataSetChanged()
@@ -130,10 +130,10 @@ class RemovableParamAdapter(
         paramPrefs.removeParam(dataSet[position])
     }
 
-    private fun editParam(kernelParam: KernelParameter) {
+    private fun editParam(kernelParam: KernelParam) {
         activityRef.get()?.let {
             Intent(it, EditKernelParamActivity::class.java).apply {
-                putExtra(KernelParamListAdapter.EXTRA_PARAM, kernelParam)
+                putExtra(EXTRA_PARAM, kernelParam)
                 putExtra(EXTRA_EDIT_SAVED_PARAM, true)
                 it.startActivity(this)
             }

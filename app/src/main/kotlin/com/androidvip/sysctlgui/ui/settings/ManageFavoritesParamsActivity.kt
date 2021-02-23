@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.ui
+package com.androidvip.sysctlgui.ui.settings
 
 import com.androidvip.sysctlgui.ui.base.BaseManageParamsActivity
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
