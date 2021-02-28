@@ -6,5 +6,5 @@ import com.androidvip.sysctlgui.data.models.KernelParam
 
 @Database(entities = [KernelParam::class], version = 1, exportSchema = false)
 abstract class ParamDatabase : RoomDatabase() {
-    abstract fun articleDao(): ParamDao
+    abstract fun paramDao(): ParamDao
 }

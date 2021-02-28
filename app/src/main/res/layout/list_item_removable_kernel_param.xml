@@ -1,66 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/error">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_delete_sweep"
-        android:layout_gravity="end|center_vertical"
-        android:layout_marginEnd="24dp"/>
+    <data>
 
-    <LinearLayout
+        <variable
+            name="param"
+            type="com.androidvip.sysctlgui.data.models.KernelParam" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/removableKernelParamLayout"
-        android:padding="16dp"
-        android:orientation="horizontal"
-        android:animateLayoutChanges="true"
-        android:background="@color/colorPrimary">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/listKernelParamName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/listKernelParamValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginTop="2dp"
-                android:text="…"
-                android:textSize="14sp" />
-
-        </LinearLayout>
+        android:background="@color/error">
 
         <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:id="@+id/listKernelParamPopUp"
-            android:src="@drawable/ic_more_vert"
-            android:layout_gravity="center"
-            android:padding="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/ic_delete_sweep" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/removableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-</FrameLayout>
+            <TextView
+                android:id="@+id/paramName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{param.name}"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/popUpIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/cities" />
+
+            <TextView
+                android:id="@+id/paramValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@{param.value}"
+                app:layout_constraintEnd_toStartOf="@+id/popUpIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/paramName"
+                tools:text="@tools:sample/full_names" />
+
+            <ImageView
+                android:id="@+id/popUpIcon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="6dp"
+                android:src="@drawable/ic_more_vert"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+</layout>

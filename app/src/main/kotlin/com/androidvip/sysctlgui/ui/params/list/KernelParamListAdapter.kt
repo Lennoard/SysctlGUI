@@ -5,18 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ListItemKernelParamListBinding
-import com.androidvip.sysctlgui.helpers.BaseViewHolder
+import com.androidvip.sysctlgui.ui.base.BaseViewHolder
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
-import com.androidvip.sysctlgui.ui.params.ParamDiffCallback
+import com.androidvip.sysctlgui.helpers.ParamDiffCallback
 import com.androidvip.sysctlgui.utils.RootUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class KernelParamListAdapter(
-    private val paramItemClickedListener: OnParamItemClickedListener,
-    private val coroutineScope: CoroutineScope
+    private val paramItemClickedListener: OnParamItemClickedListener
 ) : ListAdapter<KernelParam, BaseViewHolder<*>>(ParamDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParamListViewHolder {
@@ -46,10 +41,6 @@ class KernelParamListAdapter(
 
             binding.paramLayout.setOnClickListener {
                 paramItemClickedListener.onParamItemClicked(item)
-            }
-
-            coroutineScope.launch {
-                binding.paramValue.text = getParamValue(item)
             }
         }
     }

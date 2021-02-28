@@ -1,17 +1,18 @@
 package com.androidvip.sysctlgui.ui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.ui.base.BaseActivity
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
@@ -25,8 +26,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
 class SplashActivity : BaseActivity() {
+    private val prefs: SharedPreferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,12 +44,14 @@ class SplashActivity : BaseActivity() {
             )
         }
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         launch {
             val isRootAccessGiven = checkRootAccess()
 
             splashStatusText.setText(R.string.splash_status_checking_busybox)
             val isBusyBoxAvailable = checkBusyBox()
+
+            splashStatusText.setText(R.string.splash_status_checking_migration)
+            checkForDatabaseMigration()
 
             if (isRootAccessGiven) {
                 if (!isBusyBoxAvailable) {
@@ -72,6 +78,17 @@ class SplashActivity : BaseActivity() {
 
     private suspend fun checkBusyBox() = RootUtils.isBusyboxAvailable().also {
         delay(500)
+    }
+
+    private suspend fun checkForDatabaseMigration() {
+        delay(500)
+        if (!prefs.getBoolean(Prefs.MIGRATION_COMPLETED, false)) {
+            splashStatusText.setText(R.string.splash_status_performing_migration)
+
+            val repository: ParamRepository = get()
+            repository.performDatabaseMigration(this)
+            prefs.edit { putBoolean(Prefs.MIGRATION_COMPLETED, true) }
+        }
     }
 
     private fun navigate() {

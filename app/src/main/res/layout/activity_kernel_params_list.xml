@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,6 +14,7 @@
         app:fastScrollHorizontalThumbDrawable="@drawable/fast_scroll_thumb"
         app:fastScrollHorizontalTrackDrawable="@drawable/fast_scroll_track"
         app:fastScrollVerticalThumbDrawable="@drawable/fast_scroll_thumb"
-        app:fastScrollVerticalTrackDrawable="@drawable/fast_scroll_track" />
+        app:fastScrollVerticalTrackDrawable="@drawable/fast_scroll_track"
+        tools:listitem="@layout/list_item_kernel_param_list" />
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

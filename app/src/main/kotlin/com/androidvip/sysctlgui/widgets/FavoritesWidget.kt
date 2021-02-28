@@ -10,8 +10,7 @@ import android.net.Uri
 import android.widget.RemoteViews
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.ui.SplashActivity
-import com.androidvip.sysctlgui.ui.params.list.KernelParamListAdapter
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA

@@ -14,6 +14,7 @@ class Prefs(context: Context?): BasePrefs(context, fileName = "user-params.json"
         const val RUN_ON_START_UP = "run_on_start_up"
         const val START_UP_DELAY = "startup_delay"
         const val SHOW_TASKER_TOAST = "show_tasker_toast"
+        const val MIGRATION_COMPLETED = "migration_completed"
     }
 
     override fun changeListener(): ChangeListener? = null

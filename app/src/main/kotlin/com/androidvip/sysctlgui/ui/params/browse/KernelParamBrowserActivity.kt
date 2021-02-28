@@ -3,8 +3,8 @@ package com.androidvip.sysctlgui.ui.params.browse
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
@@ -14,7 +14,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,12 +22,12 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamBrowserBinding
 import com.androidvip.sysctlgui.goAway
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.show
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
-import com.androidvip.sysctlgui.ui.params.ParamsViewModel
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,16 +35,19 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.io.File
 
-class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListener,
-    OnParamItemClickedListener {
+class KernelParamBrowserActivity : BaseSearchActivity(),
+    DirectoryChangedListener,
+    OnParamItemClickedListener
+{
+    private lateinit var binding: ActivityKernelParamBrowserBinding
     private var actionBarMenu: Menu? = null
     private var documentationUrl = "https://www.kernel.org/doc/Documentation"
     private var currentPath = "/proc/sys"
-    private lateinit var binding: ActivityKernelParamBrowserBinding
+    private val paramViewModel: BrowseParamsViewModel by inject()
+    private val prefs: SharedPreferences by inject()
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
         KernelParamBrowserAdapter(this, this)
     }
-    private val paramViewModel: ParamsViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +55,10 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        paramViewModel.listFoldersFirst = prefs.getBoolean(Prefs.LIST_FOLDERS_FIRST, true)
+
         binding.swipeLayout.apply {
-            setColorSchemeResources(R.color.colorAccent)
+            setColorSchemeResources(R.color.colorAccent, R.color.colorAccentLight)
             setOnRefreshListener { refreshList() }
         }
 
@@ -65,16 +69,16 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
             adapter = paramsBrowserAdapter
         }
 
-        paramViewModel.loading.observe(this, Observer {
-            binding.swipeLayout.isRefreshing = it
-        })
-
-        paramViewModel.browsableKernelParams.observe(this, Observer {
+        paramViewModel.viewState.observe(this) { state ->
             lifecycleScope.launch {
-                paramsBrowserAdapter.updateData(filterList(it))
+                binding.swipeLayout.isRefreshing = state.isLoading
+                paramsBrowserAdapter.updateData(filterList(state.data))
             }
-        })
+        }
+    }
 
+    override fun onStart() {
+        super.onStart()
         refreshList()
     }
 
@@ -154,9 +158,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
     }
 
     private fun refreshList() {
-        lifecycleScope.launch {
-            paramViewModel.setPath(File(currentPath))
-        }
+        paramViewModel.setPath(currentPath)
     }
 
     private suspend fun filterList(list: List<KernelParam>) = withContext(Dispatchers.Default) {
@@ -234,3 +236,4 @@ class KernelParamBrowserActivity : BaseSearchActivity(), DirectoryChangedListene
 interface DirectoryChangedListener {
     fun onDirectoryChanged(newDir: File)
 }
+

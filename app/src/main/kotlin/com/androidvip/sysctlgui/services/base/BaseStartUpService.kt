@@ -9,33 +9,29 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.utils.KernelParamUtils
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.utils.RootUtils
+import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.prefs.Prefs
+import com.androidvip.sysctlgui.utils.RootUtils
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.*
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.lang.ref.WeakReference
 import kotlin.coroutines.CoroutineContext
 
 class BaseStartUpService(
     private var weakContext: WeakReference<Context?>,
     private var handler: ServiceHandler?
-) : CoroutineScope {
+) : CoroutineScope, KoinComponent {
     override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
     /**
      * important: implement method to check if the device keep crashing on boot and disable start up
      *            maybe add a counter to prefs and if the value is > 3 disable
      */
-    private val prefs: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(weakContext.get())
-    }
-
-    private val paramPrefs by lazy {
-        Prefs(weakContext.get())
-    }
+    private val prefs: SharedPreferences by inject()
+    private val repository: ParamRepository by inject()
 
     fun onStart() {
         weakContext.get()?.let { context ->
@@ -51,7 +47,6 @@ class BaseStartUpService(
                     } else {
                         NotificationManagerCompat.from(context).cancel(SERVICE_ID)
                     }
-                    onCleanUp()
                 }
             }
         }
@@ -119,15 +114,9 @@ class BaseStartUpService(
         }
     }
 
-    private suspend fun applyConfig() = withContext(Dispatchers.IO) {
-        weakContext.get()?.let { context ->
-            val params: List<KernelParam> = paramPrefs.getUserParamsSet()
-            val kernelParamUtils =
-                KernelParamUtils(context)
-
-            params.forEach { kernelParam: KernelParam ->
-                kernelParamUtils.commitChanges(kernelParam)
-            }
+    private suspend fun applyConfig() {
+        repository.getParams(ParamRepository.SOURCE_ROOM).forEach {
+            repository.update(it, ParamRepository.SOURCE_RUNTIME)
         }
     }
 

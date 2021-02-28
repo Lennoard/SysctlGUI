@@ -1,9 +1,8 @@
 package com.androidvip.sysctlgui.ui.settings
 
-import com.androidvip.sysctlgui.ui.base.BaseManageParamsActivity
-import com.androidvip.sysctlgui.prefs.FavoritePrefs
-import com.androidvip.sysctlgui.prefs.base.BasePrefs
+import com.androidvip.sysctlgui.data.models.KernelParam
 
 class ManageFavoritesParamsActivity : BaseManageParamsActivity() {
-    override fun setPrefs(): BasePrefs = FavoritePrefs(applicationContext)
+    override val filterPredicate: (KernelParam) -> Boolean
+        get() = { it.favorite }
 }

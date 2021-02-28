@@ -1,14 +1,18 @@
-package com.androidvip.sysctlgui.ui.params
+package com.androidvip.sysctlgui.helpers
 
 import androidx.recyclerview.widget.DiffUtil
 import com.androidvip.sysctlgui.data.models.KernelParam
 
 class ParamDiffCallback : DiffUtil.ItemCallback<KernelParam>() {
     override fun areItemsTheSame(oldItem: KernelParam, newItem: KernelParam): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: KernelParam, newItem: KernelParam): Boolean {
-        return oldItem == newItem
+        return oldItem.name == newItem.name
+            && oldItem.path == newItem.path
+            && oldItem.value == newItem.value
+            && oldItem.favorite == newItem.favorite
+            && oldItem.taskerParam == newItem.taskerParam
     }
 }

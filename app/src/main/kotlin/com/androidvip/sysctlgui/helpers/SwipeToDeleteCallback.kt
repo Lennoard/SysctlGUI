@@ -11,23 +11,31 @@ import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter.RemovableViewHolder
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.settings.RemovableParamViewHolder
+import java.lang.ref.WeakReference
 import kotlin.math.abs
 
 
-class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) : ItemTouchHelper.SimpleCallback(
-    0, ItemTouchHelper.START or ItemTouchHelper.END
+class SwipeToDeleteCallback(
+    private val adapter: RemovableParamAdapter,
+    weakContext: WeakReference<Context>
+) : ItemTouchHelper.SimpleCallback(
+    0,
+    ItemTouchHelper.START or ItemTouchHelper.END
 ) {
     private val clearPaint: Paint = Paint()
-    private val deleteDrawable: Drawable? = ContextCompat.getDrawable(
-        adapter.activityRef.get()!!,
-        R.drawable.ic_delete_sweep
+    private val deleteDrawable: Drawable? = VectorDrawableCompat.create(
+        weakContext.get()!!.resources,
+        R.drawable.ic_delete_sweep,
+        null
     )
     private val background: ColorDrawable = ColorDrawable(ContextCompat.getColor(
-        adapter.activityRef.get()!!,
+        weakContext.get()!!,
         R.color.error
     ))
     private val intrinsicWidth: Int
@@ -39,13 +47,15 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) : ItemTo
         intrinsicHeight = deleteDrawable.intrinsicHeight
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val position = viewHolder.adapterPosition
-        adapter.removeItem(position, (viewHolder as RemovableViewHolder).removableView, adapter.activityRef.get())
+    override fun onSwiped(holder: RecyclerView.ViewHolder, direction: Int) {
+        val position = holder.adapterPosition
+        adapter.onRemoveRequestedListener.onRemoveRequested(
+            position, false, (holder as RemovableParamViewHolder).binding.removableLayout
+        )
     }
 
-    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-        return if (viewHolder is RemovableViewHolder) {
+    override fun getMovementFlags(recyclerView: RecyclerView, holder: RecyclerView.ViewHolder): Int {
+        return if (holder is RemovableParamViewHolder) {
             ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.START)
         } else 0
     }
@@ -79,8 +89,10 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) : ItemTo
                 itemView.right.toFloat(),
                 itemView.bottom.toFloat()
             )
-            (viewHolder as RemovableViewHolder).popupIcon.show()
-            return super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, false)
+            (viewHolder as RemovableParamViewHolder).binding.popUpIcon.show()
+            return super.onChildDraw(
+                canvas, recyclerView, viewHolder, dX, dY, actionState, false
+            )
         }
 
         val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
@@ -100,9 +112,9 @@ class SwipeToDeleteCallback(private val adapter: RemovableParamAdapter) : ItemTo
         background.draw(canvas)
         if (dX < (-48F).dpToPx(recyclerView.context)) {
             deleteDrawable?.draw(canvas)
-            (viewHolder as RemovableViewHolder).popupIcon.goAway()
+            (viewHolder as RemovableParamViewHolder).binding.popUpIcon.goAway()
         } else {
-            (viewHolder as RemovableViewHolder).popupIcon.show()
+            (viewHolder as RemovableParamViewHolder).binding.popUpIcon.show()
         }
 
         val alpha = 1 - abs(dX) / viewHolder.itemView.width.toFloat()

@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ListItemKernelFileBrowserBinding
-import com.androidvip.sysctlgui.helpers.BaseViewHolder
+import com.androidvip.sysctlgui.ui.base.BaseViewHolder
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
-import com.androidvip.sysctlgui.ui.params.ParamDiffCallback
+import com.androidvip.sysctlgui.helpers.ParamDiffCallback
 import java.io.File
 
 class KernelParamBrowserAdapter(
@@ -62,6 +62,7 @@ class KernelParamBrowserAdapter(
                 }
             } else {
                 with(binding) {
+                    name.typeface = Typeface.create("sans-serif", Typeface.NORMAL)
                     name.setTextColor(Color.parseColor("#99FFFFFF")) // 60% white
                     icon.setImageResource(R.drawable.ic_file_outline)
                     icon.setBackgroundResource(R.drawable.circle_file)

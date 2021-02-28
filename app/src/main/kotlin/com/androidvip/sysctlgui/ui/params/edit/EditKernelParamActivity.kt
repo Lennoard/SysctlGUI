@@ -11,31 +11,25 @@ import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
-import com.androidvip.sysctlgui.prefs.FavoritePrefs
+import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.prefs.TaskerPrefs
-import com.androidvip.sysctlgui.ui.params.list.KernelParamListAdapter
-import com.androidvip.sysctlgui.utils.KernelParamUtils
+import com.androidvip.sysctlgui.utils.ApplyResult
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.io.InputStream
 
 class EditKernelParamActivity : AppCompatActivity() {
-    private val prefs: SharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this)
-    }
-    private val favoritePrefs by lazy { FavoritePrefs(applicationContext) }
-    private val paramPrefs by lazy { Prefs(applicationContext) }
-    private var taskerPrefs: TaskerPrefs? = null
+    private val prefs: SharedPreferences by inject()
+    private val repository: ParamRepository by inject()
 
-    private var kernelParameter: KernelParam? = null
+    private lateinit var kernelParameter: KernelParam
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,51 +38,44 @@ class EditKernelParamActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val extraParam = RemovableParamAdapter.EXTRA_PARAM
-        kernelParameter = intent.getParcelableExtra(extraParam) as KernelParam?
+        (intent.getParcelableExtra(extraParam) as? KernelParam)?.also {
+            kernelParameter = it
 
-        if (kernelParameter == null) {
-            showInvalidParamError()
-        } else {
-            if (!kernelParameter!!.hasValidPath() || !kernelParameter!!.hasValidName()) {
+            if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidName()) {
                 showInvalidParamError()
             } else {
-                defineInputTypeForValue(kernelParameter!!.value)
-                editParamInput.setText(kernelParameter!!.value)
-                Handler().postDelayed({ updateTextUi(kernelParameter!!) }, 100)
+                defineInputTypeForValue(kernelParameter.value)
+                editParamInput.setText(kernelParameter.value)
+                Handler().postDelayed({ updateTextUi(kernelParameter) }, 100)
 
                 editParamApply.setOnClickListener {
                     lifecycleScope.launch {
-                        applyParam(kernelParameter!!)
+                        applyParam(kernelParameter)
                     }
                 }
             }
+        } ?: run {
+            showInvalidParamError()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_params, menu)
         menu?.findItem(R.id.action_favorite)?.let {
-            kernelParameter?.let { param ->
-                if (favoritePrefs.isFavorite(param)) {
-                    it.setIcon(R.drawable.ic_favorite_selected)
-                } else {
-                    it.setIcon(R.drawable.ic_favorite_unselected)
-                }
+            if (kernelParameter.favorite) {
+                it.setIcon(R.drawable.ic_favorite_selected)
+            } else {
+                it.setIcon(R.drawable.ic_favorite_unselected)
             }
         }
 
         menu?.findItem(R.id.action_tasker)?.let {
             if (isTaskerInstalled()) {
                 it.isVisible = true
-                kernelParameter?.let { param ->
-                    if (taskerPrefs != null) {
-                        if (taskerPrefs!!.isTaskerParam(param)) {
-                            it.setIcon(R.drawable.ic_action_tasker_remove)
-                        } else {
-                            it.setIcon(R.drawable.ic_action_tasker_add)
-                        }
-                    }
-
+                if (kernelParameter.taskerParam) {
+                    it.setIcon(R.drawable.ic_action_tasker_remove)
+                } else {
+                    it.setIcon(R.drawable.ic_action_tasker_add)
                 }
             } else {
                 it.isVisible = false
@@ -102,34 +89,35 @@ class EditKernelParamActivity : AppCompatActivity() {
         when (item.itemId) {
             android.R.id.home -> finish()
             R.id.action_favorite -> {
-                kernelParameter?.let {
-                    return if (favoritePrefs.isFavorite(it)) {
-                        favoritePrefs.removeParam(it)
-                        item.setIcon(R.drawable.ic_favorite_unselected)
-                        true
-                    } else {
-                        favoritePrefs.putParam(it)
-                        item.setIcon(R.drawable.ic_favorite_selected)
-                        true
-                    }
+                if (kernelParameter.favorite) {
+                    kernelParameter.favorite = false
+                    item.setIcon(R.drawable.ic_favorite_unselected)
+                } else {
+                    kernelParameter.favorite = true
+                    item.setIcon(R.drawable.ic_favorite_selected)
                 }
+
+                lifecycleScope.launch {
+                    repository.update(kernelParameter, ParamRepository.SOURCE_ROOM)
+                }
+                return true
             }
 
             R.id.action_tasker -> {
                 selectTaskerListAsDialog { taskerList ->
-                    taskerPrefs = TaskerPrefs(applicationContext, taskerList)
-                    kernelParameter?.let { param ->
-                        taskerPrefs?.let {
-                            if (it.isTaskerParam(param)) {
-                                it.removeParam(param)
-                                item.setIcon(R.drawable.ic_action_tasker_add)
-                                toast(getString(R.string.removed_from_tasker_list, taskerList))
-                            } else {
-                                it.putParam(param)
-                                item.setIcon(R.drawable.ic_action_tasker_remove)
-                                toast(getString(R.string.added_to_tasker_list, taskerList))
-                            }
-                        }
+                    if (kernelParameter.taskerParam) {
+                        kernelParameter.taskerParam = false
+                        item.setIcon(R.drawable.ic_action_tasker_add)
+                        toast(getString(R.string.removed_from_tasker_list, taskerList))
+                    } else {
+                        kernelParameter.favorite = true
+                        item.setIcon(R.drawable.ic_action_tasker_remove)
+                        toast(getString(R.string.added_to_tasker_list, taskerList))
+                    }
+
+                    kernelParameter.taskerList = taskerList
+                    lifecycleScope.launch {
+                        repository.update(kernelParameter, ParamRepository.SOURCE_ROOM)
                     }
                 }
                 return true
@@ -195,7 +183,11 @@ class EditKernelParamActivity : AppCompatActivity() {
             .setSingleChoiceItems(R.array.tasker_lists, -1) { dialog, which ->
                 block(which)
                 dialog.dismiss()
-            }.show()
+            }.also {
+                if (!isFinishing) {
+                    it.show()
+                }
+            }
     }
 
     private fun defineInputTypeForValue(paramValue: String) {
@@ -276,54 +268,36 @@ class EditKernelParamActivity : AppCompatActivity() {
         return if (info.isNullOrEmpty()) getString(R.string.no_info_available) else info
     }
 
-    private suspend fun applyParam(KernelParam: KernelParam) {
-        val kernelParamUtils =
-            KernelParamUtils(this.application)
-        val useCustomApply = intent.getBooleanExtra(
+    private suspend fun applyParam(kernelParam: KernelParam) {
+        val isEditingSavedParam = intent.getBooleanExtra(
             RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
             false
         )
 
         val newValue = editParamInput.text.toString()
-        val newParam = KernelParam.copy().also {
+        val newParam = kernelParam.copy().also {
             it.value = newValue
         }
 
-        kernelParamUtils.applyParam(
-            newParam,
-            useCustomApply,
-            object : KernelParamUtils.KernelParamApply {
-                override fun onEmptyValue() {
-                    Snackbar.make(
-                        editParamApply,
-                        R.string.error_empty_input_field,
-                        Snackbar.LENGTH_LONG
-                    ).showAsLight()
-                }
+        val feedback = when (val result = repository.update(newParam, ParamRepository.SOURCE_RUNTIME)) {
+            is ApplyResult.Success -> {
+                setResult(Activity.RESULT_OK)
+                repository.update(newParam, ParamRepository.SOURCE_ROOM)
+                getString(R.string.done)
+            }
 
-                override fun onFeedBack(feedback: String) {
-                    Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
-                }
+            is ApplyResult.Failure -> {
+                setResult(Activity.RESULT_CANCELED)
+                getString(R.string.apply_failure_format, result.exception.message)
+            }
+        }
 
-                override fun onSuccess() {
-                    KernelParam.value = newValue
-                }
-
-                override suspend fun onCustomApply(kernelParam: KernelParam) {
-                    val success = paramPrefs.putParam(kernelParam)
-
-                    runSafeOnUiThread {
-                        if (success) {
-                            this@EditKernelParamActivity.toast(R.string.done)
-                            setResult(Activity.RESULT_OK)
-                        } else {
-                            this@EditKernelParamActivity.toast(R.string.failed)
-                            setResult(Activity.RESULT_CANCELED)
-                        }
-                        finish()
-                    }
-                }
-            })
+        if (isEditingSavedParam) {
+            toast(feedback)
+            finish()
+        } else {
+            Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
+        }
     }
 
     private fun isTaskerInstalled(): Boolean {

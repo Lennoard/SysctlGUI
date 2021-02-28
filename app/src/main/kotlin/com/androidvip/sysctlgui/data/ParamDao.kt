@@ -9,7 +9,7 @@ interface ParamDao {
     suspend fun getAll(): List<KernelParam>?
 
     @Insert
-    suspend fun insertAll(vararg params: KernelParam)
+    suspend fun insert(vararg params: KernelParam)
 
     @Delete
     suspend fun delete(param: KernelParam)

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
@@ -15,7 +16,8 @@ data class KernelParam(
     @ColumnInfo(name = "path")         var path: String = "",
     @ColumnInfo(name = "value")        var value: String = "",
     @ColumnInfo(name = "favorite")     var favorite: Boolean = false,
-    @ColumnInfo(name = "tasker_param") var taskerParam: Boolean = false
+    @ColumnInfo(name = "tasker_param") var taskerParam: Boolean = false,
+    @ColumnInfo(name = "tasker_list")  var taskerList: Int = TaskerReceiver.LIST_NUMBER_PRIMARY_TASKER
 ): Parcelable {
 
     fun setNameFromPath(path: String) {
@@ -53,8 +55,6 @@ data class KernelParam(
         if (javaClass != other?.javaClass) return false
 
         other as KernelParam
-
-        if (id != other.id) return false
         if (name != other.name) return false
 
         return true

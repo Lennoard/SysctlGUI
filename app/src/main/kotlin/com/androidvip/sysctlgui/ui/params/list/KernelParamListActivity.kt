@@ -4,17 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.LinearLayout
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamsListBinding
-import com.androidvip.sysctlgui.helpers.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
-import com.androidvip.sysctlgui.ui.params.ParamsViewModel
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,9 +21,9 @@ import org.koin.android.ext.android.inject
 
 class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener {
     private lateinit var binding: ActivityKernelParamsListBinding
-    private val paramViewModel: ParamsViewModel by inject()
+    private val paramViewModel: ListParamsViewModel by inject()
     private val paramsListAdapter: KernelParamListAdapter by lazy {
-        KernelParamListAdapter(this, lifecycleScope)
+        KernelParamListAdapter(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,16 +44,16 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
             adapter = paramsListAdapter
         }
 
-        paramViewModel.loading.observe(this, Observer {
-            binding.swipeLayout.isRefreshing = it
-        })
-
-        paramViewModel.kernelParams.observe(this, Observer {
+        paramViewModel.viewState.observe(this) { state ->
             lifecycleScope.launch {
-                paramsListAdapter.updateData(filterList(it))
+                binding.swipeLayout.isRefreshing = state.isLoading
+                paramsListAdapter.updateData(filterList(state.data))
             }
-        })
+        }
+    }
 
+    override fun onStart() {
+        super.onStart()
         refreshList()
     }
 
@@ -77,9 +75,7 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
         refreshList()
     }
 
-    private fun refreshList() = lifecycleScope.launch {
-        paramViewModel.getKernelParams()
-    }
+    private fun refreshList() = paramViewModel.getKernelParams()
 
     private suspend fun filterList(list: List<KernelParam>) = withContext(Dispatchers.Default) {
         if (searchExpression.isEmpty()) return@withContext list.toMutableList()

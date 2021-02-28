@@ -7,12 +7,15 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.ui.base.BaseActivity
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.utils.KernelParamUtils
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 
 class SettingsActivity : BaseActivity() {
+    private val repository: ParamRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,9 +23,7 @@ class SettingsActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         supportFragmentManager.beginTransaction().also {
-            it.replace(R.id.settingsFragmentHolder,
-                SettingsFragment()
-            )
+            it.replace(R.id.settingsFragmentHolder, SettingsFragment())
             it.commit()
         }
 
@@ -73,9 +74,9 @@ class SettingsActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private suspend fun exportParams(uri: Uri) = withContext(Dispatchers.IO) {
-        return@withContext KernelParamUtils(this@SettingsActivity)
-            .exportParamsToUri(uri)
+    private suspend fun exportParams(uri: Uri): Boolean {
+        val params = repository.getParams(ParamRepository.SOURCE_ROOM)
+        return KernelParamUtils.writeParamsToUri(this, params, uri)
     }
 
     companion object {

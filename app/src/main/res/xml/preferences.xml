@@ -64,7 +64,7 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:targetPackage="com.androidvip.sysctlgui"
-                android:targetClass="com.androidvip.sysctlgui.activities.ManageOnStartUpParamsActivity" />
+                android:targetClass="com.androidvip.sysctlgui.ui.settings.ManageOnStartUpParamsActivity" />
 
         </PreferenceScreen>
 
@@ -76,7 +76,7 @@
             <intent
                 android:action="ExportParams"
                 android:targetPackage="com.androidvip.sysctlgui"
-                android:targetClass="com.androidvip.sysctlgui.activities.SettingsActivity" />
+                android:targetClass="com.androidvip.sysctlgui.ui.settings.SettingsActivity" />
 
         </PreferenceScreen>
 

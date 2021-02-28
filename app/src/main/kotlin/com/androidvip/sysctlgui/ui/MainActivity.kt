@@ -12,13 +12,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.runSafeOnUiThread
+import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.settings.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
+import com.androidvip.sysctlgui.utils.ApplyResult
 import com.androidvip.sysctlgui.utils.KernelParamUtils
 import com.androidvip.sysctlgui.utils.RootUtils
 import com.google.gson.JsonParseException
@@ -26,13 +26,12 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
     override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
-    private val paramPrefs by lazy {
-        Prefs(applicationContext)
-    }
+    private val repository: ParamRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +55,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "*/*"
             }
-            startActivityForResult(intent,
+            startActivityForResult(
+                intent,
                 OPEN_FILE_REQUEST_CODE
             )
         }
@@ -123,12 +123,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) = withContext(Dispatchers.Default) {
-        val context = this@MainActivity
+    private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) {
         val successfulParams: MutableList<KernelParam> = mutableListOf()
 
         fun showResultDialog(message: String, success: Boolean) {
-            val dialog = AlertDialog.Builder(context)
+            val dialog = AlertDialog.Builder(this)
                 .setIcon(if (success) R.drawable.ic_check else R.drawable.ic_close)
                 .setTitle(if (success) R.string.done else R.string.failed)
                 .setMessage(message)
@@ -140,58 +139,44 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
 
         try {
-            val kernelParamUtils =
-                KernelParamUtils(application)
             val params: MutableList<KernelParam>? = when {
-                fileExtension.endsWith(".json") -> kernelParamUtils.getParamsFromJsonUri(uri)
-                fileExtension.endsWith(".conf") -> kernelParamUtils.getParamsFromConfUri(uri)
+                fileExtension.endsWith(".json") -> {
+                    KernelParamUtils.getParamsFromJsonUri(this, uri)
+                }
+                fileExtension.endsWith(".conf") -> {
+                    KernelParamUtils.getParamsFromConfUri(this, uri)
+                }
                 else -> mutableListOf()
             }
 
             if (params.isNullOrEmpty()) {
-                context.toast(R.string.no_parameters_found)
-                return@withContext
+                toast(R.string.no_parameters_found)
+                return
             }
 
             params.forEach {
-                // apply the param to check if valid
-                kernelParamUtils.applyParam(it, false, object : KernelParamUtils.KernelParamApply {
-                    override fun onEmptyValue() { }
-                    override fun onFeedBack(feedback: String) { }
-
-                    override fun onSuccess() {
-                        successfulParams.add(it)
-                    }
-
-                    override suspend fun onCustomApply(kernelParam: KernelParam) { }
-                })
-            }
-
-            val oldParams = paramPrefs.removeAllParams()
-            if (paramPrefs.putParams(successfulParams)) {
-                runSafeOnUiThread {
-                    val msg = "${getString(R.string.import_success_message, successfulParams.size)}\n\n ${successfulParams.joinToString()}"
-                    showResultDialog(msg, true)
-                    context.toast(R.string.done, Toast.LENGTH_LONG)
-                }
-            } else {
-                // Probably an IO error, revert back
-                paramPrefs.putParams(oldParams)
-                runSafeOnUiThread {
-                    val msg = "${getString(R.string.restore_parameters)}\n\n ${successfulParams.joinToString()}"
-                    showResultDialog(msg, false)
+                // Apply the param to check if valid
+                val result = repository.update(it, ParamRepository.SOURCE_RUNTIME)
+                if (result == ApplyResult.Success) {
+                    successfulParams.add(it)
                 }
             }
+
+            repository.clear(ParamRepository.SOURCE_ROOM)
+            repository.addParams(successfulParams, ParamRepository.SOURCE_ROOM)
+            val msg = "${
+                getString(R.string.import_success_message, successfulParams.size)
+            }\n\n ${successfulParams.joinToString()}"
+            showResultDialog(msg, true)
+            toast(R.string.done, Toast.LENGTH_LONG)
         } catch (e: Exception) {
-            runSafeOnUiThread {
-                when (e) {
-                    is JsonParseException,
-                    is JsonSyntaxException -> {
-                        showResultDialog(getString(R.string.import_error_invalid_json), false)
-                    }
-                    else -> {
-                        showResultDialog(getString(R.string.import_error), false)
-                    }
+            when (e) {
+                is JsonParseException,
+                is JsonSyntaxException -> {
+                    showResultDialog(getString(R.string.import_error_invalid_json), false)
+                }
+                else -> {
+                    showResultDialog(getString(R.string.import_error), false)
                 }
             }
         }

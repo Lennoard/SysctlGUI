@@ -79,4 +79,5 @@
     <string name="tasker_list_plugin_secondary">Lista secundária do Tasker</string>
     <string name="tasker_list_plugin_favorites">Lista de favoritos</string>
     <string name="tasker_list_plugin_apply_on_boot">Lista de aplicar na inicialização</string>
+    <string name="apply_failure_format">Falha ao aplicar parâmetros: %s</string>
 </resources>

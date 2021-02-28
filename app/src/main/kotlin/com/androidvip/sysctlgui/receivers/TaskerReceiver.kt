@@ -5,22 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import androidx.preference.PreferenceManager
-import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.isValidTaskerBundle
-import com.androidvip.sysctlgui.prefs.FavoritePrefs
-import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.prefs.TaskerPrefs
-import com.androidvip.sysctlgui.prefs.base.BasePrefs
-import com.androidvip.sysctlgui.toast
-import com.androidvip.sysctlgui.utils.KernelParamUtils
-import kotlinx.coroutines.*
+import com.androidvip.sysctlgui.services.TaskerService
 import kotlin.contracts.ExperimentalContracts
-import kotlin.coroutines.CoroutineContext
 
-class TaskerReceiver : BroadcastReceiver(), CoroutineScope {
-    override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
+class TaskerReceiver : BroadcastReceiver() {
 
     @ExperimentalContracts
     override fun onReceive(context: Context?, intent: Intent) {
@@ -29,34 +18,13 @@ class TaskerReceiver : BroadcastReceiver(), CoroutineScope {
         val bundle: Bundle? = intent.getBundleExtra(EXTRA_BUNDLE)
         if (bundle.isValidTaskerBundle()) {
             val taskerList = bundle.getInt(BUNDLE_EXTRA_LIST_NUMBER, LIST_NUMBER_INVALID)
-            launch {
-                with (context) {
-                    applyParams(this.applicationContext, taskerList)
-                    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-                    if (prefs.getBoolean(Prefs.SHOW_TASKER_TOAST, true)) {
-                        toast(getString(R.string.tasker_toast, taskerList), Toast.LENGTH_LONG)
-                    }
-                }
+            val serviceIntent = Intent(context, TaskerService::class.java).apply {
+                putExtra(BUNDLE_EXTRA_LIST_NUMBER, taskerList)
             }
+
+            context.startService(serviceIntent)
         } else {
             Log.w(TAG, "Invalid tasker bundle: $bundle")
-        }
-    }
-
-    private suspend fun applyParams(context: Context, listNumber: Int) = withContext(Dispatchers.IO) {
-        val prefs : BasePrefs = when (listNumber) {
-            LIST_NUMBER_PRIMARY_TASKER,
-            LIST_NUMBER_SECONDARY_TASKER -> TaskerPrefs(context, listNumber)
-            LIST_NUMBER_FAVORITES -> FavoritePrefs(context)
-            LIST_NUMBER_APPLY_ON_BOOT -> Prefs(context)
-            else -> return@withContext
-        }
-
-        val kernelParamUtils =
-            KernelParamUtils(context)
-
-        prefs.getUserParamsSet().forEach { param ->
-            kernelParamUtils.commitChanges(param)
         }
     }
 
@@ -73,5 +41,5 @@ class TaskerReceiver : BroadcastReceiver(), CoroutineScope {
         const val LIST_NUMBER_FAVORITES: Int = 2
         const val LIST_NUMBER_APPLY_ON_BOOT: Int = 3
     }
-
 }
+

@@ -6,8 +6,8 @@ import com.androidvip.sysctlgui.R
 import java.util.*
 
 abstract class BaseSearchActivity : BaseActivity() {
+    protected val defaultLocale: Locale by lazy { Locale.getDefault() }
     protected var searchExpression: String = ""
-    protected var defaultLocale: Locale = Locale.getDefault()
     private var searchView: SearchView? = null
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

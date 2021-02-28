@@ -2,6 +2,8 @@
     <string name="app_name" translatable="false">Sysctl GUI</string>
     <string name="splash_status_checking_root">Checking for root access</string>
     <string name="splash_status_checking_busybox">Checking for busybox</string>
+    <string name="splash_status_checking_migration">Checking for old database schema</string>
+    <string name="splash_status_performing_migration">Performing database migration</string>
     <string name="error">Error</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
@@ -79,4 +81,5 @@
     <string name="tasker_select_list">Select a list to be used with Tasker</string>
     <string name="tasker_plugin_description">Once triggered by Tasker, the plugin will immediately reapply all parameters from the selected list with their respective values.</string>
     <string name="tasker_settings">Tasker settings</string>
+    <string name="apply_failure_format">Failed to apply params: %s</string>
 </resources>
