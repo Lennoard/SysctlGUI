@@ -6,15 +6,16 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.ui.base.BaseActivity
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
@@ -29,7 +30,7 @@ import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
-class SplashActivity : BaseActivity() {
+class SplashActivity : AppCompatActivity() {
     private val prefs: SharedPreferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +45,7 @@ class SplashActivity : BaseActivity() {
             )
         }
 
-        launch {
+        lifecycleScope.launch {
             val isRootAccessGiven = checkRootAccess()
 
             splashStatusText.setText(R.string.splash_status_checking_busybox)

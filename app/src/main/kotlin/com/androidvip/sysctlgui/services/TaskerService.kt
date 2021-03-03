@@ -1,17 +1,13 @@
 package com.androidvip.sysctlgui.services
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.repository.ParamRepository
-import com.androidvip.sysctlgui.prefs.FavoritePrefs
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.prefs.TaskerPrefs
-import com.androidvip.sysctlgui.prefs.base.BasePrefs
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import com.androidvip.sysctlgui.toast
 import kotlinx.coroutines.*

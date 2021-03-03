@@ -6,15 +6,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
-import com.androidvip.sysctlgui.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.repository.ParamRepository
-import com.androidvip.sysctlgui.ui.base.BaseActivity
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.runSafeOnUiThread
+import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.utils.KernelParamUtils
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : AppCompatActivity() {
     private val repository: ParamRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +36,8 @@ class SettingsActivity : BaseActivity() {
                 type = "*/*"
                 putExtra(Intent.EXTRA_TITLE, "params.json")
             }
-            startActivityForResult(intent,
+            startActivityForResult(
+                intent,
                 CREATE_FILE_REQUEST_CODE
             )
         }
@@ -55,7 +59,7 @@ class SettingsActivity : BaseActivity() {
                 }
 
                 data?.data?.let { uri ->
-                    launch {
+                    lifecycleScope.launch {
                         val message: String = if (exportParams(uri)) {
                             getString(R.string.done)
                         } else {

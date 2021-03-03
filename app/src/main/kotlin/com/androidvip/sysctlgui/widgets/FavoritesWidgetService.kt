@@ -7,12 +7,14 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.prefs.FavoritePrefs
+import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EXTRA_ITEM
+import kotlinx.coroutines.runBlocking
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-
+// FIXME: Broken
 class FavoritesWidgetService : RemoteViewsService() {
-
     override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
         return FavoritesRemoteViewsFactory(applicationContext, intent!!)
     }
@@ -21,7 +23,8 @@ class FavoritesWidgetService : RemoteViewsService() {
 class FavoritesRemoteViewsFactory(
     val context: Context,
     val intent: Intent
-) : RemoteViewsService.RemoteViewsFactory {
+) : RemoteViewsService.RemoteViewsFactory, KoinComponent {
+    private val repository: ParamRepository by inject()
 
     private var widgetId: Any = intent.getIntExtra(
         AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -31,7 +34,11 @@ class FavoritesRemoteViewsFactory(
     private var params: MutableList<KernelParam> = mutableListOf()
 
     override fun onCreate() {
-        params = FavoritePrefs(context).getUserParamsSet()
+        runBlocking {
+            params = repository.getParams(ParamRepository.SOURCE_ROOM).filter {
+                it.favorite
+            }.toMutableList().also { println(it) }
+        }
     }
 
     override fun getLoadingView(): RemoteViews? = null
@@ -41,7 +48,11 @@ class FavoritesRemoteViewsFactory(
     }
 
     override fun onDataSetChanged() {
-        params = FavoritePrefs(context).getUserParamsSet()
+        runBlocking {
+            params = repository.getParams(ParamRepository.SOURCE_ROOM).filter {
+                it.favorite
+            }.toMutableList()
+        }
     }
 
     override fun hasStableIds(): Boolean = true
@@ -61,7 +72,6 @@ class FavoritesRemoteViewsFactory(
         }
 
         views.setOnClickFillInIntent(R.id.listKernelParamLayout, fillInIntent)
-
         return views
     }
 

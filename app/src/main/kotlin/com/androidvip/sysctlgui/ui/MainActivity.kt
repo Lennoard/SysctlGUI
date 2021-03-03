@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.repository.ParamRepository
@@ -25,12 +26,10 @@ import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity(), CoroutineScope {
-    override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
+class MainActivity : AppCompatActivity() {
     private val repository: ParamRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onDestroy() {
         RootUtils.finishProcess()
-        coroutineContext[Job]?.cancelChildren()
         super.onDestroy()
     }
 
@@ -109,7 +107,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
                     fileExtension?.let { extension ->
                         if (extension.endsWith(".json") or extension.endsWith(".conf")) {
-                            launch {
+                            lifecycleScope.launch {
                                 applyParamsFromUri(uri, extension)
                             }
                         } else {
