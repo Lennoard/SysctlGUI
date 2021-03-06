@@ -104,8 +104,6 @@ dependencies {
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.google.code.gson:gson:2.8.6")
 
-    implementation("com.daimajia.androidanimations:library:2.3@aar")
-    implementation("com.daimajia.easing:library:2.1@aar")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.11.0")
     implementation("com.github.topjohnwu.libsu:core:2.5.1")
 

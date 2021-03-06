@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,19 +22,14 @@ import com.androidvip.sysctlgui.showAsLight
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.daimajia.androidanimations.library.Techniques
-import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.lang.ref.WeakReference
 
 abstract class BaseManageParamsActivity : BaseSearchActivity(),
     OnParamItemClickedListener,
-    OnPopUpMenuItemSelectedListener, RemovableParamAdapter.OnRemoveRequestedListener
-{
+    OnPopUpMenuItemSelectedListener, RemovableParamAdapter.OnRemoveRequestedListener {
     private lateinit var binding: ActivityManageParamSetBinding
     private val repository: ParamRepository by inject()
     private val savedKernelParams = mutableListOf<KernelParam>()
@@ -74,11 +70,25 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         updateRecyclerViewData()
     }
 
-    override fun onParamItemClicked(param: KernelParam) {
+    override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
+        val sharedElements = arrayOf(
+            Pair<View, String>(
+                itemLayout.findViewById(R.id.paramName),
+                EditKernelParamActivity.NAME_TRANSITION_NAME
+            ),
+            Pair<View, String>(
+                itemLayout.findViewById(R.id.paramValue),
+                EditKernelParamActivity.VALUE_TRANSITION_NAME
+            )
+        )
+        val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            *sharedElements,
+        )
         Intent(this, EditKernelParamActivity::class.java).apply {
             putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
             putExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, true)
-            startActivity(this)
+            startActivity(this, options.toBundle())
         }
     }
 
@@ -88,7 +98,7 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         removableLayout: ConstraintLayout
     ) {
         when (itemId) {
-            R.id.popupEdit -> onParamItemClicked(kernelParam)
+            R.id.popupEdit -> onParamItemClicked(kernelParam, removableLayout)
             R.id.popupRemove -> {
                 val index = savedKernelParams.indexOf(kernelParam)
                 if (index < 0) return
@@ -106,25 +116,16 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         savedKernelParams.getOrNull(position)?.let {
             lifecycleScope.launch {
                 repository.delete(it, ParamRepository.SOURCE_ROOM)
+                if (fakeGesture) {
+                    Handler(mainLooper).postDelayed({
+                        savedKernelParams.removeAt(position)
+                        updateRecyclerViewData()
+                    }, 400)
+                } else {
+                    savedKernelParams.removeAt(position)
+                    updateRecyclerViewData()
+                }
             }
-        }
-        if (fakeGesture) {
-            YoYo.with(Techniques.SlideOutLeft)
-                .duration(400)
-                .interpolate(
-                    AnimationUtils.loadInterpolator(
-                        this, android.R.anim.accelerate_decelerate_interpolator
-                    )
-                )
-                .playOn(removableLayout)
-
-            Handler(mainLooper).postDelayed({
-                savedKernelParams.removeAt(position)
-                updateRecyclerViewData()
-            }, 400)
-        } else {
-            savedKernelParams.removeAt(position)
-            updateRecyclerViewData()
         }
     }
 

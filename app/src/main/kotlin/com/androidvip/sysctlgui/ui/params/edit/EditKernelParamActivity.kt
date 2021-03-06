@@ -2,24 +2,25 @@ package com.androidvip.sysctlgui.ui.params.edit
 
 import android.app.Activity
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.text.InputType
+import android.transition.Explode
+import android.transition.Slide
 import android.view.Menu
 import android.view.MenuItem
-import android.view.animation.AnimationUtils
+import android.view.Window
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.databinding.ActivityEditKernelParamBinding
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
+import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.utils.ApplyResult
-import com.daimajia.androidanimations.library.Techniques
-import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -34,6 +35,13 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+            window.enterTransition = Explode()
+            window.exitTransition = Slide()
+        }
+
         binding = ActivityEditKernelParamBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -48,8 +56,7 @@ class EditKernelParamActivity : AppCompatActivity() {
             } else {
                 defineInputTypeForValue(kernelParameter.value)
                 binding.editParamInput.setText(kernelParameter.value)
-                Handler().postDelayed({ updateTextUi(kernelParameter) }, 100)
-
+                updateTextUi(kernelParameter)
                 binding.editParamApply.setOnClickListener {
                     lifecycleScope.launch {
                         applyParam(kernelParameter)
@@ -58,6 +65,13 @@ class EditKernelParamActivity : AppCompatActivity() {
             }
         } ?: run {
             showInvalidParamError()
+        }
+    }
+
+    override fun onBackPressed() {
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP -> finish()
+            else -> supportFinishAfterTransition()
         }
     }
 
@@ -89,7 +103,7 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> finish()
+            android.R.id.home -> onBackPressed()
             R.id.action_favorite -> {
                 if (kernelParameter.favorite) {
                     kernelParameter.favorite = false
@@ -128,48 +142,17 @@ class EditKernelParamActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun updateTextUi(KernelParam: KernelParam) {
-        val paramName = KernelParam.name.split(".").last()
+    private fun updateTextUi(param: KernelParam) {
+        ViewCompat.setTransitionName(binding.editParamName, NAME_TRANSITION_NAME)
+        ViewCompat.setTransitionName(binding.editParamInput, VALUE_TRANSITION_NAME)
+
+        val paramName = param.name.split(".").last()
         binding.editParamName.text = paramName
+        binding.editParamSub.text = param.name.removeSuffix(paramName).removeSuffix(".")
+        binding.editParamInfo.text = findInfoForParam(param)
+        binding.editParamApply.show()
 
-        YoYo.with(Techniques.SlideInLeft)
-            .duration(600)
-            .interpolate(
-                AnimationUtils.loadInterpolator(
-                    this,
-                    android.R.anim.accelerate_decelerate_interpolator
-                )
-            )
-            .playOn(binding.editParamName)
-
-        Handler().postDelayed({
-            YoYo.with(Techniques.SlideInLeft)
-                .duration(600)
-                .interpolate(
-                    AnimationUtils.loadInterpolator(
-                        this,
-                        android.R.anim.accelerate_decelerate_interpolator
-                    )
-                )
-                .playOn(binding.editParamSub)
-
-            binding.editParamSub.text = KernelParam.name.removeSuffix(paramName).removeSuffix(".")
-        }, 100)
-
-        Handler().postDelayed({
-            binding.editParamInfo.text = findInfoForParam(KernelParam)
-            YoYo.with(Techniques.ZoomIn)
-                .duration(260)
-                .interpolate(
-                    AnimationUtils.loadInterpolator(
-                        this,
-                        android.R.anim.accelerate_decelerate_interpolator
-                    )
-                )
-                .playOn(binding.editParamInfo)
-
-            binding.editParamApply.show()
-        }, 300)
+        supportStartPostponedEnterTransition()
     }
 
     private fun showInvalidParamError() {
@@ -308,5 +291,10 @@ class EditKernelParamActivity : AppCompatActivity() {
             packageManager.getPackageInfo("net.dinglisch.android.taskerm", 0)
             true
         }.getOrDefault(false)
+    }
+
+    companion object {
+        const val NAME_TRANSITION_NAME = "transition_title"
+        const val VALUE_TRANSITION_NAME = "transition_value"
     }
 }

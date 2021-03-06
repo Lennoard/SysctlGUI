@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:onClick="@{() -> kernelFile.directory ? directoryListener.onDirectoryChanged(kernelFile) : paramListener.onParamItemClicked(param)}"
+        android:onClick="@{(view) -> kernelFile.directory ? directoryListener.onDirectoryChanged(kernelFile) : paramListener.onParamItemClicked(param, view)}"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingTop="8dp"
@@ -55,7 +55,7 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
-            android:text="@{param.name}"
+            android:text="@{param.shortName}"
             android:textColor="@{kernelFile.directory ? Color.WHITE : Color.argb(150, 255, 255, 255)}"
             android:textSize="16sp"
             tools:text="@tools:sample/cities" />

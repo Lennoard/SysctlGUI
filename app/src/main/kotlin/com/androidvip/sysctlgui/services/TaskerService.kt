@@ -59,5 +59,4 @@ class TaskerService : Service(), CoroutineScope {
             repository.update(it, ParamRepository.SOURCE_RUNTIME)
         }
     }
-
 }

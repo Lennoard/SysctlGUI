@@ -3,7 +3,10 @@ package com.androidvip.sysctlgui.ui.params.list
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.LinearLayout
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -64,10 +67,24 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onParamItemClicked(param: KernelParam) {
+    override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
+        val sharedElements = arrayOf(
+            Pair<View, String>(
+                itemLayout.findViewById(R.id.paramName),
+                EditKernelParamActivity.NAME_TRANSITION_NAME
+            ),
+            Pair<View, String>(
+                itemLayout.findViewById(R.id.paramValue),
+                EditKernelParamActivity.VALUE_TRANSITION_NAME
+            )
+        )
+        val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            *sharedElements,
+        )
         Intent(this, EditKernelParamActivity::class.java).apply {
             putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
-            startActivity(this)
+            startActivity(this, options.toBundle())
         }
     }
 

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="param"
             type="com.androidvip.sysctlgui.data.models.KernelParam" />
@@ -18,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
-        android:onClick="@{() -> onParamItemClickedListener.onParamItemClicked(param)}"
+        android:onClick="@{(view) -> onParamItemClickedListener.onParamItemClicked(param, view)}"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -30,7 +29,7 @@
             android:layout_marginEnd="4dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{param.name}"
+            android:text="@{param.shortName}"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="16sp"
             tools:text="@tools:sample/cities" />

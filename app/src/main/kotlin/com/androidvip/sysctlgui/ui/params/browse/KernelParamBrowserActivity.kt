@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.Window
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -14,6 +15,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -146,10 +149,21 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
         refreshList()
     }
 
-    override fun onParamItemClicked(param: KernelParam) {
+    override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
+        val sharedElements = arrayOf(
+            Pair<View, String>(
+                itemLayout.findViewById(R.id.name),
+                EditKernelParamActivity.NAME_TRANSITION_NAME
+            )
+        )
+        val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            *sharedElements,
+        )
+
         Intent(this, EditKernelParamActivity::class.java).apply {
             putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
-            startActivity(this)
+            startActivity(this, options.toBundle())
         }
     }
 

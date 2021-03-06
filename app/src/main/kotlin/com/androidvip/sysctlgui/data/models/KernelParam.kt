@@ -18,6 +18,7 @@ data class KernelParam(
     @ColumnInfo(name = "tasker_param") var taskerParam: Boolean = false,
     @ColumnInfo(name = "tasker_list")  var taskerList: Int = TaskerReceiver.LIST_NUMBER_PRIMARY_TASKER
 ): Parcelable {
+    val shortName: String get() = name.split(".").last()
 
     fun setNameFromPath(path: String) {
         if (path.trim().isEmpty() || !path.startsWith("/proc/sys/")) return

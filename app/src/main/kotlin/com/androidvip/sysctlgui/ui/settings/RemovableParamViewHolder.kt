@@ -13,6 +13,7 @@ class RemovableParamViewHolder(
     private val paramItemClickedListener: OnParamItemClickedListener
 ) : BaseViewHolder<KernelParam>(binding) {
     override fun bind(item: KernelParam) {
+        binding.param = item
 
         val popupMenu = PopupMenu(binding.popUpIcon.context, binding.popUpIcon).apply {
             menuInflater.inflate(R.menu.popup_manage_params, menu)
@@ -26,14 +27,15 @@ class RemovableParamViewHolder(
 
         with (binding) {
             popUpIcon.setOnClickListener { popupMenu.show() }
-            itemView.setOnClickListener { paramItemClickedListener.onParamItemClicked(item) }
+            itemView.setOnClickListener {
+                paramItemClickedListener.onParamItemClicked(item, removableLayout)
+            }
             itemView.setOnLongClickListener {
                 popupMenu.show()
                 true
             }
         }
 
-        binding.param = item
         binding.executePendingBindings()
     }
 }

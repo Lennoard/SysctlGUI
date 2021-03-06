@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{param.name}"
+                android:text="@{param.shortName}"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@+id/popUpIcon"
