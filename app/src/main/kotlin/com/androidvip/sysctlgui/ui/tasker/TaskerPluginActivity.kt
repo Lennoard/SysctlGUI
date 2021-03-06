@@ -6,21 +6,23 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.databinding.ActivityTaskerPluginBinding
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
-import kotlinx.android.synthetic.main.activity_tasker_plugin.*
 
 class TaskerPluginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityTaskerPluginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tasker_plugin)
+        binding = ActivityTaskerPluginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        taskerDoneButton.setOnClickListener {
-            val selectedListNumber = taskerListSpinner.selectedItemPosition // 0-based index
+        binding.taskerDoneButton.setOnClickListener {
+            val selectedListNumber = binding.taskerListSpinner.selectedItemPosition // 0-based index
 
             val resultBundle = bundleOf(
                 TaskerReceiver.BUNDLE_EXTRA_LIST_NUMBER to selectedListNumber,
-                TaskerReceiver.EXTRA_STRING_BLURB to taskerListSpinner.selectedItem.toString()
+                TaskerReceiver.EXTRA_STRING_BLURB to binding.taskerListSpinner.selectedItem.toString()
             )
 
             val resultIntent = Intent().apply {

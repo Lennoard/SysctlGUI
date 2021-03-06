@@ -47,6 +47,8 @@ class BaseStartUpService(
                     } else {
                         NotificationManagerCompat.from(context).cancel(SERVICE_ID)
                     }
+
+                    onCleanUp()
                 }
             }
         }

@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.databinding.ActivityMainBinding
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
@@ -24,32 +25,32 @@ import com.androidvip.sysctlgui.utils.KernelParamUtils
 import com.androidvip.sysctlgui.utils.RootUtils
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private val repository: ParamRepository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
-        mainParamsList.setOnClickListener {
+        binding.content.mainParamsList.setOnClickListener {
             Intent(this, KernelParamListActivity::class.java).apply {
                 startActivity(this)
             }
         }
 
-        mainParamBrowser.setOnClickListener {
+        binding.content.mainParamBrowser.setOnClickListener {
             Intent(this, KernelParamBrowserActivity::class.java).apply {
                 startActivity(this)
             }
         }
 
-        mainReadFromFile.setOnClickListener {
+        binding.content.mainReadFromFile.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "*/*"
@@ -60,13 +61,13 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-        mainFavorites.setOnClickListener {
+        binding.content.mainFavorites.setOnClickListener {
             Intent(this, ManageFavoritesParamsActivity::class.java).apply {
                 startActivity(this)
             }
         }
 
-        mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
+        binding.content.mainAppDescription.movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

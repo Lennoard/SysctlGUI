@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-    id("kotlin-android-extensions")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -27,6 +27,11 @@ android {
         versionCode = 9
         versionName = "1.0.8"
         resConfigs("en", "de", "pt-rBR")
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.incremental"] = "true"
+            }
+        }
     }
 
     buildTypes {
@@ -81,7 +86,7 @@ kapt {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1")
 
     implementation("org.koin:koin-android:2.1.6")
     implementation("org.koin:koin-androidx-scope:2.1.6")

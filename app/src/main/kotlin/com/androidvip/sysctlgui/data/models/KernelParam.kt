@@ -5,8 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
-import kotlinx.android.parcel.Parcelize
-import java.io.Serializable
+import kotlinx.parcelize.Parcelize
 
 @Entity
 @Parcelize

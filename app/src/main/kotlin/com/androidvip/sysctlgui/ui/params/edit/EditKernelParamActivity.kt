@@ -14,18 +14,19 @@ import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.*
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.databinding.ActivityEditKernelParamBinding
 import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.utils.ApplyResult
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_edit_kernel_param.*
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.io.InputStream
 
 class EditKernelParamActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityEditKernelParamBinding
     private val prefs: SharedPreferences by inject()
     private val repository: ParamRepository by inject()
 
@@ -33,8 +34,9 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_edit_kernel_param)
-        setSupportActionBar(toolbar)
+        binding = ActivityEditKernelParamBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val extraParam = RemovableParamAdapter.EXTRA_PARAM
@@ -45,10 +47,10 @@ class EditKernelParamActivity : AppCompatActivity() {
                 showInvalidParamError()
             } else {
                 defineInputTypeForValue(kernelParameter.value)
-                editParamInput.setText(kernelParameter.value)
+                binding.editParamInput.setText(kernelParameter.value)
                 Handler().postDelayed({ updateTextUi(kernelParameter) }, 100)
 
-                editParamApply.setOnClickListener {
+                binding.editParamApply.setOnClickListener {
                     lifecycleScope.launch {
                         applyParam(kernelParameter)
                     }
@@ -128,7 +130,7 @@ class EditKernelParamActivity : AppCompatActivity() {
 
     private fun updateTextUi(KernelParam: KernelParam) {
         val paramName = KernelParam.name.split(".").last()
-        editParamName.text = paramName
+        binding.editParamName.text = paramName
 
         YoYo.with(Techniques.SlideInLeft)
             .duration(600)
@@ -138,7 +140,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                     android.R.anim.accelerate_decelerate_interpolator
                 )
             )
-            .playOn(editParamName)
+            .playOn(binding.editParamName)
 
         Handler().postDelayed({
             YoYo.with(Techniques.SlideInLeft)
@@ -149,13 +151,13 @@ class EditKernelParamActivity : AppCompatActivity() {
                         android.R.anim.accelerate_decelerate_interpolator
                     )
                 )
-                .playOn(editParamSub)
+                .playOn(binding.editParamSub)
 
-            editParamSub.text = KernelParam.name.removeSuffix(paramName).removeSuffix(".")
+            binding.editParamSub.text = KernelParam.name.removeSuffix(paramName).removeSuffix(".")
         }, 100)
 
         Handler().postDelayed({
-            editParamInfo.text = findInfoForParam(KernelParam)
+            binding.editParamInfo.text = findInfoForParam(KernelParam)
             YoYo.with(Techniques.ZoomIn)
                 .duration(260)
                 .interpolate(
@@ -164,16 +166,16 @@ class EditKernelParamActivity : AppCompatActivity() {
                         android.R.anim.accelerate_decelerate_interpolator
                     )
                 )
-                .playOn(editParamInfo)
+                .playOn(binding.editParamInfo)
 
-            editParamApply.show()
+            binding.editParamApply.show()
         }, 300)
     }
 
     private fun showInvalidParamError() {
-        editParamErrorText.show()
-        editParamScroll.goAway()
-        editParamApply.hide()
+        binding.editParamErrorText.show()
+        binding.editParamScroll.goAway()
+        binding.editParamApply.hide()
     }
 
     private fun selectTaskerListAsDialog(block: (Int) -> Unit) {
@@ -194,21 +196,21 @@ class EditKernelParamActivity : AppCompatActivity() {
         if (!prefs.getBoolean(Prefs.GUESS_INPUT_TYPE, true)) return
 
         if (paramValue.length > 12) {
-            editParamInput.inputType =
+            binding.editParamInput.inputType =
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-            editParamInput.setLines(3)
+            binding.editParamInput.setLines(3)
         } else {
             try {
                 paramValue.toInt()
-                editParamInput.inputType =
+                binding.editParamInput.inputType =
                     InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
             } catch (e: Exception) {
                 try {
                     paramValue.toDouble()
-                    editParamInput.inputType =
+                    binding.editParamInput.inputType =
                         InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 } catch (e: Exception) {
-                    editParamInput.inputType =
+                    binding.editParamInput.inputType =
                         InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
                 }
             }
@@ -274,29 +276,30 @@ class EditKernelParamActivity : AppCompatActivity() {
             false
         )
 
-        val newValue = editParamInput.text.toString()
+        val newValue = binding.editParamInput.text.toString()
         val newParam = kernelParam.copy().also {
             it.value = newValue
         }
 
-        val feedback = when (val result = repository.update(newParam, ParamRepository.SOURCE_RUNTIME)) {
-            is ApplyResult.Success -> {
-                setResult(Activity.RESULT_OK)
-                repository.update(newParam, ParamRepository.SOURCE_ROOM)
-                getString(R.string.done)
-            }
+        val feedback =
+            when (val result = repository.update(newParam, ParamRepository.SOURCE_RUNTIME)) {
+                is ApplyResult.Success -> {
+                    setResult(Activity.RESULT_OK)
+                    repository.update(newParam, ParamRepository.SOURCE_ROOM)
+                    getString(R.string.done)
+                }
 
-            is ApplyResult.Failure -> {
-                setResult(Activity.RESULT_CANCELED)
-                getString(R.string.apply_failure_format, result.exception.message)
+                is ApplyResult.Failure -> {
+                    setResult(Activity.RESULT_CANCELED)
+                    getString(R.string.apply_failure_format, result.exception.message)
+                }
             }
-        }
 
         if (isEditingSavedParam) {
             toast(feedback)
             finish()
         } else {
-            Snackbar.make(editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
+            Snackbar.make(binding.editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
         }
     }
 

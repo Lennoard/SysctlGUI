@@ -12,6 +12,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
@@ -22,7 +23,6 @@ import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
 import com.androidvip.sysctlgui.utils.RootUtils
 import com.topjohnwu.superuser.Shell
-import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,11 +31,13 @@ import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class SplashActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySplashBinding
     private val prefs: SharedPreferences by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -48,10 +50,10 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val isRootAccessGiven = checkRootAccess()
 
-            splashStatusText.setText(R.string.splash_status_checking_busybox)
+            binding.splashStatusText.setText(R.string.splash_status_checking_busybox)
             val isBusyBoxAvailable = checkBusyBox()
 
-            splashStatusText.setText(R.string.splash_status_checking_migration)
+            binding.splashStatusText.setText(R.string.splash_status_checking_migration)
             checkForDatabaseMigration()
 
             if (isRootAccessGiven) {
@@ -61,7 +63,7 @@ class SplashActivity : AppCompatActivity() {
                 navigate()
                 finish()
             } else {
-                splashProgress.goAway()
+                binding.splashProgress.goAway()
                 AlertDialog.Builder(this@SplashActivity)
                     .setTitle(R.string.error)
                     .setMessage(getString(R.string.root_not_found_sum))
@@ -84,7 +86,7 @@ class SplashActivity : AppCompatActivity() {
     private suspend fun checkForDatabaseMigration() {
         delay(500)
         if (!prefs.getBoolean(Prefs.MIGRATION_COMPLETED, false)) {
-            splashStatusText.setText(R.string.splash_status_performing_migration)
+            binding.splashStatusText.setText(R.string.splash_status_performing_migration)
 
             val repository: ParamRepository = get()
             repository.performDatabaseMigration(this)
@@ -114,7 +116,9 @@ class SplashActivity : AppCompatActivity() {
                     )
                     putExtra(
                         RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
-                        intent.getBooleanExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false)
+                        intent.getBooleanExtra(
+                            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false
+                        )
                     )
                 }
             }
