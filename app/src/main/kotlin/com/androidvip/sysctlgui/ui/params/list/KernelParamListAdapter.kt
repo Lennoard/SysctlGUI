@@ -37,11 +37,8 @@ class KernelParamListAdapter(
     ) : BaseViewHolder<KernelParam>(binding) {
         override fun bind(item: KernelParam) {
             binding.param = item
+            binding.onParamItemClickedListener = paramItemClickedListener
             binding.executePendingBindings()
-
-            binding.paramLayout.setOnClickListener {
-                paramItemClickedListener.onParamItemClicked(item)
-            }
         }
     }
 

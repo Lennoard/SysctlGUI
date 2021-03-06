@@ -7,6 +7,20 @@
         <variable
             name="param"
             type="com.androidvip.sysctlgui.data.models.KernelParam" />
+
+        <variable
+            name="paramListener"
+            type="com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener" />
+
+        <variable
+            name="directoryListener"
+            type="com.androidvip.sysctlgui.ui.params.browse.DirectoryChangedListener" />
+
+        <variable
+            name="kernelFile"
+            type="java.io.File" />
+
+        <import type="android.graphics.Color" />
     </data>
 
     <LinearLayout
@@ -15,6 +29,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
+        android:onClick="@{() -> kernelFile.directory ? directoryListener.onDirectoryChanged(kernelFile) : paramListener.onParamItemClicked(param)}"
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingTop="8dp"
@@ -25,10 +40,12 @@
             android:id="@+id/icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/circle_folder"
+            android:background="@{kernelFile.directory ? @drawable/circle_folder : @drawable/circle_file}"
             android:padding="12dp"
-            android:src="@drawable/ic_folder_outline"
-            app:tint="@color/colorAccentLight" />
+            android:src="@{kernelFile.directory ? @drawable/ic_folder_outline : @drawable/ic_file_outline}"
+            app:tint="@color/colorAccentLight"
+            tools:background="@drawable/circle_folder"
+            tools:src="@drawable/ic_folder_outline" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/name"
@@ -39,7 +56,7 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@{param.name}"
-            android:textColor="#ffffff"
+            android:textColor="@{kernelFile.directory ? Color.WHITE : Color.argb(150, 255, 255, 255)}"
             android:textSize="16sp"
             tools:text="@tools:sample/cities" />
 

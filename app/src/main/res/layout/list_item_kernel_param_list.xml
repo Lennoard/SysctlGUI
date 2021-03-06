@@ -7,6 +7,10 @@
         <variable
             name="param"
             type="com.androidvip.sysctlgui.data.models.KernelParam" />
+
+        <variable
+            name="onParamItemClickedListener"
+            type="com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener" />
     </data>
 
     <LinearLayout
@@ -14,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
+        android:onClick="@{() -> onParamItemClickedListener.onParamItemClicked(param)}"
         android:orientation="vertical"
         android:padding="16dp">
 
