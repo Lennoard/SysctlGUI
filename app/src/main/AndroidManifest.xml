@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".ui.settings.ManageFavoritesParamsActivity" />
+        <activity android:name=".ui.params.user.ManageFavoritesParamsActivity" />
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings" />
@@ -38,7 +38,7 @@
             android:name=".ui.params.browse.KernelParamBrowserActivity"
             android:label="@string/browse_variables" />
         <activity
-            android:name=".ui.settings.ManageOnStartUpParamsActivity"
+            android:name=".ui.params.user.ManageOnStartUpParamsActivity"
             android:label="@string/manage_parameters" />
         <activity
             android:name=".ui.SplashActivity"

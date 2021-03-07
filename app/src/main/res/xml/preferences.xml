@@ -64,7 +64,7 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:targetPackage="com.androidvip.sysctlgui"
-                android:targetClass="com.androidvip.sysctlgui.ui.settings.ManageOnStartUpParamsActivity" />
+                android:targetClass="com.androidvip.sysctlgui.ui.params.user.ManageOnStartUpParamsActivity" />
 
         </PreferenceScreen>
 

@@ -15,7 +15,7 @@ import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity

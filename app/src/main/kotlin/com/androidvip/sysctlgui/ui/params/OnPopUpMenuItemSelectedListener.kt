@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.ui.settings
+package com.androidvip.sysctlgui.ui.params
 
 import androidx.annotation.IdRes
 import androidx.constraintlayout.widget.ConstraintLayout

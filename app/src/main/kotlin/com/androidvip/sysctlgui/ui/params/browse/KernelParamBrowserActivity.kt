@@ -25,7 +25,7 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamBrowserBinding
 import com.androidvip.sysctlgui.goAway
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.show
 import com.androidvip.sysctlgui.toast

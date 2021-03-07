@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.ui.settings
+package com.androidvip.sysctlgui.ui.params.user
 
 import android.widget.PopupMenu
 import com.androidvip.sysctlgui.R
@@ -6,6 +6,7 @@ import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ListItemRemovableKernelParamBinding
 import com.androidvip.sysctlgui.ui.base.BaseViewHolder
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
+import com.androidvip.sysctlgui.ui.params.OnPopUpMenuItemSelectedListener
 
 class RemovableParamViewHolder(
     val binding: ListItemRemovableKernelParamBinding,

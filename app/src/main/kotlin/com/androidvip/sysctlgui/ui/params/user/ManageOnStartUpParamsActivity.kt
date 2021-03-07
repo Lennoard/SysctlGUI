@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.ui.settings
+package com.androidvip.sysctlgui.ui.params.user
 
 import com.androidvip.sysctlgui.data.models.KernelParam
 

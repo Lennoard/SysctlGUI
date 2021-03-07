@@ -1,12 +1,13 @@
-package com.androidvip.sysctlgui.ui.settings
+package com.androidvip.sysctlgui.ui.params.user
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.addListener
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.lifecycle.lifecycleScope
@@ -15,12 +16,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.databinding.ActivityManageParamSetBinding
 import com.androidvip.sysctlgui.helpers.SwipeToDeleteCallback
 import com.androidvip.sysctlgui.showAsLight
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
+import com.androidvip.sysctlgui.ui.params.OnPopUpMenuItemSelectedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -29,10 +30,18 @@ import java.lang.ref.WeakReference
 
 abstract class BaseManageParamsActivity : BaseSearchActivity(),
     OnParamItemClickedListener,
-    OnPopUpMenuItemSelectedListener, RemovableParamAdapter.OnRemoveRequestedListener {
+    OnPopUpMenuItemSelectedListener,
+    RemovableParamAdapter.OnRemoveRequestedListener
+{
+    protected val paramViewModel: UserParamsViewModel by inject()
     private lateinit var binding: ActivityManageParamSetBinding
-    private val repository: ParamRepository by inject()
-    private val savedKernelParams = mutableListOf<KernelParam>()
+    private val noParamSnackbar: Snackbar by lazy {
+        Snackbar.make(
+            binding.recyclerView,
+            R.string.no_parameters_found,
+            Snackbar.LENGTH_INDEFINITE
+        )
+    }
     private val removableParamAdapter: RemovableParamAdapter by lazy {
         RemovableParamAdapter(
             this,
@@ -45,18 +54,37 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityManageParamSetBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        afterSetContentView()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.swipeLayout.apply {
+            setColorSchemeResources(R.color.colorAccent, R.color.colorAccentLight)
+            setOnRefreshListener { refreshList() }
+        }
+
+        binding.recyclerView.apply {
+            addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
+            layoutManager = GridLayoutManager(context, recyclerViewColumns)
+            adapter = removableParamAdapter
+
+            val itemTouchHelper = ItemTouchHelper(
+                SwipeToDeleteCallback(
+                    removableParamAdapter, WeakReference(this@BaseManageParamsActivity)
+                )
+            )
+            itemTouchHelper.attachToRecyclerView(this)
+        }
+
+        paramViewModel.viewState.observe(this) { state ->
+            lifecycleScope.launch {
+                binding.swipeLayout.isRefreshing = state.isLoading
+                updateRecyclerViewData(state.data)
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch {
-            savedKernelParams.clear()
-            savedKernelParams.addAll(
-                repository.getParams(ParamRepository.SOURCE_ROOM).filter(filterPredicate)
-            )
-            updateRecyclerViewData()
-        }
+        paramViewModel.setFilterPredicate(filterPredicate)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -67,7 +95,16 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
     }
 
     override fun onQueryTextChanged() {
-        updateRecyclerViewData()
+        if (searchExpression.isNotEmpty()) {
+            paramViewModel.setFilterPredicate {
+                it.name.toLowerCase(defaultLocale)
+                    .replace(".", "")
+                    .contains(searchExpression.toLowerCase(defaultLocale)) &&
+                    filterPredicate.invoke(it)
+            }
+        } else {
+            paramViewModel.setFilterPredicate(filterPredicate)
+        }
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
@@ -100,84 +137,44 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         when (itemId) {
             R.id.popupEdit -> onParamItemClicked(kernelParam, removableLayout)
             R.id.popupRemove -> {
-                val index = savedKernelParams.indexOf(kernelParam)
-                if (index < 0) return
-
-                onRemoveRequested(index, false, removableLayout)
+                onRemoveRequested(kernelParam, true, removableLayout)
             }
         }
     }
 
     override fun onRemoveRequested(
-        position: Int,
+        kernelParam: KernelParam,
         fakeGesture: Boolean,
         removableLayout: View
     ) {
-        savedKernelParams.getOrNull(position)?.let {
-            lifecycleScope.launch {
-                repository.delete(it, ParamRepository.SOURCE_ROOM)
-                if (fakeGesture) {
-                    Handler(mainLooper).postDelayed({
-                        savedKernelParams.removeAt(position)
-                        updateRecyclerViewData()
-                    }, 400)
-                } else {
-                    savedKernelParams.removeAt(position)
-                    updateRecyclerViewData()
-                }
-            }
+        if (fakeGesture) {
+            val viewWidth = removableLayout.measuredWidth
+            ObjectAnimator.ofFloat(
+                removableLayout,
+                "translationX",
+                viewWidth * (-1F)
+            ).apply {
+                duration = 300
+                start()
+            }.addListener(onEnd = {
+                paramViewModel.delete(kernelParam)
+            })
+        } else {
+            paramViewModel.delete(kernelParam)
         }
     }
 
     abstract val filterPredicate: (KernelParam) -> Boolean
 
-    private fun updateRecyclerViewData() {
-        val snackbar = Snackbar.make(
-            binding.recyclerView,
-            R.string.no_parameters_found,
-            Snackbar.LENGTH_INDEFINITE
-        )
+    private fun refreshList() = paramViewModel.getParams()
 
-        binding.swipeLayout.isRefreshing = true
+    private fun updateRecyclerViewData(params: List<KernelParam>) {
+        removableParamAdapter.updateData(params)
 
-        var kernelParams = savedKernelParams
-        if (searchExpression.isNotEmpty()) {
-            kernelParams = kernelParams.filter { kernelParameter ->
-                kernelParameter.name.toLowerCase(defaultLocale)
-                    .replace(".", "")
-                    .contains(searchExpression.toLowerCase(defaultLocale))
-            }.toMutableList()
-        }
-
-        binding.swipeLayout.isRefreshing = false
-        removableParamAdapter.updateData(kernelParams)
-
-        if (kernelParams.isEmpty()) {
-            snackbar.showAsLight()
-        } else {
-            snackbar.dismiss()
-        }
-    }
-
-    private fun afterSetContentView() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        binding.swipeLayout.apply {
-            setColorSchemeResources(R.color.colorAccent)
-            setOnRefreshListener { updateRecyclerViewData() }
-        }
-
-        binding.recyclerView.apply {
-            addItemDecoration(DividerItemDecoration(context, LinearLayout.VERTICAL))
-            layoutManager = GridLayoutManager(context, recyclerViewColumns)
-            adapter = removableParamAdapter
-
-            val itemTouchHelper = ItemTouchHelper(
-                SwipeToDeleteCallback(
-                    removableParamAdapter, WeakReference(this@BaseManageParamsActivity)
-                )
-            )
-            itemTouchHelper.attachToRecyclerView(this)
+        if (params.isEmpty() && !noParamSnackbar.isShown) {
+            noParamSnackbar.showAsLight()
+        } else if (noParamSnackbar.isShown) {
+            noParamSnackbar.dismiss()
         }
     }
 }

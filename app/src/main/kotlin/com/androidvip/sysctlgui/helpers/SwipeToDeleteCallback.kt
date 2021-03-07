@@ -15,8 +15,8 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
-import com.androidvip.sysctlgui.ui.settings.RemovableParamViewHolder
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamViewHolder
 import java.lang.ref.WeakReference
 import kotlin.math.abs
 
@@ -49,8 +49,9 @@ class SwipeToDeleteCallback(
 
     override fun onSwiped(holder: RecyclerView.ViewHolder, direction: Int) {
         val position = holder.adapterPosition
+        val param = adapter.currentList[position]
         adapter.onRemoveRequestedListener.onRemoveRequested(
-            position, false, (holder as RemovableParamViewHolder).binding.removableLayout
+            param, false, (holder as RemovableParamViewHolder).binding.removableLayout
         )
     }
 

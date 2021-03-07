@@ -19,7 +19,7 @@ import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.databinding.ActivityEditKernelParamBinding
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.utils.ApplyResult
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.ui.settings
+package com.androidvip.sysctlgui.ui.params.user
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,7 @@ import com.androidvip.sysctlgui.databinding.ListItemRemovableKernelParamBinding
 import com.androidvip.sysctlgui.helpers.ParamDiffCallback
 import com.androidvip.sysctlgui.ui.base.BaseViewHolder
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
+import com.androidvip.sysctlgui.ui.params.OnPopUpMenuItemSelectedListener
 
 class RemovableParamAdapter(
     private val onPopUpMenuItemSelectedListener: OnPopUpMenuItemSelectedListener,
@@ -38,7 +39,7 @@ class RemovableParamAdapter(
 
     interface OnRemoveRequestedListener {
         fun onRemoveRequested(
-            position: Int,
+            kernelParam: KernelParam,
             fakeGesture: Boolean,
             removableLayout: View
         )

@@ -18,7 +18,7 @@ import com.androidvip.sysctlgui.databinding.ActivityMainBinding
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
-import com.androidvip.sysctlgui.ui.settings.ManageFavoritesParamsActivity
+import com.androidvip.sysctlgui.ui.params.user.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
 import com.androidvip.sysctlgui.utils.ApplyResult
 import com.androidvip.sysctlgui.utils.KernelParamUtils

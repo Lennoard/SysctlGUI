@@ -12,7 +12,7 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.ui.SplashActivity
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
 import kotlinx.coroutines.*
 import org.koin.core.KoinComponent

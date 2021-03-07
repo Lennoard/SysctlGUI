@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamsListBinding
-import com.androidvip.sysctlgui.ui.settings.RemovableParamAdapter
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
