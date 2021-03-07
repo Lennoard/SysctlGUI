@@ -282,7 +282,14 @@ class EditKernelParamActivity : AppCompatActivity() {
             toast(feedback)
             finish()
         } else {
-            Snackbar.make(binding.editParamApply, feedback, Snackbar.LENGTH_LONG).showAsLight()
+            Snackbar.make(
+                binding.editParamApply, feedback, Snackbar.LENGTH_LONG
+            ).setAction(R.string.undo) {
+                lifecycleScope.launchWhenResumed {
+                    repository.update(kernelParam, ParamRepository.SOURCE_RUNTIME)
+                    binding.editParamInput.setText(kernelParam.value)
+                }
+            }.showAsLight()
         }
     }
 

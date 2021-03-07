@@ -85,13 +85,13 @@ class ParamRepository(
 
                 if (commitMode == "sysctl") {
                     if (commitResult == "error" || !commitResult.contains(param.name)) {
-                        ApplyResult.Failure(Exception("Failed to set param. Try using 'echo' mode."))
+                        ApplyResult.Failure(Exception("Value refused to apply. Try using 'echo' mode."))
                     } else {
                         ApplyResult.Success
                     }
                 } else {
                     if (commitResult == "error") {
-                        ApplyResult.Failure(Exception("Failed to set param"))
+                        ApplyResult.Failure(Exception("Value refused to apply"))
                     } else {
                         ApplyResult.Success
                     }
