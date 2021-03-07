@@ -20,17 +20,17 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/editParamErrorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:padding="16dp"
         android:text="@string/unexpected_error"
         android:textColor="@color/error"
-        android:visibility="gone"
-        android:padding="16dp"
         android:textSize="22sp"
-        android:gravity="center_horizontal" />
+        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/editParamScroll"
@@ -41,67 +41,67 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:baselineAligned="false"
-            android:paddingTop="16dp"
+            android:orientation="horizontal"
             android:paddingStart="@dimen/default_margin"
+            android:paddingTop="16dp"
             android:paddingEnd="@dimen/default_margin">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="0.5"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/editParamName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
                     android:textColor="#fff"
-                    android:textSize="32sp"/>
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/editParamSub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/editParamInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:inputType="text"
                     android:lines="2"
-                    android:textSize="48sp"
-                    android:inputType="text" />
+                    android:textSize="48sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginStart="8dp"
                 android:layout_weight="0.5"
                 android:animateLayoutChanges="true"
-                android:layout_marginStart="8dp">
+                android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorAccent"
                     android:layout_marginTop="16dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@string/information"/>
+                    android:text="@string/information"
+                    android:textColor="?attr/colorAccent" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/editParamInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textIsSelectable="true"
-                    android:textColor="#fff"/>
+                    android:textColor="#fff"
+                    android:textIsSelectable="true" />
 
             </LinearLayout>
 
@@ -115,8 +115,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:visibility="invisible"
-        android:src="@drawable/ic_check"
-        app:backgroundTint="?attr/colorAccent"/>
+        android:tint="#DE000000"
+        app:backgroundTint="@color/colorAccent"
+        app:srcCompat="@drawable/ic_check" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

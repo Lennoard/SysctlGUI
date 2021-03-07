@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:paddingLeft="@dimen/text_margin"
     android:paddingRight="@dimen/text_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.MainActivity">
 
     <LinearLayout
@@ -14,11 +14,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/CategoryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sysctl_operations"/>
+            android:text="@string/sysctl_operations" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/CardStyle"
@@ -26,32 +26,32 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/mainParamsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_horizontal"
-                android:id="@+id/mainParamsList"
-                android:background="?attr/selectableItemBackground">
+                android:orientation="horizontal">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_edit_outline"
-                    android:tint="?attr/iconColor"
-                    android:paddingStart="16dp" />
+                    android:paddingStart="16dp"
+                    app:srcCompat="@drawable/ic_edit_outline"
+                    app:tint="?attr/iconColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardTitleSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/show_variables"/>
+                        android:text="@string/show_variables" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardContentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -70,32 +70,32 @@
             android:layout_marginTop="16dp">
 
             <LinearLayout
+                android:id="@+id/mainParamBrowser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_horizontal"
-                android:id="@+id/mainParamBrowser"
-                android:background="?attr/selectableItemBackground">
+                android:orientation="horizontal">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_folder_outline"
-                    android:tint="?attr/iconColor"
-                    android:paddingStart="16dp" />
+                    android:paddingStart="16dp"
+                    app:srcCompat="@drawable/ic_folder_outline"
+                    app:tint="?attr/iconColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardTitleSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/browse_variables"/>
+                        android:text="@string/browse_variables" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardContentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -114,32 +114,32 @@
             android:layout_marginTop="16dp">
 
             <LinearLayout
+                android:id="@+id/mainReadFromFile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_horizontal"
-                android:id="@+id/mainReadFromFile"
-                android:background="?attr/selectableItemBackground">
+                android:orientation="horizontal">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_file_import_outline"
+                    android:paddingStart="16dp"
                     android:tint="?attr/iconColor"
-                    android:paddingStart="16dp"/>
+                    app:srcCompat="@drawable/ic_file_import_outline" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardTitleSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/read_from_file"/>
+                        android:text="@string/read_from_file" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardContentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -158,32 +158,32 @@
             android:layout_marginTop="16dp">
 
             <LinearLayout
+                android:id="@+id/mainFavorites"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_horizontal"
-                android:id="@+id/mainFavorites"
-                android:background="?attr/selectableItemBackground">
+                android:orientation="horizontal">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_favorite_unselected"
-                    android:tint="?attr/iconColor"
-                    android:paddingStart="16dp"/>
+                    android:paddingStart="16dp"
+                    app:srcCompat="@drawable/ic_favorite_unselected"
+                    app:tint="?attr/iconColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardTitleSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/show_favorites"/>
+                        android:text="@string/show_favorites" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardContentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -195,42 +195,43 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/CategoryText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/about"/>
+            android:text="@string/about" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/CardStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal">
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_info_outline"
-                    android:tint="?attr/iconColor"
-                    android:paddingStart="16dp" />
+                    android:paddingStart="16dp"
+                    app:srcCompat="@drawable/ic_info_outline"
+                    app:tint="?attr/iconColor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardTitleSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/sysctl"/>
+                        android:text="@string/sysctl" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/CardContentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -239,14 +240,14 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="16dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
+                        android:layout_marginBottom="16dp"
                         android:background="?android:attr/listDivider" />
 
-                    <TextView
-                        style="@style/CardContentText"
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/mainAppDescription"
+                        style="@style/CardContentText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/app_description" />

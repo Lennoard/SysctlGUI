@@ -6,55 +6,54 @@
     android:animateLayoutChanges="true">
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/taskerDoneButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/taskerDoneButton"
         android:layout_gravity="bottom|end"
-        android:text="@string/done"
-        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
-        app:icon="@drawable/ic_check"
-        app:backgroundTint="?attr/colorAccent"/>
+        android:layout_marginBottom="16dp"
+        android:text="@string/done"
+        app:backgroundTint="@color/colorAccent"
+        app:icon="@drawable/ic_check" />
 
     <LinearLayout
+        android:id="@+id/taskerSelectFeatureLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/taskerSelectFeatureLayout">
+        android:orientation="vertical">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="128dp"
             android:layout_height="128dp"
-            android:src="@drawable/tasker"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
-            android:layout_gravity="center_horizontal"/>
+            app:srcCompat="@drawable/tasker" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:paddingTop="16dp"
             android:fontFamily="sans-serif-medium"
-            android:textColor="?attr/colorAccent"
-            android:text="@string/tasker_select_list" />
+            android:paddingTop="16dp"
+            android:text="@string/tasker_select_list"
+            android:textColor="?attr/colorAccent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/tasker_plugin_description"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp" />
+            android:paddingRight="16dp"
+            android:text="@string/tasker_plugin_description" />
 
         <Spinner
+            android:id="@+id/taskerListSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:id="@+id/taskerListSpinner"
-            android:padding="8dp"
-            android:entries="@array/tasker_plugins_lists"/>
+            android:entries="@array/tasker_plugins_lists"
+            android:padding="8dp" />
 
     </LinearLayout>
-
 
 
 </FrameLayout>

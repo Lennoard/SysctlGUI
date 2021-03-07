@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="param"
             type="com.androidvip.sysctlgui.data.models.KernelParam" />
@@ -58,7 +59,7 @@
             android:text="@{param.shortName}"
             android:textColor="@{kernelFile.directory ? Color.WHITE : Color.argb(150, 255, 255, 255)}"
             android:textSize="16sp"
-            tools:text="@tools:sample/cities" />
+            tools:text="@tools:sample/full_names" />
 
     </LinearLayout>
 </layout>

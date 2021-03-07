@@ -16,12 +16,12 @@
         android:layout_height="wrap_content"
         android:background="@color/error">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="24dp"
-            android:src="@drawable/ic_delete_sweep" />
+            app:srcCompat="@drawable/ic_delete_sweep" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/removableLayout"
@@ -32,7 +32,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/paramName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@tools:sample/cities" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/paramValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toBottomOf="@id/paramName"
                 tools:text="@tools:sample/full_names" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/popUpIcon"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
@@ -65,10 +65,10 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="6dp"
-                android:src="@drawable/ic_more_vert"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_more_vert" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

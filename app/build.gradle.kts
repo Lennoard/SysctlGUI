@@ -26,6 +26,7 @@ android {
         targetSdkVersion(29)
         versionCode = 9
         versionName = "1.0.8"
+        vectorDrawables.useSupportLibrary = true
         resConfigs("en", "de", "pt-rBR")
         javaCompileOptions {
             annotationProcessorOptions {
