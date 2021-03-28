@@ -1,7 +1,5 @@
 package com.androidvip.sysctlgui.ui.settings
 
-import android.content.ComponentName
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
@@ -9,9 +7,9 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.utils.RootUtils
+import com.androidvip.sysctlgui.helpers.StartUpServiceToggle
 import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.receivers.BootReceiver
+import com.androidvip.sysctlgui.utils.RootUtils
 import kotlinx.coroutines.launch
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
@@ -55,18 +53,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         when (preference?.key) {
             Prefs.RUN_ON_START_UP -> {
-                val receiver = ComponentName(requireContext(), BootReceiver::class.java)
-                val state = if (newValue == true) {
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                } else {
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                }
-
-                requireContext().packageManager.setComponentEnabledSetting(
-                    receiver,
-                    state,
-                    PackageManager.DONT_KILL_APP
-                )
+                StartUpServiceToggle.toggleStartUpService(requireContext(), newValue == true)
             }
 
             Prefs.COMMIT_MODE -> {

@@ -83,4 +83,8 @@
     <string name="tasker_settings">Tasker settings</string>
     <string name="apply_failure_format">Failed to apply params: %s</string>
     <string name="undo">Undo</string>
+    <string name="tile_start_app_label">Start Sysctl GUI</string>
+    <string name="tile_toggle_start_up_label">Run Sysctl GUI at boot</string>
+    <string name="tile_toggle_start_up_no_root_access_label">Requires root access</string>
+    <string name="tile_toggle_start_up_no_root_access_toast">Root access required</string>
 </resources>
