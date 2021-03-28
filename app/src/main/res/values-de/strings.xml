@@ -2,6 +2,8 @@
 <resources>
     <string name="splash_status_checking_root">Überprüfe Rootstatus</string>
     <string name="splash_status_checking_busybox">Überprüfe busybox</string>
+    <string name="splash_status_checking_migration">Prüfe auf ein altes Datenbankschema</string>
+    <string name="splash_status_performing_migration">Führe Datenbankmigration aus</string>
     <string name="error">Fehler</string>
     <string name="settings">Einstellungen</string>
     <string name="about">Über</string>
@@ -79,4 +81,10 @@
     <string name="tasker_select_list">Wähle eine Liste aus die mit Tasker verwendet werden soll</string>
     <string name="tasker_plugin_description">Wenn Tasker dieses Plugin ausführt, werden alle Parameter dieser Liste mit ihren Werten angewendet.</string>
     <string name="tasker_settings">Tasker Einstellungen</string>
+    <string name="apply_failure_format">Es ist ein Fehler beim Anwenden der Parameter: %s aufgetreten</string>
+    <string name="undo">Rückgängig</string>
+    <string name="tile_start_app_label">Sysctl GUI starten</string>
+    <string name="tile_toggle_start_up_label">Sysctl GUI beim Systemstart ausführen</string>
+    <string name="tile_toggle_start_up_no_root_access_label">Kein Rootzugriff</string>
+    <string name="tile_toggle_start_up_no_root_access_toast">Rootzugriff wird benötigt</string>
 </resources>
