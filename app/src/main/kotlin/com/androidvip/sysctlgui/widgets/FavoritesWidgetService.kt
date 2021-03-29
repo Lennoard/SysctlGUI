@@ -13,7 +13,6 @@ import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-// FIXME: Broken
 class FavoritesWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
         return FavoritesRemoteViewsFactory(applicationContext, intent!!)

@@ -76,6 +76,9 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (this::kernelParameter.isInitialized.not()) {
+            return false
+        }
         menuInflater.inflate(R.menu.menu_edit_params, menu)
         menu?.findItem(R.id.action_favorite)?.let {
             if (kernelParameter.favorite) {

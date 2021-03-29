@@ -14,11 +14,10 @@ import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.ui.SplashActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-// FIXME: Broken
 class FavoritesWidget : AppWidgetProvider(), KoinComponent {
     private val repository: ParamRepository by inject()
 
@@ -39,7 +38,10 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
-        if (intent.action != EDIT_PARAM_EXTRA) return
+        if (intent.action != EDIT_PARAM_EXTRA) {
+            super.onReceive(context, intent)
+            return
+        }
 
         runBlocking {
             val params = repository.getParams(ParamRepository.SOURCE_ROOM).filter {

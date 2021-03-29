@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
 import com.androidvip.sysctlgui.goAway
@@ -112,7 +113,7 @@ class SplashActivity : AppCompatActivity() {
                 Intent(this, EditKernelParamActivity::class.java).apply {
                     putExtra(
                         RemovableParamAdapter.EXTRA_PARAM,
-                        intent.getSerializableExtra(RemovableParamAdapter.EXTRA_PARAM)
+                        intent.extras!!.getParcelable<KernelParam>(RemovableParamAdapter.EXTRA_PARAM)
                     )
                     putExtra(
                         RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
