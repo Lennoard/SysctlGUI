@@ -17,7 +17,8 @@ import kotlin.IllegalArgumentException
 
 class ParamRepository(
     private val paramDao: ParamDao,
-    private val prefs: SharedPreferences
+    private val prefs: SharedPreferences,
+    private val changeListener: ChangeListener?,
 ) {
     /**
      * Retrieves all params from a given `source`.
@@ -110,6 +111,8 @@ class ParamRepository(
                     UnsupportedOperationException("Updating json params is not supported")
                 )
             }
+        }.also {
+            changeListener?.onChange()
         }
     }
 
@@ -119,6 +122,8 @@ class ParamRepository(
             else -> throw UnsupportedOperationException(
                 "Deleting params is only supported in room database"
             )
+        }.also {
+            changeListener?.onChange()
         }
     }
 
@@ -136,6 +141,8 @@ class ParamRepository(
             else -> throw UnsupportedOperationException(
                 "Clearing params is only supported in Room or JSON database"
             )
+        }.also {
+            changeListener?.onChange()
         }
     }
 
@@ -153,6 +160,8 @@ class ParamRepository(
             else -> throw UnsupportedOperationException(
                 "Adding params is only supported in room database"
             )
+        }.also {
+            changeListener?.onChange()
         }
     }
 
@@ -168,6 +177,8 @@ class ParamRepository(
             else -> throw UnsupportedOperationException(
                 "Adding params is only supported in room database"
             )
+        }.also {
+            changeListener?.onChange()
         }
     }
 
@@ -261,6 +272,9 @@ class ParamRepository(
         annotation class Source
     }
 
+    interface ChangeListener {
+        fun onChange()
+    }
 }
 
 typealias Target = ParamRepository.Companion.Source

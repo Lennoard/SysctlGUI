@@ -8,6 +8,7 @@ import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.ui.params.browse.BrowseParamsViewModel
 import com.androidvip.sysctlgui.ui.params.list.ListParamsViewModel
 import com.androidvip.sysctlgui.ui.params.user.UserParamsViewModel
+import com.androidvip.sysctlgui.widgets.FavoriteWidgetParamUpdater
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -21,9 +22,10 @@ class SysctlGuiApp : Application() {
         viewModel { UserParamsViewModel(repository = get()) }
         single { PreferenceManager.getDefaultSharedPreferences(applicationContext) }
         single { ParamDatabaseManager.getInstance(applicationContext) }
+        single { FavoriteWidgetParamUpdater(this@SysctlGuiApp).getListener() }
         single {
             val db: ParamDatabase = get()
-            ParamRepository(paramDao = db.paramDao(), prefs = get())
+            ParamRepository(paramDao = db.paramDao(), prefs = get(), changeListener = get())
         }
     }
 
