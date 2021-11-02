@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ListItemKernelParamListBinding
+import com.androidvip.sysctlgui.helpers.ParamDiffCallback
 import com.androidvip.sysctlgui.ui.base.BaseViewHolder
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
-import com.androidvip.sysctlgui.helpers.ParamDiffCallback
-import com.androidvip.sysctlgui.utils.RootUtils
 
 class KernelParamListAdapter(
     private val paramItemClickedListener: OnParamItemClickedListener
@@ -40,9 +39,5 @@ class KernelParamListAdapter(
             binding.onParamItemClickedListener = paramItemClickedListener
             binding.executePendingBindings()
         }
-    }
-
-    private suspend fun getParamValue(param: KernelParam): String {
-        return RootUtils.executeWithOutput("cat ${param.path}", "")
     }
 }

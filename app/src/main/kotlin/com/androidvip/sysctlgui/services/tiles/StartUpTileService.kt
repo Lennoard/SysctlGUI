@@ -5,18 +5,16 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.helpers.StartUpServiceToggle
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.topjohnwu.superuser.Shell
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 @RequiresApi(Build.VERSION_CODES.N)
-class StartUpTileService : TileService() {
-
-    private val sharedPreferences by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this)
-    }
+class StartUpTileService : TileService(), KoinComponent {
+    private val prefs: AppPrefs by inject()
 
     override fun onStartListening() {
         super.onStartListening()
@@ -52,11 +50,10 @@ class StartUpTileService : TileService() {
         }
     }
 
-    private fun isStartUpEnabled() = sharedPreferences
-        .getBoolean(Prefs.RUN_ON_START_UP, false)
+    private fun isStartUpEnabled() = prefs.runOnStartUp
 
     private fun toggleService(enabled: Boolean) {
-        sharedPreferences.edit().putBoolean(Prefs.RUN_ON_START_UP, enabled).commit()
+        prefs.runOnStartUp = enabled
         StartUpServiceToggle.toggleStartUpService(this, enabled)
     }
 }

@@ -5,9 +5,9 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.data.repository.ParamsRepositoryImpl
 
-class FavoriteWidgetParamUpdater(private val context: Context) : ParamRepository.ChangeListener {
+class FavoriteWidgetParamUpdater(private val context: Context) : ParamsRepositoryImpl.ChangeListener {
     override fun onChange() {
         val intentUpdate = Intent(context, FavoritesWidget::class.java)
         intentUpdate.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
@@ -28,5 +28,5 @@ class FavoriteWidgetParamUpdater(private val context: Context) : ParamRepository
         }
     }
 
-    fun getListener(): ParamRepository.ChangeListener = this
+    fun getListener(): ParamsRepositoryImpl.ChangeListener = this
 }

@@ -13,15 +13,16 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamsListBinding
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
+// TODO: Improve by delegating any non-presentation logic to a view model
 class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener {
     private lateinit var binding: ActivityKernelParamsListBinding
     private val paramViewModel: ListParamsViewModel by inject()
@@ -98,10 +99,9 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
         if (searchExpression.isEmpty()) return@withContext list.toMutableList()
 
         return@withContext list.filter { param ->
-            param.name.toLowerCase(defaultLocale)
+            param.name.lowercase(defaultLocale)
                 .replace(".", "")
-                .contains(searchExpression.toLowerCase(defaultLocale))
+                .contains(searchExpression.lowercase(defaultLocale))
         }.toMutableList()
     }
-
 }

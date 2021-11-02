@@ -12,17 +12,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivityMainBinding
+import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.domain.usecase.AddUserParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.ClearUserParamUseCase
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.params.user.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
-import com.androidvip.sysctlgui.utils.ApplyResult
 import com.androidvip.sysctlgui.utils.KernelParamUtils
-import com.androidvip.sysctlgui.utils.RootUtils
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
@@ -30,7 +31,10 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val repository: ParamRepository by inject()
+    private val rootUtils: RootUtils by inject()
+    private val applyParamsUseCase: ApplyParamsUseCase by inject()
+    private val clearUserParamUseCase: ClearUserParamUseCase by inject()
+    private val addUserParamsUseCase: AddUserParamsUseCase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +98,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        RootUtils.finishProcess()
+        rootUtils.finishProcess()
         super.onDestroy()
     }
 
@@ -123,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) {
-        val successfulParams: MutableList<KernelParam> = mutableListOf()
+        val successfulParams: MutableList<DomainKernelParam> = mutableListOf()
 
         fun showResultDialog(message: String, success: Boolean) {
             val dialog = AlertDialog.Builder(this)
@@ -138,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            val params: MutableList<KernelParam>? = when {
+            val params: MutableList<DomainKernelParam>? = when {
                 fileExtension.endsWith(".json") -> {
                     KernelParamUtils.getParamsFromJsonUri(this, uri)
                 }
@@ -146,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                     KernelParamUtils.getParamsFromConfUri(this, uri)
                 }
                 else -> mutableListOf()
-            }
+            }?.toMutableList()
 
             if (params.isNullOrEmpty()) {
                 toast(R.string.no_parameters_found)
@@ -155,20 +159,21 @@ class MainActivity : AppCompatActivity() {
 
             params.forEach {
                 // Apply the param to check if valid
-                val result = repository.update(it, ParamRepository.SOURCE_RUNTIME)
-                if (result == ApplyResult.Success) {
+                val result = applyParamsUseCase.execute(it)
+                if (result.isSuccess) {
                     successfulParams.add(it)
                 }
             }
 
-            repository.clear(ParamRepository.SOURCE_ROOM)
-            repository.addParams(successfulParams, ParamRepository.SOURCE_ROOM)
+            clearUserParamUseCase.execute()
+            addUserParamsUseCase.execute(successfulParams)
             val msg = "${
-                getString(R.string.import_success_message, successfulParams.size)
+            getString(R.string.import_success_message, successfulParams.size)
             }\n\n ${successfulParams.joinToString()}"
             showResultDialog(msg, true)
             toast(R.string.done, Toast.LENGTH_LONG)
         } catch (e: Exception) {
+            e.printStackTrace()
             when (e) {
                 is JsonParseException,
                 is JsonSyntaxException -> {
