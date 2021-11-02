@@ -1,7 +1,6 @@
 package com.androidvip.sysctlgui.ui.params.edit
 
 import android.app.Activity
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -14,22 +13,29 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
-import com.androidvip.sysctlgui.*
+import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.data.repository.ParamRepository
 import com.androidvip.sysctlgui.databinding.ActivityEditKernelParamBinding
-import com.androidvip.sysctlgui.prefs.Prefs
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
+import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.UpdateUserParamUseCase
+import com.androidvip.sysctlgui.goAway
+import com.androidvip.sysctlgui.readLines
+import com.androidvip.sysctlgui.show
+import com.androidvip.sysctlgui.showAsLight
+import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import com.androidvip.sysctlgui.utils.ApplyResult
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.io.InputStream
 
+// TODO: Improve by delegating any non-presentation logic to a view model
 class EditKernelParamActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditKernelParamBinding
-    private val prefs: SharedPreferences by inject()
-    private val repository: ParamRepository by inject()
+    private val prefs: AppPrefs by inject()
+    private val applyParamsUseCase: ApplyParamsUseCase by inject()
+    private val updateUserParamUseCase: UpdateUserParamUseCase by inject()
 
     private lateinit var kernelParameter: KernelParam
 
@@ -59,7 +65,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 updateTextUi(kernelParameter)
                 binding.editParamApply.setOnClickListener {
                     lifecycleScope.launch {
-                        applyParam(kernelParameter)
+                        applyParam()
                     }
                 }
             }
@@ -117,7 +123,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 }
 
                 lifecycleScope.launch {
-                    repository.update(kernelParameter, ParamRepository.SOURCE_ROOM)
+                    updateUserParamUseCase.execute(kernelParameter)
                 }
                 return true
             }
@@ -136,7 +142,7 @@ class EditKernelParamActivity : AppCompatActivity() {
 
                     kernelParameter.taskerList = taskerList
                     lifecycleScope.launch {
-                        repository.update(kernelParameter, ParamRepository.SOURCE_ROOM)
+                        updateUserParamUseCase.execute(kernelParameter)
                     }
                 }
                 return true
@@ -179,32 +185,33 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private fun defineInputTypeForValue(paramValue: String) {
-        if (!prefs.getBoolean(Prefs.GUESS_INPUT_TYPE, true)) return
+        if (!prefs.guessInputType) return
 
         if (paramValue.length > 12) {
             binding.editParamInput.inputType =
                 InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             binding.editParamInput.setLines(3)
-        } else {
+            return
+        }
+
+        try {
+            paramValue.toInt()
+            binding.editParamInput.inputType =
+                InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
+        } catch (e: Exception) {
             try {
-                paramValue.toInt()
+                paramValue.toDouble()
                 binding.editParamInput.inputType =
-                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_NORMAL
+                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
             } catch (e: Exception) {
-                try {
-                    paramValue.toDouble()
-                    binding.editParamInput.inputType =
-                        InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                } catch (e: Exception) {
-                    binding.editParamInput.inputType =
-                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
-                }
+                binding.editParamInput.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
             }
         }
     }
 
-    private fun findInfoForParam(KernelParam: KernelParam): String {
-        val paramName = KernelParam.name.split(".").last()
+    private fun findInfoForParam(kernelParam: KernelParam): String {
+        val paramName = kernelParam.name.split(".").last()
         val resId = resources.getIdentifier(
             paramName.replace("-", "_"),
             "string",
@@ -219,11 +226,11 @@ class EditKernelParamActivity : AppCompatActivity() {
         // Prefer the documented string resource
         if (stringRes != null) return stringRes
 
-        if (!KernelParam.path.startsWith("/")) {
+        if (!kernelParam.path.startsWith("/")) {
             return stringRes ?: getString(R.string.no_info_available)
         }
 
-        val subdirs = KernelParam.path.split("/")
+        val subdirs = kernelParam.path.split("/")
         if (subdirs.isEmpty() || subdirs.size < 4) {
             return stringRes ?: getString(R.string.no_info_available)
         }
@@ -256,30 +263,24 @@ class EditKernelParamActivity : AppCompatActivity() {
         return if (info.isNullOrEmpty()) getString(R.string.no_info_available) else info
     }
 
-    private suspend fun applyParam(kernelParam: KernelParam) {
+    private suspend fun applyParam() {
         val isEditingSavedParam = intent.getBooleanExtra(
             RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
             false
         )
 
         val newValue = binding.editParamInput.text.toString()
-        val newParam = kernelParam.copy().also {
-            it.value = newValue
+        kernelParameter.value = newValue
+
+        val result = applyParamsUseCase.execute(kernelParameter)
+        val feedback = if (result.isSuccess) {
+            setResult(Activity.RESULT_OK)
+            updateUserParamUseCase.execute(kernelParameter)
+            getString(R.string.done)
+        } else {
+            setResult(Activity.RESULT_CANCELED)
+            getString(R.string.apply_failure_format, result.exceptionOrNull()?.message.orEmpty())
         }
-
-        val feedback =
-            when (val result = repository.update(newParam, ParamRepository.SOURCE_RUNTIME)) {
-                is ApplyResult.Success -> {
-                    setResult(Activity.RESULT_OK)
-                    repository.update(newParam, ParamRepository.SOURCE_ROOM)
-                    getString(R.string.done)
-                }
-
-                is ApplyResult.Failure -> {
-                    setResult(Activity.RESULT_CANCELED)
-                    getString(R.string.apply_failure_format, result.exception.message)
-                }
-            }
 
         if (isEditingSavedParam) {
             toast(feedback)
@@ -289,8 +290,8 @@ class EditKernelParamActivity : AppCompatActivity() {
                 binding.editParamApply, feedback, Snackbar.LENGTH_LONG
             ).setAction(R.string.undo) {
                 lifecycleScope.launchWhenResumed {
-                    repository.update(kernelParam, ParamRepository.SOURCE_RUNTIME)
-                    binding.editParamInput.setText(kernelParam.value)
+                    updateUserParamUseCase.execute(kernelParameter)
+                    binding.editParamInput.setText(kernelParameter.value)
                 }
             }.showAsLight()
         }

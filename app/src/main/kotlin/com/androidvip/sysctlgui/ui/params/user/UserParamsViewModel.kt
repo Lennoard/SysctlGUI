@@ -4,14 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.data.models.ViewState
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.domain.models.ViewState
+import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.RemoveUserParamUseCase
+import com.androidvip.sysctlgui.domain.usecase.UpdateUserParamUseCase
 import kotlinx.coroutines.launch
 
 typealias ParamFilterPredicate = (KernelParam) -> Boolean
 
-class UserParamsViewModel(private val repository: ParamRepository) : ViewModel() {
+class UserParamsViewModel(
+    private val getParamsUseCase: GetUserParamsUseCase,
+    private val removeParamUseCase: RemoveUserParamUseCase,
+    private val updateParamUseCase: UpdateUserParamUseCase
+) : ViewModel() {
     private val _viewState = MutableLiveData<ViewState<KernelParam>>()
     private val _filterPredicate = MutableLiveData<ParamFilterPredicate>()
     val viewState: LiveData<ViewState<KernelParam>> = _viewState
@@ -19,7 +26,10 @@ class UserParamsViewModel(private val repository: ParamRepository) : ViewModel()
     fun getParams() {
         viewModelScope.launch {
             _viewState.postValue(currentViewState.copy(isLoading = true))
-            val params = repository.getParams(ParamRepository.SOURCE_ROOM)
+            val params = getParamsUseCase()
+                .getOrNull()
+                .orEmpty()
+                .map { DomainParamMapper.map(it) }
                 .filter(currentFilterPredicate)
             _viewState.postValue(currentViewState.copy(isLoading = false, data = params))
         }
@@ -33,7 +43,7 @@ class UserParamsViewModel(private val repository: ParamRepository) : ViewModel()
     fun delete(kernelParam: KernelParam) {
         _viewState.postValue(currentViewState.copy(isLoading = true))
         viewModelScope.launch {
-            repository.delete(kernelParam, ParamRepository.SOURCE_ROOM)
+            removeParamUseCase.execute(kernelParam)
             getParams()
         }
     }
@@ -41,7 +51,7 @@ class UserParamsViewModel(private val repository: ParamRepository) : ViewModel()
     fun update(kernelParam: KernelParam) {
         _viewState.postValue(currentViewState.copy(isLoading = true))
         viewModelScope.launch {
-            repository.update(kernelParam, ParamRepository.SOURCE_ROOM)
+            updateParamUseCase.execute(kernelParam)
             getParams()
         }
     }

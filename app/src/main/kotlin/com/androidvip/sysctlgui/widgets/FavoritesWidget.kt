@@ -9,17 +9,18 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.widget.RemoteViews
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
+import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.ui.SplashActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
 import kotlinx.coroutines.runBlocking
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class FavoritesWidget : AppWidgetProvider(), KoinComponent {
-    private val repository: ParamRepository by inject()
+    private val getUserParamsUseCase: GetUserParamsUseCase by inject()
 
     override fun onUpdate(
         context: Context,
@@ -44,8 +45,10 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
         }
 
         runBlocking {
-            val params = repository.getParams(ParamRepository.SOURCE_ROOM).filter {
+            val params = getUserParamsUseCase().getOrNull().orEmpty().filter {
                 it.favorite
+            }.map {
+                DomainParamMapper.map(it)
             }.toMutableList()
 
             if (params.isEmpty()) return@runBlocking

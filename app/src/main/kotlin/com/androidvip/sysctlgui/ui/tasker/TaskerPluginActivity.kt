@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import com.androidvip.sysctlgui.databinding.ActivityTaskerPluginBinding
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
+import kotlin.contracts.ExperimentalContracts
 
+@ExperimentalContracts
 class TaskerPluginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTaskerPluginBinding
 

@@ -3,7 +3,6 @@ package com.androidvip.sysctlgui.ui.params.browse
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -24,30 +23,32 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamBrowserBinding
+import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.goAway
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.show
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.io.File
 
-class KernelParamBrowserActivity : BaseSearchActivity(),
+// TODO: Improve by delegating any non-presentation logic to the view model
+class KernelParamBrowserActivity :
+    BaseSearchActivity(),
     DirectoryChangedListener,
-    OnParamItemClickedListener
-{
+    OnParamItemClickedListener {
     private lateinit var binding: ActivityKernelParamBrowserBinding
     private var actionBarMenu: Menu? = null
     private var documentationUrl = "https://www.kernel.org/doc/Documentation"
-    private var currentPath = "/proc/sys"
+    private var currentPath = Consts.PROC_SYS
     private val paramViewModel: BrowseParamsViewModel by inject()
-    private val prefs: SharedPreferences by inject()
+    private val prefs: AppPrefs by inject()
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
         KernelParamBrowserAdapter(this, this)
     }
@@ -58,7 +59,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
         setContentView(binding.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        paramViewModel.listFoldersFirst = prefs.getBoolean(Prefs.LIST_FOLDERS_FIRST, true)
+        paramViewModel.listFoldersFirst = prefs.listFoldersFirst
 
         binding.swipeLayout.apply {
             setColorSchemeResources(R.color.colorAccent, R.color.colorAccentLight)
@@ -86,10 +87,10 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
     }
 
     override fun onBackPressed() {
-        if (currentPath == "/proc/sys") {
+        if (currentPath == Consts.PROC_SYS) {
             finish()
         } else {
-            onDirectoryChanged(File(currentPath).parentFile ?: File("/proc/sys"))
+            onDirectoryChanged(File(currentPath).parentFile ?: File(Consts.PROC_SYS))
         }
     }
 
@@ -112,7 +113,7 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
 
     override fun onDirectoryChanged(newDir: File) {
         val newPath = newDir.absolutePath
-        if (newPath.isNotEmpty() && newPath.startsWith("/proc/sys")) {
+        if (newPath.isNotEmpty() && newPath.startsWith(Consts.PROC_SYS)) {
             currentPath = newPath
             supportActionBar?.subtitle = newPath
 
@@ -179,9 +180,9 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
         if (searchExpression.isEmpty()) return@withContext list.toMutableList()
 
         return@withContext list.filter { param ->
-            param.name.toLowerCase(defaultLocale)
+            param.name.lowercase(defaultLocale)
                 .replace(".", "")
-                .contains(searchExpression.toLowerCase(defaultLocale))
+                .contains(searchExpression.lowercase(defaultLocale))
         }.toMutableList()
     }
 
@@ -214,7 +215,8 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
                     swipeLayout.isRefreshing = false
 
                     // Change webView background and text color to match the app theme
-                    view.loadUrl("""
+                    view.loadUrl(
+                        """
                         |javascript:(
                             |function() { 
                                 |document.querySelector('body').style.color='#FFFFFF'; 
@@ -250,4 +252,3 @@ class KernelParamBrowserActivity : BaseSearchActivity(),
 interface DirectoryChangedListener {
     fun onDirectoryChanged(newDir: File)
 }
-

@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.runSafeOnUiThread
 import com.androidvip.sysctlgui.toast
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SettingsActivity : AppCompatActivity() {
-    private val repository: ParamRepository by inject()
+    private val getUserParamsUseCase: GetUserParamsUseCase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +79,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private suspend fun exportParams(uri: Uri): Boolean {
-        val params = repository.getParams(ParamRepository.SOURCE_ROOM)
+        val params = getUserParamsUseCase().getOrNull().orEmpty()
         return KernelParamUtils.writeParamsToUri(this, params, uri)
     }
 

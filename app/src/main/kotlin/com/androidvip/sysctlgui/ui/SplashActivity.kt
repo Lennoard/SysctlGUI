@@ -1,39 +1,38 @@
 package com.androidvip.sysctlgui.ui
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
+import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import com.androidvip.sysctlgui.prefs.Prefs
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
+import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
-import com.androidvip.sysctlgui.utils.RootUtils
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
-    private val prefs: SharedPreferences by inject()
+    private val prefs: AppPrefs by inject()
+    private val rootUtils: RootUtils by inject()
+    private val performDatabaseMigrationUseCase: PerformDatabaseMigrationUseCase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +58,7 @@ class SplashActivity : AppCompatActivity() {
 
             if (isRootAccessGiven) {
                 if (!isBusyBoxAvailable) {
-                    prefs.edit { putBoolean(Prefs.USE_BUSYBOX, false) }
+                    prefs.useBusybox = false
                 }
                 navigate()
                 finish()
@@ -80,18 +79,17 @@ class SplashActivity : AppCompatActivity() {
         Shell.rootAccess()
     }
 
-    private suspend fun checkBusyBox() = RootUtils.isBusyboxAvailable().also {
+    private suspend fun checkBusyBox() = rootUtils.isBusyboxAvailable().also {
         delay(500)
     }
 
     private suspend fun checkForDatabaseMigration() {
         delay(500)
-        if (!prefs.getBoolean(Prefs.MIGRATION_COMPLETED, false)) {
+        if (!prefs.migrationCompleted) {
             binding.splashStatusText.setText(R.string.splash_status_performing_migration)
 
-            val repository: ParamRepository = get()
-            repository.performDatabaseMigration(this)
-            prefs.edit { putBoolean(Prefs.MIGRATION_COMPLETED, true) }
+            val result = performDatabaseMigrationUseCase.execute()
+            prefs.migrationCompleted = result.isSuccess
         }
     }
 

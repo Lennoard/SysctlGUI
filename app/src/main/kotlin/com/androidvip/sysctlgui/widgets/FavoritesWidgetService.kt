@@ -6,12 +6,13 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.data.repository.ParamRepository
+import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EXTRA_ITEM
 import kotlinx.coroutines.runBlocking
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class FavoritesWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent?): RemoteViewsFactory {
@@ -23,7 +24,7 @@ class FavoritesRemoteViewsFactory(
     val context: Context,
     val intent: Intent
 ) : RemoteViewsService.RemoteViewsFactory, KoinComponent {
-    private val repository: ParamRepository by inject()
+    private val getUserParamsUseCase: GetUserParamsUseCase by inject()
 
     private var widgetId: Any = intent.getIntExtra(
         AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -34,9 +35,11 @@ class FavoritesRemoteViewsFactory(
 
     override fun onCreate() {
         runBlocking {
-            params = repository.getParams(ParamRepository.SOURCE_ROOM).filter {
+            params = getUserParamsUseCase().getOrNull().orEmpty().filter {
                 it.favorite
-            }.toMutableList().also { println(it) }
+            }.map {
+                DomainParamMapper.map(it)
+            }.toMutableList()
         }
     }
 
@@ -48,8 +51,10 @@ class FavoritesRemoteViewsFactory(
 
     override fun onDataSetChanged() {
         runBlocking {
-            params = repository.getParams(ParamRepository.SOURCE_ROOM).filter {
+            params = getUserParamsUseCase().getOrNull().orEmpty().filter {
                 it.favorite
+            }.map {
+                DomainParamMapper.map(it)
             }.toMutableList()
         }
     }

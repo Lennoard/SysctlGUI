@@ -4,25 +4,33 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.repository.ParamRepository
-import com.androidvip.sysctlgui.prefs.Prefs
-import com.androidvip.sysctlgui.utils.RootUtils
+import com.androidvip.sysctlgui.data.utils.RootUtils
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
+import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.*
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.lang.ref.WeakReference
 import kotlin.coroutines.CoroutineContext
 
 class BaseStartUpService(
     private var weakContext: WeakReference<Context?>,
-    private var handler: ServiceHandler?
+    private var handler: ServiceHandler?,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : CoroutineScope, KoinComponent {
     override val coroutineContext: CoroutineContext = Dispatchers.Main + SupervisorJob()
 
@@ -30,8 +38,10 @@ class BaseStartUpService(
      * important: implement method to check if the device keep crashing on boot and disable start up
      *            maybe add a counter to prefs and if the value is > 3 disable
      */
-    private val prefs: SharedPreferences by inject()
-    private val repository: ParamRepository by inject()
+    private val appPrefs: AppPrefs by inject()
+    private val rootUtils: RootUtils by inject()
+    private val getUserParamsUseCase: GetUserParamsUseCase by inject()
+    private val applyParamsUseCase: ApplyParamsUseCase by inject()
 
     fun onStart() {
         weakContext.get()?.let { context ->
@@ -77,14 +87,15 @@ class BaseStartUpService(
             }
         }
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val startupDelay = prefs.getInt(Prefs.START_UP_DELAY, 0)
+        val startupDelay = appPrefs.startUpDelay
 
         if (startupDelay > 0) {
-            builder.setContentTitle(context.getString(
-                R.string.notification_start_up_description_delay,
-                startupDelay
-            ))
+            builder.setContentTitle(
+                context.getString(
+                    R.string.notification_start_up_description_delay,
+                    startupDelay
+                )
+            )
             builder.setProgress(startupDelay, 0, true)
 
             launch {
@@ -117,22 +128,20 @@ class BaseStartUpService(
     }
 
     private suspend fun applyConfig() {
-        repository.getParams(ParamRepository.SOURCE_ROOM).forEach {
-            repository.update(it, ParamRepository.SOURCE_RUNTIME)
+        getUserParamsUseCase().getOrNull().orEmpty().forEach {
+            applyParamsUseCase.execute(it)
         }
     }
 
-    private suspend fun checkRequirements() = withContext(Dispatchers.IO) {
-        val allowStartUp: Boolean = prefs.getBoolean(RUN_ON_START_UP, false)
-
-        allowStartUp && Shell.rootAccess()
+    private suspend fun checkRequirements() = withContext(dispatcher) {
+        appPrefs.runOnStartUp && Shell.rootAccess()
     }
 
     private fun onCleanUp() {
         // avoid memory leaks
         this.handler = null
         coroutineContext[Job]?.cancelChildren()
-        RootUtils.finishProcess()
+        rootUtils.finishProcess()
     }
 
     interface ServiceHandler {
@@ -141,7 +150,6 @@ class BaseStartUpService(
     }
 
     companion object {
-        private const val RUN_ON_START_UP: String = "run_on_start_up"
         private const val SERVICE_ID: Int = 2
         private const val NOTIFICATION_ID: String = "2"
     }
