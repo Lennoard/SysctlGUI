@@ -16,6 +16,7 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.ui.main.MainActivity
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity

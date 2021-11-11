@@ -29,7 +29,7 @@ class RemovableParamAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         if (holder is RemovableParamViewHolder) {
-            holder.bind(getItem(position))
+            holder.bind(getItem(position), position)
         }
     }
 

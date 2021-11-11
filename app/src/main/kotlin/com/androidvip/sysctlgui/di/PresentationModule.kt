@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.di
 
+import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.params.browse.BrowseParamsViewModel
 import com.androidvip.sysctlgui.ui.params.list.ListParamsViewModel
 import com.androidvip.sysctlgui.ui.params.user.UserParamsViewModel
@@ -13,6 +14,7 @@ internal val presentationModules = module {
     viewModel { BrowseParamsViewModel(get(), Dispatchers.IO) }
     viewModel { ListParamsViewModel(get()) }
     viewModel { UserParamsViewModel(get(), get(), get()) }
+    viewModel { MainViewModel() }
 
     single { FavoriteWidgetParamUpdater(androidContext()).getListener() }
 }

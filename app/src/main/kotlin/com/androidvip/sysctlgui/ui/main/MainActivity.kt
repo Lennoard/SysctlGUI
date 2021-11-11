@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.ui
+package com.androidvip.sysctlgui.ui.main
 
 import android.app.Activity
 import android.content.Intent
@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.models.HomeItem
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivityMainBinding
 import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
@@ -28,13 +29,17 @@ import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HomeItemAdapter.OnHomeItemClickedListener {
     private lateinit var binding: ActivityMainBinding
     private val rootUtils: RootUtils by inject()
+
     private val applyParamsUseCase: ApplyParamsUseCase by inject()
     private val clearUserParamUseCase: ClearUserParamUseCase by inject()
     private val addUserParamsUseCase: AddUserParamsUseCase by inject()
+
+    private val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,32 +47,38 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        binding.content.mainParamsList.setOnClickListener {
-            Intent(this, KernelParamListActivity::class.java).apply {
-                startActivity(this)
-            }
-        }
+        val adapter = HomeItemAdapter(this)
+        binding.content.recyclerView.adapter = adapter
+        adapter.submitList(viewModel.getHomeItems())
 
-        binding.content.mainParamBrowser.setOnClickListener {
-            Intent(this, KernelParamBrowserActivity::class.java).apply {
-                startActivity(this)
-            }
-        }
+        viewModel.viewEffect.observe(this) { viewEffect ->
+            when (viewEffect) {
+                is MainViewEffect.NavigateToKernelList -> startActivity(
+                    Intent(this, KernelParamListActivity::class.java)
+                )
 
-        binding.content.mainReadFromFile.setOnClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                addCategory(Intent.CATEGORY_OPENABLE)
-                type = "*/*"
-            }
-            startActivityForResult(
-                intent,
-                OPEN_FILE_REQUEST_CODE
-            )
-        }
+                is MainViewEffect.NavigateToKernelBrowser -> startActivity(
+                    Intent(this, KernelParamBrowserActivity::class.java)
+                )
 
-        binding.content.mainFavorites.setOnClickListener {
-            Intent(this, ManageFavoritesParamsActivity::class.java).apply {
-                startActivity(this)
+                is MainViewEffect.ImportParamsFromFile -> {
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = "*/*"
+                    }
+                    startActivityForResult(
+                        intent,
+                        OPEN_FILE_REQUEST_CODE
+                    )
+                }
+
+                is MainViewEffect.NavigateToFavorites -> startActivity(
+                    Intent(this, ManageFavoritesParamsActivity::class.java)
+                )
+
+                is MainViewEffect.NavigateToSettings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                }
             }
         }
 
@@ -84,9 +95,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             android.R.id.home -> finish()
 
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-            }
+            R.id.action_settings -> viewModel.doWhenSettingsPressed()
 
             R.id.action_exit -> {
                 moveTaskToBack(true)
@@ -124,6 +133,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onHomeItemClicked(item: HomeItem, position: Int) {
+        when (position) {
+            0 -> viewModel.doWhenListPressed()
+            1 -> viewModel.doWhenBrowsePressed()
+            2 -> viewModel.doWhenImportPressed()
+            3 -> viewModel.doWhenFavoritesPressed()
+        }
     }
 
     private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) {
