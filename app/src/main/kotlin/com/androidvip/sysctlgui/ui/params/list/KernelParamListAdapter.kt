@@ -23,7 +23,7 @@ class KernelParamListAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         if (holder is ParamListViewHolder) {
-            holder.bind(getItem(position))
+            holder.bind(getItem(position), position)
         }
     }
 
@@ -34,7 +34,7 @@ class KernelParamListAdapter(
     inner class ParamListViewHolder(
         private val binding: ListItemKernelParamListBinding
     ) : BaseViewHolder<KernelParam>(binding) {
-        override fun bind(item: KernelParam) {
+        override fun bind(item: KernelParam, position: Int) {
             binding.param = item
             binding.onParamItemClickedListener = paramItemClickedListener
             binding.executePendingBindings()

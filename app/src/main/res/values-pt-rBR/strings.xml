@@ -48,9 +48,11 @@
     <string name="manage_parameters_sum">Gerenciar os parâmetros que serão aplicados na inicialização</string>
     <string name="no_parameters_found">Nenhum parâmetro encontrado</string>
     <string name="export_parameters">Exportar parâmetros</string>
-    <string name="export_parameters_sum">Exportar os parâmetros que serão aplicados na inicialização</string>
+    <string name="export_parameters_sum">Exportar os parâmetros que você alterou usando este aplicativo para um arquivo JSON</string>
     <string name="import_error_invalid_file_type">Não foi possível abrir o arquivo: tipo de arquivo inválido.</string>
-    <string name="restore_parameters">Tentando restaurar parâmetros</string>
+    <string name="import_error_malformed_line">Não foi possível importar os parâmetros: existem erros de formatação no arquivo.</string>
+    <string name="import_error_empty_file">Não foi possível importar os parâmetros: o arquivo está vazio.</string>
+    <string name="restore_parameters">Restaurar parâmetros</string>
     <string name="import_error_invalid_json">Arquivo JSON inválido ou mal formado</string>
     <string name="import_error">Falha ao importar parâmetros</string>
     <string name="import_success_message">%d parâmetro(s) aplicados</string>
@@ -83,4 +85,18 @@
     <string name="undo">Desfazer</string>
     <string name="splash_status_performing_migration">Migrando banco de dados</string>
     <string name="splash_status_checking_migration">Verificando esquema de banco de dados antigo</string>
+    <string name="tile_toggle_start_up_no_root_access_toast">Acesso root necessário</string>
+    <string name="tile_toggle_start_up_no_root_access_label">Requer acesso root</string>
+    <string name="tile_toggle_start_up_label">Executar o SysctlGUI na inicialização</string>
+    <string name="tile_start_app_label">Iniciar o SysctlGUI</string>
+    <string name="backup_parameters">Fazer backup dos parâmetros</string>
+    <string name="backup_parameters_sum">Fazer backup de todos os parêmetros em runtime atuais. Por favor, note que nem todos os parâmetros podem ser reaplicados novamente, uma vez restaurados.</string>
+    <string name="import_parameters">Importar parâmetros</string>
+    <string name="restore_parameters_sum">Restaurar a sua cópia de segurança anterior</string>
+    <string name="export_options">Opções de exportação</string>
+    <string name="export_success_message">Parâmetros exportados com sucesso</string>
+    <string name="export_error_no_param">Para na exportação de parâmetros: nenhum parâmetro encontrado</string>
+    <string name="export_error_io">A exportação de parâmetros falhou devido a um erro do armazenamento</string>
+    <string name="export_error">Falha ao exportar parâmetros</string>
+    <string name="export_options_sum">Importar, exportar ou fazer backup dos parâmetros do kernel</string>
 </resources>

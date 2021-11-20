@@ -17,12 +17,15 @@ class RuntimeParamDataSource(
     ): Result<Unit> = runCatching {
         val commitResult = commitChanges(param, commitMode, useBusybox, allowBlank)
 
-        if (commitMode == "sysctl") {
-            if (commitResult == "error" || !commitResult.contains(param.name)) {
-                throw Exception("Value refused to apply. Try using 'echo' mode.")
+        when {
+            commitMode == "sysctl" -> {
+                if (commitResult == "error" || !commitResult.contains(param.name)) {
+                    throw Exception("Value refused to apply. Try using 'echo' mode.")
+                }
             }
-        } else if (commitResult == "error") {
-            throw Exception("Value refused to apply")
+            commitResult == "error" -> {
+                throw Exception("Value refused to apply")
+            }
         }
     }
 

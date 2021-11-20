@@ -30,7 +30,7 @@ class KernelParamBrowserAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         if (holder is ParamBrowserViewHolder) {
-            holder.bind(getItem(position))
+            holder.bind(getItem(position), position)
         }
     }
 
@@ -41,7 +41,7 @@ class KernelParamBrowserAdapter(
     inner class ParamBrowserViewHolder(
         private val binding: ListItemKernelFileBrowserBinding
     ) : BaseViewHolder<KernelParam>(binding) {
-        override fun bind(item: KernelParam) {
+        override fun bind(item: KernelParam, position: Int) {
             val kernelFile = File(item.path)
             binding.param = item
             binding.kernelFile = kernelFile

@@ -32,34 +32,4 @@ object KernelParamUtils {
         }
     }
 
-    fun getParamsFromJsonUri(context: Context, uri: Uri): List<DomainKernelParam>? {
-        val sb = StringBuilder()
-        uri.readLines(context) { sb.append(it) }
-
-        val type: Type = object : TypeToken<List<DomainKernelParam>>() {}.type
-        return Gson().fromJson(sb.toString(), type)
-    }
-
-    fun getParamsFromConfUri(context: Context, uri: Uri): List<DomainKernelParam> {
-        val readParams = mutableListOf<DomainKernelParam>()
-
-        var cont = 0
-        uri.readLines(context) { line ->
-            if (!line.startsWith("#") && !line.startsWith(";") && line.isNotEmpty()) {
-                runCatching {
-                    readParams.add(
-                        DomainKernelParam(
-                            id = ++cont,
-                            name = line.split("=").first().trim(),
-                            value = line.split("=")[1].trim()
-                        ).apply {
-                            setPathFromName(this.name)
-                        }
-                    )
-                }
-            }
-        }
-
-        return readParams
-    }
 }
