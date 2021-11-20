@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.util.Properties
 
-val devCycle = true
+val devCycle = false
 
 plugins {
     id("com.android.application")
@@ -40,8 +40,8 @@ android {
         applicationId = "com.androidvip.sysctlgui"
         minSdk = 19
         targetSdk = 30
-        versionCode = 9
-        versionName = "1.0.8"
+        versionCode = 10
+        versionName = "1.1.0"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations.addAll(listOf("en", "de", "pt-rBR"))
         javaCompileOptions {
