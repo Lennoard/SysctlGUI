@@ -52,9 +52,10 @@
     <string name="manage_parameters">Manage parameters</string>
     <string name="manage_parameters_sum">Manage the parameters that will be applied at startup</string>
     <string name="export_parameters">Export parameters</string>
-    <string name="export_parameters_sum">Export the parameters that will be applied at startup</string>
+    <string name="export_parameters_sum">Export parameters that you have altered using this application to a JSON file</string>
     <string name="no_parameters_found">No parameters found</string>
-    <string name="restore_parameters">Trying to restore parameters</string>
+    <string name="restore_parameters">Restore parameters</string>
+    <string name="restore_parameters_sum">Restore your previous parameter backup</string>
     <string name="import_error">Failed to import parameters</string>
     <string name="import_error_invalid_json">Invalid or malformed JSON file</string>
     <string name="import_error_invalid_file_type">Can\'t open file: invalid file type.</string>
@@ -89,4 +90,14 @@
     <string name="tile_toggle_start_up_label">Run Sysctl GUI at boot</string>
     <string name="tile_toggle_start_up_no_root_access_label">Requires root access</string>
     <string name="tile_toggle_start_up_no_root_access_toast">Root access required</string>
+    <string name="import_parameters">Import parameters</string>
+    <string name="backup_parameters">Backup parameters</string>
+    <string name="backup_parameters_sum">Backup all current runtime parameters. Please note that not all of these can be reapplied back once restored.</string>
+    <string name="export_error">Failed to export parameters</string>
+    <string name="export_error_io">Parameter export failed due to an IO error</string>
+    <string name="export_error_no_param">Parameter export failed: no parameter to export</string>
+    <string name="export_options">Export options</string>
+    <string name="export_success_message">Parameters successfully exported</string>
+    <string name="export_options_sum">Import, export or back up kernel parameters</string>
+    <string name="please_wait">Please wait, this may take some time...</string>
 </resources>

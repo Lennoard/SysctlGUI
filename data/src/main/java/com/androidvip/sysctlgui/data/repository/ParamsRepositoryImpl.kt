@@ -12,6 +12,8 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileDescriptor
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.lang.reflect.Type
 import kotlin.coroutines.CoroutineContext
@@ -176,6 +178,34 @@ class ParamsRepositoryImpl(
                 }
             }
             readParams
+        }
+    }
+
+    override suspend fun exportParams(
+        params: List<DomainKernelParam>,
+        fileDescriptor: FileDescriptor
+    ): Result<Unit> {
+        return runCatching {
+            FileOutputStream(fileDescriptor).use { stream ->
+                stream.write(Gson().toJson(params).toByteArray())
+            }
+        }
+    }
+
+    override suspend fun backupParams(
+        params: List<DomainKernelParam>,
+        fileDescriptor: FileDescriptor
+    ): Result<Unit> {
+        return runCatching {
+            val rawText = buildString {
+                params.forEach { param ->
+                    appendLine(param.toString())
+                }
+            }
+
+            FileOutputStream(fileDescriptor).use { stream ->
+                stream.write(rawText.toByteArray())
+            }
         }
     }
 

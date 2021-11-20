@@ -41,6 +41,10 @@
             android:name=".ui.params.user.ManageOnStartUpParamsActivity"
             android:label="@string/manage_parameters" />
         <activity
+            android:name=".ui.export.ExportOptionsActivity"
+            android:label="@string/export_options"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.SplashActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -103,7 +107,7 @@
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
 
             <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
         <service
@@ -113,7 +117,7 @@
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
 
             <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
     </application>

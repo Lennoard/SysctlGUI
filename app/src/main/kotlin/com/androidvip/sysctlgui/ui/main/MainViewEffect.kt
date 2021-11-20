@@ -1,9 +1,9 @@
 package com.androidvip.sysctlgui.ui.main
 
-sealed class MainViewEffect {
-    object NavigateToKernelList : MainViewEffect()
-    object NavigateToKernelBrowser : MainViewEffect()
-    object ImportParamsFromFile : MainViewEffect()
-    object NavigateToFavorites : MainViewEffect()
-    object NavigateToSettings : MainViewEffect()
+sealed interface MainViewEffect {
+    object NavigateToKernelList : MainViewEffect
+    object NavigateToKernelBrowser : MainViewEffect
+    object ExportParams : MainViewEffect
+    object NavigateToFavorites : MainViewEffect
+    object NavigateToSettings : MainViewEffect
 }

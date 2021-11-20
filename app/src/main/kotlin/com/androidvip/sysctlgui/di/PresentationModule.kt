@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.di
 
+import com.androidvip.sysctlgui.ui.export.ExportOptionsViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.params.browse.BrowseParamsViewModel
 import com.androidvip.sysctlgui.ui.params.list.ListParamsViewModel
@@ -15,6 +16,7 @@ internal val presentationModules = module {
     viewModel { ListParamsViewModel(get()) }
     viewModel { UserParamsViewModel(get(), get(), get()) }
     viewModel { MainViewModel() }
+    viewModel { ExportOptionsViewModel(get(), get(), get()) }
 
     single { FavoriteWidgetParamUpdater(androidContext()).getListener() }
 }
