@@ -15,16 +15,16 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.HomeItem
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivityMainBinding
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
-import com.androidvip.sysctlgui.domain.usecase.AddUserParamsUseCase
-import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
-import com.androidvip.sysctlgui.domain.usecase.ClearUserParamUseCase
+import com.androidvip.sysctlgui.domain.exceptions.EmptyFileException
+import com.androidvip.sysctlgui.domain.exceptions.InvalidFileExtensionException
+import com.androidvip.sysctlgui.domain.exceptions.MalformedLineException
+import com.androidvip.sysctlgui.domain.exceptions.NoValidParamException
+import com.androidvip.sysctlgui.domain.usecase.ImportParamsUseCase
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.params.user.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
-import com.androidvip.sysctlgui.utils.KernelParamUtils
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
@@ -35,9 +35,7 @@ class MainActivity : AppCompatActivity(), HomeItemAdapter.OnHomeItemClickedListe
     private lateinit var binding: ActivityMainBinding
     private val rootUtils: RootUtils by inject()
 
-    private val applyParamsUseCase: ApplyParamsUseCase by inject()
-    private val clearUserParamUseCase: ClearUserParamUseCase by inject()
-    private val addUserParamsUseCase: AddUserParamsUseCase by inject()
+    private val importParamsUseCase: ImportParamsUseCase by inject()
 
     private val viewModel: MainViewModel by viewModel()
 
@@ -114,22 +112,9 @@ class MainActivity : AppCompatActivity(), HomeItemAdapter.OnHomeItemClickedListe
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             OPEN_FILE_REQUEST_CODE -> {
-                if (resultCode != Activity.RESULT_OK) return
-
-                data?.data?.let { uri ->
-                    val fileExtension = uri.lastPathSegment
-
-                    fileExtension?.let { extension ->
-                        if (extension.endsWith(".json") or extension.endsWith(".conf")) {
-                            lifecycleScope.launch {
-                                applyParamsFromUri(uri, extension)
-                            }
-                        } else {
-                            toast(R.string.import_error_invalid_file_type)
-                            return
-                        }
-                    }
-                }
+                if (resultCode != Activity.RESULT_OK) return toast(R.string.import_error)
+                val uri = data?.data ?: return toast(R.string.import_error)
+                importParams(uri)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -144,8 +129,9 @@ class MainActivity : AppCompatActivity(), HomeItemAdapter.OnHomeItemClickedListe
         }
     }
 
-    private suspend fun applyParamsFromUri(uri: Uri, fileExtension: String) {
-        val successfulParams: MutableList<DomainKernelParam> = mutableListOf()
+    private fun importParams(uri: Uri) {
+        val extension = uri.lastPathSegment.orEmpty()
+        val stream = contentResolver.openInputStream(uri) ?: return toast(R.string.import_error)
 
         fun showResultDialog(message: String, success: Boolean) {
             val dialog = AlertDialog.Builder(this)
@@ -159,43 +145,32 @@ class MainActivity : AppCompatActivity(), HomeItemAdapter.OnHomeItemClickedListe
             }
         }
 
-        try {
-            val params: MutableList<DomainKernelParam>? = when {
-                fileExtension.endsWith(".json") -> {
-                    KernelParamUtils.getParamsFromJsonUri(this, uri)
-                }
-                fileExtension.endsWith(".conf") -> {
-                    KernelParamUtils.getParamsFromConfUri(this, uri)
-                }
-                else -> mutableListOf()
-            }?.toMutableList()
-
-            if (params.isNullOrEmpty()) {
-                toast(R.string.no_parameters_found)
-                return
-            }
-
-            params.forEach {
-                // Apply the param to check if valid
-                val result = applyParamsUseCase.execute(it)
-                if (result.isSuccess) {
-                    successfulParams.add(it)
-                }
-            }
-
-            clearUserParamUseCase.execute()
-            addUserParamsUseCase.execute(successfulParams)
-            val msg = "${
-            getString(R.string.import_success_message, successfulParams.size)
-            }\n\n ${successfulParams.joinToString()}"
-            showResultDialog(msg, true)
-            toast(R.string.done, Toast.LENGTH_LONG)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            when (e) {
+        lifecycleScope.launch {
+            val result = importParamsUseCase.execute(stream, extension)
+            when (result.exceptionOrNull()) {
                 is JsonParseException,
                 is JsonSyntaxException -> {
                     showResultDialog(getString(R.string.import_error_invalid_json), false)
+                }
+                is InvalidFileExtensionException -> showResultDialog(
+                    getString(R.string.import_error_invalid_file_type), false
+                )
+                is EmptyFileException -> showResultDialog(
+                    getString(R.string.import_error_empty_file), false
+                )
+                is MalformedLineException -> showResultDialog(
+                    getString(R.string.import_error_malformed_line), false
+                )
+                is NoValidParamException -> showResultDialog(
+                    getString(R.string.no_parameters_found), false
+                )
+                null -> {
+                    val successfulParams = result.getOrNull().orEmpty()
+                    val msg = "${
+                    getString(R.string.import_success_message, successfulParams.size)
+                    }\n\n ${successfulParams.joinToString()}"
+                    showResultDialog(msg, true)
+                    toast(R.string.done, Toast.LENGTH_LONG)
                 }
                 else -> {
                     showResultDialog(getString(R.string.import_error), false)

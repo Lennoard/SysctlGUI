@@ -11,6 +11,7 @@ import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.domain.usecase.RemoveUserParamUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpdateUserParamUseCase
+import com.androidvip.sysctlgui.domain.usecase.ImportParamsUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -25,4 +26,5 @@ val domainModule = module {
     factory { PerformDatabaseMigrationUseCase(get()) }
     factory { RemoveUserParamUseCase(get()) }
     factory { UpdateUserParamUseCase(get(), get()) }
+    factory { ImportParamsUseCase(get(), get(), get(), get()) }
 }

@@ -58,6 +58,8 @@
     <string name="import_error">Failed to import parameters</string>
     <string name="import_error_invalid_json">Invalid or malformed JSON file</string>
     <string name="import_error_invalid_file_type">Can\'t open file: invalid file type.</string>
+    <string name="import_error_empty_file">Can\'t import params: empty file.</string>
+    <string name="import_error_malformed_line">Can\'t import params: there is a formatting error in the file.</string>
     <string name="import_success_message">%d parameter(s) applied</string>
     <string name="open_documentation">Open documentation</string>
     <string name="edit">Edit</string>

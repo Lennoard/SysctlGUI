@@ -50,6 +50,8 @@
     <string name="export_parameters">Exportar parâmetros</string>
     <string name="export_parameters_sum">Exportar os parâmetros que serão aplicados na inicialização</string>
     <string name="import_error_invalid_file_type">Não foi possível abrir o arquivo: tipo de arquivo inválido.</string>
+    <string name="import_error_malformed_line">Não foi possível importar os parâmetros: existem erros de formatação no arquivo.</string>
+    <string name="import_error_empty_file">Não foi possível importar os parâmetros: o arquivo está vazio.</string>
     <string name="restore_parameters">Tentando restaurar parâmetros</string>
     <string name="import_error_invalid_json">Arquivo JSON inválido ou mal formado</string>
     <string name="import_error">Falha ao importar parâmetros</string>
@@ -83,4 +85,8 @@
     <string name="undo">Desfazer</string>
     <string name="splash_status_performing_migration">Migrando banco de dados</string>
     <string name="splash_status_checking_migration">Verificando esquema de banco de dados antigo</string>
+    <string name="tile_toggle_start_up_no_root_access_toast">Acesso root necessário</string>
+    <string name="tile_toggle_start_up_no_root_access_label">Requer acesso root</string>
+    <string name="tile_toggle_start_up_label">Executar o SysctlGUI na inicialização</string>
+    <string name="tile_start_app_label">Iniciar o SysctlGUI</string>
 </resources>

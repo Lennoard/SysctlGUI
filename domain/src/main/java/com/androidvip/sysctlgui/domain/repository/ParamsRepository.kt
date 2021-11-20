@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.domain.repository
 
 import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
 import java.io.File
+import java.io.InputStream
 
 interface ParamsRepository {
     suspend fun getUserParams(): Result<List<DomainKernelParam>>
@@ -23,4 +24,6 @@ interface ParamsRepository {
     suspend fun clearUserParams(): Result<Unit>
 
     suspend fun performDatabaseMigration(): Result<Unit>
+    suspend fun importParamsFromJson(stream: InputStream): Result<List<DomainKernelParam>>
+    suspend fun importParamsFromConf(stream: InputStream): Result<List<DomainKernelParam>>
 }
