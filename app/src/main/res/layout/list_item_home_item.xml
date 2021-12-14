@@ -41,11 +41,11 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="?attr/iconColor"
+                app:tint="?colorPrimary"
                 binding:srcCompatRes="@{item.iconRes}"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/itemTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -54,13 +54,13 @@
                 android:fontFamily="sans-serif-medium"
                 android:maxLines="@integer/material_motion_duration_long_1"
                 android:text="@{item.titleRes}"
-                android:textAppearance="?textAppearanceSubtitle1"
+                android:textAppearance="?textAppearanceBody1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemIcon"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@tools:sample/full_names" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/itemSummary"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -69,6 +69,7 @@
                 android:ellipsize="end"
                 android:maxLines="3"
                 android:text="@{item.descriptionRes}"
+                android:textAppearance="?textAppearanceBody2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/itemIcon"
                 app:layout_constraintTop_toBottomOf="@+id/itemTitle"

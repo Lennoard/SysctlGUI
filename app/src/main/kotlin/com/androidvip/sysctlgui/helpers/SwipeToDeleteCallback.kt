@@ -36,7 +36,7 @@ class SwipeToDeleteCallback(
     )
     private val background: ColorDrawable = ColorDrawable(ContextCompat.getColor(
         weakContext.get()!!,
-        R.color.error
+        R.color.red_500
     ))
     private val intrinsicWidth: Int
     private val intrinsicHeight: Int

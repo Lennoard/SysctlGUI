@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.addListener
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.util.Pair
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityManageParamSetBinding
+import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.helpers.SwipeToDeleteCallback
 import com.androidvip.sysctlgui.showAsLight
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
@@ -27,12 +27,13 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.lang.ref.WeakReference
+import androidx.core.util.Pair as PairUtil
 
-abstract class BaseManageParamsActivity : BaseSearchActivity(),
+abstract class BaseManageParamsActivity :
+    BaseSearchActivity(),
     OnParamItemClickedListener,
     OnPopUpMenuItemSelectedListener,
-    RemovableParamAdapter.OnRemoveRequestedListener
-{
+    RemovableParamAdapter.OnRemoveRequestedListener {
     protected val paramViewModel: UserParamsViewModel by inject()
     private lateinit var binding: ActivityManageParamSetBinding
     private val noParamSnackbar: Snackbar by lazy {
@@ -54,10 +55,13 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityManageParamSetBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.swipeLayout.apply {
-            setColorSchemeResources(R.color.colorAccent, R.color.colorAccentLight)
+            val roles = getColorRoles()
+            setColorSchemeColors(roles.accent)
+            setProgressBackgroundColorSchemeColor(roles.accentContainer)
             setOnRefreshListener { refreshList() }
         }
 
@@ -75,10 +79,8 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
         }
 
         paramViewModel.viewState.observe(this) { state ->
-            lifecycleScope.launch {
-                binding.swipeLayout.isRefreshing = state.isLoading
-                updateRecyclerViewData(state.data)
-            }
+            binding.swipeLayout.isRefreshing = state.isLoading
+            updateRecyclerViewData(state.data)
         }
     }
 
@@ -97,9 +99,9 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
     override fun onQueryTextChanged() {
         if (searchExpression.isNotEmpty()) {
             paramViewModel.setFilterPredicate {
-                it.name.toLowerCase(defaultLocale)
+                it.name.lowercase(defaultLocale)
                     .replace(".", "")
-                    .contains(searchExpression.toLowerCase(defaultLocale)) &&
+                    .contains(searchExpression.lowercase(defaultLocale)) &&
                     filterPredicate.invoke(it)
             }
         } else {
@@ -108,12 +110,12 @@ abstract class BaseManageParamsActivity : BaseSearchActivity(),
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
-        val sharedElements = arrayOf(
-            Pair<View, String>(
+        val sharedElements = arrayOf<PairUtil<View, String>>(
+            PairUtil(
                 itemLayout.findViewById(R.id.paramName),
                 EditKernelParamActivity.NAME_TRANSITION_NAME
             ),
-            Pair<View, String>(
+            PairUtil(
                 itemLayout.findViewById(R.id.paramValue),
                 EditKernelParamActivity.VALUE_TRANSITION_NAME
             )

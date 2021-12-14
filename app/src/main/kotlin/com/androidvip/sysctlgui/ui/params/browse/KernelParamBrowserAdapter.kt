@@ -1,13 +1,8 @@
 package com.androidvip.sysctlgui.ui.params.browse
 
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
-import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ListItemKernelFileBrowserBinding
 import com.androidvip.sysctlgui.helpers.ParamDiffCallback
@@ -47,21 +42,6 @@ class KernelParamBrowserAdapter(
             binding.kernelFile = kernelFile
             binding.paramListener = paramItemClickedListener
             binding.directoryListener = directoryChangedListener
-
-            if (kernelFile.isDirectory) {
-                with(binding) {
-                    name.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-                    icon.setColorFilter(
-                        ContextCompat.getColor(binding.icon.context, R.color.colorAccentLight),
-                        PorterDuff.Mode.SRC_IN
-                    )
-                }
-            } else {
-                with(binding) {
-                    name.typeface = Typeface.create("sans-serif", Typeface.NORMAL)
-                    icon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
-                }
-            }
 
             binding.executePendingBindings()
         }

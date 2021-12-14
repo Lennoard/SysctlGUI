@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.databinding.ActivityKernelParamsListBinding
+import com.androidvip.sysctlgui.databinding.SettingsActivityBinding
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.runSafeOnUiThread
@@ -18,11 +20,14 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: SettingsActivityBinding
     private val getUserParamsUseCase: GetUserParamsUseCase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+        binding = SettingsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         supportFragmentManager.beginTransaction().also {

@@ -5,7 +5,7 @@ import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
-import com.androidvip.sysctlgui.ui.SplashActivity
+import com.androidvip.sysctlgui.ui.StartActivity
 
 @RequiresApi(Build.VERSION_CODES.N)
 class StartAppTileService : TileService() {
@@ -16,7 +16,7 @@ class StartAppTileService : TileService() {
             updateTile()
         }
         startActivityAndCollapse(
-            Intent(this, SplashActivity::class.java)
+            Intent(this, StartActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         )
     }

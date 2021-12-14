@@ -1,8 +1,10 @@
 package com.androidvip.sysctlgui.ui.base
 
+import android.os.Bundle
 import android.view.Menu
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.androidvip.sysctlgui.R
 import java.util.*
 
@@ -10,6 +12,11 @@ abstract class BaseSearchActivity : AppCompatActivity() {
     protected val defaultLocale: Locale by lazy { Locale.getDefault() }
     protected var searchExpression: String = ""
     private var searchView: SearchView? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
@@ -22,20 +29,21 @@ abstract class BaseSearchActivity : AppCompatActivity() {
 
     fun setUpSearchView(menu: Menu?) {
         searchView = (menu?.findItem(R.id.action_search)?.actionView as SearchView?)?.apply {
-            setOnQueryTextListener(object :
-                androidx.appcompat.widget.SearchView.OnQueryTextListener,
-                SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return true
-                }
+            setOnQueryTextListener(
+                object :
+                    androidx.appcompat.widget.SearchView.OnQueryTextListener,
+                    SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        return true
+                    }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchExpression = newText.orEmpty().replace(".", "")
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        searchExpression = newText.orEmpty().replace(".", "")
 
-                    this@BaseSearchActivity.onQueryTextChanged()
-                    return true
-                }
-            })
+                        this@BaseSearchActivity.onQueryTextChanged()
+                        return true
+                    }
+                })
 
             // expand and show keyboard
             isIconifiedByDefault = false
@@ -48,7 +56,6 @@ abstract class BaseSearchActivity : AppCompatActivity() {
         searchView?.setQuery("", false)
     }
 
-    val recyclerViewColumns : Int
+    val recyclerViewColumns: Int
         get() = if (resources.getBoolean(R.bool.is_landscape)) 2 else 1
-
 }

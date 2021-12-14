@@ -7,6 +7,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
-class SplashActivity : AppCompatActivity() {
+class StartActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val prefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
@@ -37,16 +38,15 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(
-                this,
-                R.color.colorPrimaryLight
-            )
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(
+            this,
+            R.color.colorPrimaryLight
+        )
 
         lifecycleScope.launch {
             val isRootAccessGiven = checkRootAccess()
@@ -65,7 +65,7 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             } else {
                 binding.splashProgress.goAway()
-                AlertDialog.Builder(this@SplashActivity)
+                AlertDialog.Builder(this@StartActivity)
                     .setTitle(R.string.error)
                     .setMessage(getString(R.string.root_not_found_sum))
                     .setPositiveButton(android.R.string.ok) { _, _ -> finish() }

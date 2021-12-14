@@ -8,6 +8,7 @@
         android:orderInCategory="100"
         android:icon="@drawable/ic_settings_outline"
         android:title="@string/settings"
+        app:iconTint="?colorOnBackground"
         app:showAsAction="always" />
 
     <item

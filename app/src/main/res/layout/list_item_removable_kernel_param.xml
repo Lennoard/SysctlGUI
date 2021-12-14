@@ -14,44 +14,45 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/error">
+        android:background="?colorError">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="24dp"
-            app:srcCompat="@drawable/ic_delete_sweep" />
+            app:srcCompat="@drawable/ic_delete_sweep"
+            app:tint="?colorOnError" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/removableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:background="@color/colorPrimary"
+            android:background="?android:attr/colorBackground"
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/paramName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@{param.shortName}"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="16sp"
+                android:textAppearance="?textAppearanceBody1"
                 app:layout_constraintEnd_toStartOf="@+id/popUpIcon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="@tools:sample/cities" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/paramValue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@{param.value}"
+                android:textAppearance="?textAppearanceBody2"
                 app:layout_constraintEnd_toStartOf="@+id/popUpIcon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/paramName"
@@ -68,7 +69,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_more_vert" />
+                app:srcCompat="@drawable/ic_more_vert"
+                app:tint="?colorOnBackground" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

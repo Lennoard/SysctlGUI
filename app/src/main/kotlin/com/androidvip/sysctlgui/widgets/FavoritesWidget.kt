@@ -12,7 +12,7 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.SplashActivity
+import com.androidvip.sysctlgui.ui.StartActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
 import kotlinx.coroutines.runBlocking
@@ -54,7 +54,7 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
             if (params.isEmpty()) return@runBlocking
 
             val param = params[intent.getIntExtra(EXTRA_ITEM, 0)]
-            Intent(context, SplashActivity::class.java).apply {
+            Intent(context, StartActivity::class.java).apply {
                 flags = FLAG_ACTIVITY_NEW_TASK
                 action = Actions.EditParam.name
                 putExtra(RemovableParamAdapter.EXTRA_PARAM, param)

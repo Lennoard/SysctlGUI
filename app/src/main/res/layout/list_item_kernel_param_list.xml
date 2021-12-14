@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="param"
             type="com.androidvip.sysctlgui.data.models.KernelParam" />
@@ -21,7 +22,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/paramName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,11 +31,10 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@{param.shortName}"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="16sp"
+            android:textAppearance="?textAppearanceBody1"
             tools:text="@tools:sample/cities" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/paramValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,6 +42,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="4dp"
             android:text="@{param.value}"
+            android:textAppearance="?textAppearanceBody2"
             tools:text="@tools:sample/last_names" />
 
     </LinearLayout>

@@ -42,11 +42,9 @@ class EditKernelParamActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-            window.enterTransition = Explode()
-            window.exitTransition = Slide()
-        }
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+        window.enterTransition = Explode()
+        window.exitTransition = Slide()
 
         binding = ActivityEditKernelParamBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -75,10 +73,7 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP -> finish()
-            else -> supportFinishAfterTransition()
-        }
+        supportFinishAfterTransition()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

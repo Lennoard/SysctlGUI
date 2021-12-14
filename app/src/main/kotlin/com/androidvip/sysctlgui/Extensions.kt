@@ -9,7 +9,10 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.AttrRes
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
+import com.google.android.material.color.ColorRoles
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,6 +23,11 @@ import kotlin.contracts.contract
 fun View.goAway() { this.visibility = View.GONE }
 fun View.hide() { this.visibility = View.INVISIBLE }
 fun View.show() { this.visibility = View.VISIBLE }
+
+fun View.getColorRoles(@AttrRes colorAttrRes: Int = R.attr.colorSecondary): ColorRoles {
+    val color = MaterialColors.getColor(this, colorAttrRes)
+    return MaterialColors.getColorRoles(context, color)
+}
 
 fun Snackbar.showAsLight() {
     view.setBackgroundColor(Color.parseColor("#cfd8dc"))

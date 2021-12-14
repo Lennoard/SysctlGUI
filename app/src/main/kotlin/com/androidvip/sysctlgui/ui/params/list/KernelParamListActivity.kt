@@ -6,13 +6,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.util.Pair
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.ActivityKernelParamsListBinding
+import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import androidx.core.util.Pair as PairUtil
 
 // TODO: Improve by delegating any non-presentation logic to a view model
 class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener {
@@ -34,10 +35,13 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
         super.onCreate(savedInstanceState)
         binding = ActivityKernelParamsListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.swipeLayout.apply {
-            setColorSchemeResources(R.color.colorAccent)
+            val roles = getColorRoles()
+            setColorSchemeColors(roles.accent)
+            setProgressBackgroundColorSchemeColor(roles.accentContainer)
             setOnRefreshListener { refreshList() }
         }
 
@@ -69,12 +73,12 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
-        val sharedElements = arrayOf(
-            Pair<View, String>(
+        val sharedElements = arrayOf<PairUtil<View, String>>(
+            PairUtil(
                 itemLayout.findViewById(R.id.paramName),
                 EditKernelParamActivity.NAME_TRANSITION_NAME
             ),
-            Pair<View, String>(
+            PairUtil(
                 itemLayout.findViewById(R.id.paramValue),
                 EditKernelParamActivity.VALUE_TRANSITION_NAME
             )

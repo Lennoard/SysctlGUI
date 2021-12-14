@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.util.Properties
 
-val devCycle = false
+val devCycle = true
 
 plugins {
     id("com.android.application")
@@ -12,7 +12,7 @@ plugins {
 
 android {
 
-    compileSdk = 30
+    compileSdk = 31
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -38,8 +38,8 @@ android {
 
     defaultConfig {
         applicationId = "com.androidvip.sysctlgui"
-        minSdk = 19
-        targetSdk = 30
+        minSdk = 21
+        targetSdk = 31
         versionCode = 10
         versionName = "1.1.0"
         vectorDrawables.useSupportLibrary = true
@@ -80,13 +80,17 @@ android {
     }
 
     packagingOptions {
-        exclude("/META-INF/**")
-        exclude("/androidsupportmultidexversion.txt")
-        exclude("/kotlin/**")
-        exclude("/kotlinx/**")
-        exclude("/okhttp3/**")
-        exclude("/*.txt")
-        exclude("/*.bin")
+        resources.excludes.addAll(
+            arrayOf(
+                "/META-INF/**",
+                "/androidsupportmultidexversion.txt",
+                "/kotlin/**",
+                "/kotlinx/**",
+                "/okhttp3/**",
+                "/*.txt",
+                "/*.bin"
+            )
+        )
     }
 }
 
@@ -115,16 +119,17 @@ dependencies {
 
     implementation("io.insert-koin:koin-android:3.1.3")
 
-    implementation("androidx.appcompat:appcompat:1.3.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.1")
-    implementation("androidx.core:core-ktx:1.3.2")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
+    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.2")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-splashscreen:1.0.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.room:room-ktx:2.3.0")
     implementation("androidx.room:room-runtime:2.3.0")
 
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.material:material:1.5.0-beta01")
     implementation("com.google.code.gson:gson:2.8.6")
 
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")

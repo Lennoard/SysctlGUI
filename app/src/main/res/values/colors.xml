@@ -8,7 +8,62 @@
     <color name="colorAccentLight">#ffd942</color>
     <color name="colorBackgroundAlt">#304049</color>
     <color name="iconColor">#abb8c3</color>
-    <color name="error">#B00020</color>
-    <color name="warning">#ff9100</color>
+
+    <color name="gray_50">#E9EDEE</color>
+    <color name="gray_100">#C9D1D5</color>
+    <color name="gray_200">#A5B2B9</color>
+    <color name="gray_300">#80939C</color>
+    <color name="gray_400">#657C87</color>
+    <color name="gray_500">#4A6572</color>
+    <color name="gray_600">#435D6A</color>
+    <color name="gray_700">#3A535F</color>
+    <color name="gray_800">#324955</color>
+    <color name="gray_900">#223742</color>
+
+    <color name="yellow_50">#FEF5E7</color>
+    <color name="yellow_100">#FDE6C2</color>
+    <color name="yellow_200">#FCD599</color>
+    <color name="yellow_300">#FBC470</color>
+    <color name="yellow_400">#FAB752</color>
+    <color name="yellow_500">#F9AA33</color>
+    <color name="yellow_600">#F8A32E</color>
+    <color name="yellow_700">#F79927</color>
+    <color name="yellow_800">#F69020</color>
+    <color name="yellow_900">#F57F14</color>
+
+    <color name="cyan_50">#E0F7FA</color>
+    <color name="cyan_100">#B2EBF2</color>
+    <color name="cyan_200">#80DEEA</color>
+    <color name="cyan_300">#4DD0E1</color>
+    <color name="cyan_400">#26C6DA</color>
+    <color name="cyan_500">#00BCD4</color>
+    <color name="cyan_600">#00ACC1</color>
+    <color name="cyan_700">#0097A7</color>
+    <color name="cyan_800">#00838F</color>
+    <color name="cyan_900">#006064</color>
+
+    <color name="green_200">#80E4A9</color>
+    <color name="green_500">#00C853</color>
+    <color name="green_800">#00B439</color>
+
+    <color name="orange_200">#FFCB80</color>
+    <color name="orange_500">#FF9600</color>
+    <color name="orange_800">#FF7900</color>
+
+    <color name="red_50">#f6E5E4</color>
+    <color name="red_100">#F9DEDC</color>
+    <color name="red_200">#D9938F</color>
+    <color name="red_300">#CA6762</color>
+    <color name="red_400">#BE4740</color>
+    <color name="red_500">#B3261E</color>
+    <color name="red_600">#AC221A</color>
+    <color name="red_700">#A31C16</color>
+    <color name="red_800">#9A1712</color>
+    <color name="red_900">#8B0D0A</color>
+
+    <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="neutral_200">#ECE7E7</color>
+    <color name="neutral_500">#7E7979</color>
+    <color name="neutral_900">#1B1B2F</color>
 </resources>
