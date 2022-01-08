@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="CardStyle">
         <item name="cardBackgroundColor">?colorSurface</item>
@@ -32,7 +32,15 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.DynamicColors.DayNight" />
+    <style name="AppTheme.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">@color/black_87</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">@color/black_87</item>
+    </style>
+
+    <style name="AppTheme.AppBarLayout.Flat" parent="AppTheme.AppBarLayout">
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
 

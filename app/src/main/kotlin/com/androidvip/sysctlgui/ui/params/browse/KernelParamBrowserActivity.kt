@@ -219,10 +219,10 @@ class KernelParamBrowserActivity :
                     swipeLayout.isRefreshing = false
 
                     val containerColorInt = MaterialColors.getColor(
-                        swipeLayout, R.attr.colorSecondaryContainer
+                        swipeLayout, R.attr.colorPrimaryContainer
                     )
                     val colorInt = MaterialColors.getColor(
-                        swipeLayout, R.attr.colorOnSecondaryContainer
+                        swipeLayout, R.attr.colorOnPrimaryContainer
                     )
 
                     val containerColorHex = "#%06X".format(0xFFFFFF and containerColorInt)

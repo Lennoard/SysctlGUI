@@ -20,4 +20,3 @@ class SysctlGuiApp : Application() {
         }
     }
 }
-

@@ -18,7 +18,7 @@ fun AppCompatImageView.setImageResourceCompat(@DrawableRes res: Int) {
 
 @BindingAdapter("binding:iconTintForFile")
 fun AppCompatImageView.setIconTintForFile(file: File) {
-    val attr = if (file.isDirectory) R.attr.colorOnSecondary else R.attr.colorOnSurface
+    val attr = if (file.isDirectory) R.attr.colorOnPrimaryContainer else R.attr.colorOnSurface
     val color = MaterialColors.getColor(this, attr)
     val colorStateList = ColorStateList.valueOf(color)
     ImageViewCompat.setImageTintList(this, colorStateList)
