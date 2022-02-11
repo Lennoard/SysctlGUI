@@ -1,7 +1,6 @@
 package com.androidvip.sysctlgui.ui
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
@@ -17,7 +16,7 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.main.MainActivity
+import com.androidvip.sysctlgui.ui.main.MainActivity2
 import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
@@ -124,7 +123,7 @@ class StartActivity : AppCompatActivity() {
             }
 
             else -> {
-                Intent(this, MainActivity::class.java)
+                Intent(this, MainActivity2::class.java)
             }
         }
 

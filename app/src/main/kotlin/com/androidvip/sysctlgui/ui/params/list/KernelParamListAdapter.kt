@@ -27,7 +27,7 @@ class KernelParamListAdapter(
         }
     }
 
-    fun updateData(newList: MutableList<KernelParam>) {
+    fun updateData(newList: List<KernelParam>) {
         submitList(newList)
     }
 

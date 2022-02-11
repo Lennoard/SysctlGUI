@@ -100,4 +100,6 @@
     <string name="export_success_message">Parameters successfully exported</string>
     <string name="export_options_sum">Import, export or back up kernel parameters</string>
     <string name="please_wait">Please wait, this may take some time...</string>
+    <string name="browse">Browse</string>
+    <string name="export">Export</string>
 </resources>

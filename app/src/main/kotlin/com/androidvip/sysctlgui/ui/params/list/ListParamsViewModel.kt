@@ -14,7 +14,7 @@ class ListParamsViewModel(private val getParamsUseCase: GetRuntimeParamsUseCase)
     private val _viewState = MutableLiveData<ViewState<KernelParam>>()
     val viewState: LiveData<ViewState<KernelParam>> = _viewState
 
-    fun getKernelParams() {
+    fun requestKernelParams() {
         viewModelScope.launch {
             _viewState.postValue(currentViewState.copy(isLoading = true))
             val params = getParamsUseCase().getOrNull().orEmpty().map {

@@ -27,6 +27,7 @@
 
         <item name="android:colorBackground">@color/neutral_900</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="colorOnBackground">@color/white_87</item>
         <item name="colorSurface">@color/neutral_900</item>

@@ -2,41 +2,36 @@ package com.androidvip.sysctlgui.ui.params.list
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.databinding.ActivityKernelParamsListBinding
+import com.androidvip.sysctlgui.databinding.FragmentKernelParamListBinding
+import com.androidvip.sysctlgui.domain.models.ViewState
 import com.androidvip.sysctlgui.getColorRoles
-import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
+import com.androidvip.sysctlgui.ui.base.BaseViewBindingFragment
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.util.Pair as PairUtil
 
-// TODO: Improve by delegating any non-presentation logic to a view model
-class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener {
-    private lateinit var binding: ActivityKernelParamsListBinding
-    private val paramViewModel: ListParamsViewModel by inject()
+class KernelParamListFragment :
+    BaseViewBindingFragment<FragmentKernelParamListBinding>(
+        FragmentKernelParamListBinding::inflate
+    ),
+    OnParamItemClickedListener {
+
+    private val paramViewModel: ListParamsViewModel by viewModel()
     private val paramsListAdapter: KernelParamListAdapter by lazy {
         KernelParamListAdapter(this)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityKernelParamsListBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.swipeLayout.apply {
             val roles = getColorRoles()
@@ -52,24 +47,12 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
             adapter = paramsListAdapter
         }
 
-        paramViewModel.viewState.observe(this) { state ->
-            lifecycleScope.launch {
-                binding.swipeLayout.isRefreshing = state.isLoading
-                paramsListAdapter.updateData(filterList(state.data))
-            }
-        }
+        paramViewModel.viewState.observe(viewLifecycleOwner, ::renderState)
     }
 
     override fun onStart() {
         super.onStart()
         refreshList()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
@@ -84,28 +67,19 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
             )
         )
         val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            this,
-            *sharedElements,
+            requireActivity(),
+            *sharedElements
         )
-        Intent(this, EditKernelParamActivity::class.java).apply {
+        Intent(requireContext(), EditKernelParamActivity::class.java).apply {
             putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
             startActivity(this, options.toBundle())
         }
     }
 
-    override fun onQueryTextChanged() {
-        refreshList()
-    }
-
     private fun refreshList() = paramViewModel.requestKernelParams()
 
-    private suspend fun filterList(list: List<KernelParam>) = withContext(Dispatchers.Default) {
-        if (searchExpression.isEmpty()) return@withContext list.toMutableList()
-
-        return@withContext list.filter { param ->
-            param.name.lowercase(defaultLocale)
-                .replace(".", "")
-                .contains(searchExpression.lowercase(defaultLocale))
-        }.toMutableList()
+    private fun renderState(state: ViewState<KernelParam>) {
+        binding.swipeLayout.isRefreshing = state.isLoading
+        paramsListAdapter.updateData(state.data)
     }
 }
