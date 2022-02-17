@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.addListener
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -24,18 +23,16 @@ import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.OnPopUpMenuItemSelectedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import java.lang.ref.WeakReference
 import androidx.core.util.Pair as PairUtil
 
 abstract class BaseManageParamsActivity :
-    BaseSearchActivity(),
+    BaseSearchActivity<ActivityManageParamSetBinding>(ActivityManageParamSetBinding::inflate),
     OnParamItemClickedListener,
     OnPopUpMenuItemSelectedListener,
     RemovableParamAdapter.OnRemoveRequestedListener {
     protected val paramViewModel: UserParamsViewModel by inject()
-    private lateinit var binding: ActivityManageParamSetBinding
     private val noParamSnackbar: Snackbar by lazy {
         Snackbar.make(
             binding.recyclerView,
@@ -53,7 +50,7 @@ abstract class BaseManageParamsActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityManageParamSetBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -99,9 +96,9 @@ abstract class BaseManageParamsActivity :
     override fun onQueryTextChanged() {
         if (searchExpression.isNotEmpty()) {
             paramViewModel.setFilterPredicate {
-                it.name.lowercase(defaultLocale)
+                it.name.lowercase()
                     .replace(".", "")
-                    .contains(searchExpression.lowercase(defaultLocale)) &&
+                    .contains(searchExpression.lowercase()) &&
                     filterPredicate.invoke(it)
             }
         } else {

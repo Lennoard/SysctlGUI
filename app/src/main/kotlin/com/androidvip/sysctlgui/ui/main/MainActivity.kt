@@ -15,7 +15,6 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.helpers.OnSettingsItemClickedListener
 import com.androidvip.sysctlgui.ui.export.ExportOptionsActivity
-import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.params.user.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
@@ -87,10 +86,6 @@ class MainActivity : AppCompatActivity(), OnSettingsItemClickedListener {
                 Intent(this, KernelParamListActivity::class.java)
             )
 
-            is MainViewEffect.NavigateToKernelBrowser -> startActivity(
-                Intent(this, KernelParamBrowserActivity::class.java)
-            )
-
             is MainViewEffect.ExportParams -> {
                 startActivity(Intent(this, ExportOptionsActivity::class.java))
             }
@@ -102,6 +97,7 @@ class MainActivity : AppCompatActivity(), OnSettingsItemClickedListener {
             is MainViewEffect.NavigateToSettings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
+            else -> {}
         }
     }
 }

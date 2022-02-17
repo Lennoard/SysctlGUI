@@ -25,13 +25,13 @@ class UserParamsViewModel(
 
     fun getParams() {
         viewModelScope.launch {
-            _viewState.postValue(currentViewState.copy(isLoading = true))
+            _viewState.postValue(currentViewState.copyState(isLoading = true))
             val params = getParamsUseCase()
                 .getOrNull()
                 .orEmpty()
                 .map { DomainParamMapper.map(it) }
                 .filter(currentFilterPredicate)
-            _viewState.postValue(currentViewState.copy(isLoading = false, data = params))
+            _viewState.postValue(currentViewState.copyState(isLoading = false, data = params))
         }
     }
 
@@ -41,7 +41,7 @@ class UserParamsViewModel(
     }
 
     fun delete(kernelParam: KernelParam) {
-        _viewState.postValue(currentViewState.copy(isLoading = true))
+        _viewState.postValue(currentViewState.copyState(isLoading = true))
         viewModelScope.launch {
             removeParamUseCase.execute(kernelParam)
             getParams()
@@ -49,7 +49,7 @@ class UserParamsViewModel(
     }
 
     fun update(kernelParam: KernelParam) {
-        _viewState.postValue(currentViewState.copy(isLoading = true))
+        _viewState.postValue(currentViewState.copyState(isLoading = true))
         viewModelScope.launch {
             updateParamUseCase.execute(kernelParam)
             getParams()

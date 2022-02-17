@@ -102,4 +102,5 @@
     <string name="please_wait">Please wait, this may take some time...</string>
     <string name="browse">Browse</string>
     <string name="export">Export</string>
+    <string name="param_list">Param list</string>
 </resources>

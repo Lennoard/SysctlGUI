@@ -27,7 +27,7 @@
             android:padding="32dp"
             android:text="@string/please_wait"
             android:textAppearance="?textAppearanceSubtitle1"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
@@ -14,61 +15,52 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.databinding.ActivityKernelParamBrowserBinding
+import com.androidvip.sysctlgui.databinding.FragmentKernelParamBrowserBinding
 import com.androidvip.sysctlgui.domain.Consts
-import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
 import com.androidvip.sysctlgui.toast
-import com.androidvip.sysctlgui.ui.base.BaseSearchActivity
+import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.google.android.material.color.MaterialColors
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 import java.io.File
-import androidx.core.util.Pair as PairUtil
 
-// TODO: Improve by delegating any non-presentation logic to the view model
-class KernelParamBrowserActivity :
-    BaseSearchActivity(),
-    DirectoryChangedListener,
-    OnParamItemClickedListener {
-    private lateinit var binding: ActivityKernelParamBrowserBinding
+class KernelParamBrowseFragment :
+    BaseSearchFragment<FragmentKernelParamBrowserBinding>(FragmentKernelParamBrowserBinding::inflate),
+    OnParamItemClickedListener,
+    DirectoryChangedListener {
+
     private var actionBarMenu: Menu? = null
-    private var documentationUrl = "https://www.kernel.org/doc/Documentation"
-    private var currentPath = Consts.PROC_SYS
-    private val paramViewModel: BrowseParamsViewModel by inject()
-    private val prefs: AppPrefs by inject()
+    private val viewModel: BrowseParamsViewModel by inject()
     private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
         KernelParamBrowserAdapter(this, this)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityKernelParamBrowserBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        paramViewModel.listFoldersFirst = prefs.listFoldersFirst
+        with(viewModel) {
+            viewState.observe(viewLifecycleOwner, ::renderState)
+            viewEffect.observe(viewLifecycleOwner, ::handleViewEffect)
+            setPath(Consts.PROC_SYS)
+        }
 
         binding.swipeLayout.apply {
             val roles = getColorRoles()
             setColorSchemeColors(roles.accent)
             setProgressBackgroundColorSchemeColor(roles.accentContainer)
-            setOnRefreshListener { refreshList() }
+            setOnRefreshListener { refresh() }
         }
 
         binding.recyclerView.apply {
@@ -78,125 +70,92 @@ class KernelParamBrowserActivity :
             adapter = paramsBrowserAdapter
         }
 
-        paramViewModel.viewState.observe(this) { state ->
-            lifecycleScope.launch {
-                binding.swipeLayout.isRefreshing = state.isLoading
-                paramsBrowserAdapter.updateData(filterList(state.data))
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val currentPath = viewModel.viewState.value?.currentPath.orEmpty()
+                    if (currentPath == Consts.PROC_SYS) {
+                        if (isEnabled) {
+                            isEnabled = false
+                            requireActivity().onBackPressed()
+                        }
+                    } else {
+                        onDirectoryChanged(
+                            File(currentPath).parentFile ?: File(Consts.PROC_SYS)
+                        )
+                    }
+                }
             }
-        }
+        )
     }
 
     override fun onStart() {
         super.onStart()
-        refreshList()
+        refresh()
     }
 
-    override fun onBackPressed() {
-        if (currentPath == Consts.PROC_SYS) {
-            finish()
-        } else {
-            onDirectoryChanged(File(currentPath).parentFile ?: File(Consts.PROC_SYS))
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_browse_params, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_browse_params, menu)
         actionBarMenu = menu
 
         setUpSearchView(menu)
-
-        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-            R.id.action_documentation -> openDocumentationUrl()
+            R.id.action_documentation -> viewModel.doWhenDocumentationMenuClicked()
+            else -> return false
         }
-        return super.onOptionsItemSelected(item)
+
+        return true
     }
 
-    override fun onDirectoryChanged(newDir: File) {
-        val newPath = newDir.absolutePath
-        if (newPath.isNotEmpty() && newPath.startsWith(Consts.PROC_SYS)) {
-            currentPath = newPath
-            supportActionBar?.subtitle = newPath
-
-            fun setItemVisible() =
-                actionBarMenu?.findItem(R.id.action_documentation)?.setVisible(true)
-
-            when {
-                newPath.startsWith("/proc/sys/abi") -> setItemVisible().also {
-                    documentationUrl = "https://www.kernel.org/doc/Documentation/sysctl/abi.txt"
-                }
-
-                newPath.startsWith("/proc/sys/fs") -> setItemVisible().also {
-                    documentationUrl = "https://www.kernel.org/doc/Documentation/sysctl/fs.txt"
-                }
-
-                newPath.startsWith("/proc/sys/kernel") -> setItemVisible().also {
-                    documentationUrl = "https://www.kernel.org/doc/Documentation/sysctl/kernel.txt"
-                }
-
-                newPath.startsWith("/proc/sys/net") -> setItemVisible().also {
-                    documentationUrl = "https://www.kernel.org/doc/Documentation/sysctl/net.txt"
-                }
-
-                newPath.startsWith("/proc/sys/vm") -> setItemVisible().also {
-                    documentationUrl = "https://www.kernel.org/doc/Documentation/sysctl/vm.txt"
-                }
-
-                else -> actionBarMenu?.findItem(R.id.action_documentation)?.isVisible = false
-            }
-        } else {
-            toast(getString(R.string.invalid_path))
-        }
-
-        resetSearchExpression()
-        refreshList()
+    override fun onQueryTextChanged() {
+        viewModel.setSearchExpression(searchExpression)
+        refresh()
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
-        val sharedElements = arrayOf<PairUtil<View, String>>(
-            PairUtil(
-                itemLayout.findViewById(R.id.name),
-                EditKernelParamActivity.NAME_TRANSITION_NAME
-            )
-        )
-        val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            this,
-            *sharedElements,
-        )
+        viewModel.doWhenParamItemClicked(param, itemLayout, requireActivity())
+    }
 
-        Intent(this, EditKernelParamActivity::class.java).apply {
+    override fun onDirectoryChanged(newDir: File) {
+        viewModel.doWhenDirectoryChanges(newDir)
+        resetSearchExpression()
+    }
+
+    private fun renderState(state: ParamBrowserViewState) {
+        actionBarMenu?.findItem(R.id.action_documentation)?.isVisible = state.showDocumentationMenu
+        binding.swipeLayout.isRefreshing = state.isLoading
+
+        paramsBrowserAdapter.updateData(state.data)
+    }
+
+    private fun handleViewEffect(viewEffect: ParamBrowserViewEffect) {
+        when (viewEffect) {
+            is ParamBrowserViewEffect.NavigateToParamDetails -> navigateToParamDetails(
+                viewEffect.param, viewEffect.options
+            )
+            is ParamBrowserViewEffect.OpenDocumentationUrl -> openDocumentationUrl(viewEffect.url)
+            is ParamBrowserViewEffect.ShowToast -> toast(viewEffect.stringRes)
+        }
+    }
+
+    private fun navigateToParamDetails(param: KernelParam, options: ActivityOptionsCompat) {
+        Intent(requireContext(), EditKernelParamActivity::class.java).apply {
             putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
             startActivity(this, options.toBundle())
         }
     }
 
-    override fun onQueryTextChanged() {
-        refreshList()
-    }
-
-    private fun refreshList() {
-        paramViewModel.setPath(currentPath)
-    }
-
-    private suspend fun filterList(list: List<KernelParam>) = withContext(Dispatchers.Default) {
-        if (searchExpression.isEmpty()) return@withContext list.toMutableList()
-
-        return@withContext list.filter { param ->
-            param.name.lowercase(defaultLocale)
-                .replace(".", "")
-                .contains(searchExpression.lowercase(defaultLocale))
-        }.toMutableList()
-    }
+    private fun refresh() = viewModel.setPath(viewModel.viewState.value?.currentPath.orEmpty())
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun openDocumentationUrl() {
-        if (isFinishing) return
+    private fun openDocumentationUrl(url: String) {
+        if (!isAdded) return
 
-        val dialog = Dialog(this).apply {
+        val dialog = Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.dialog_web)
             setCancelable(true)
@@ -211,7 +170,7 @@ class KernelParamBrowserActivity :
                 cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
             }
 
-            loadUrl(documentationUrl)
+            loadUrl(url)
 
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
@@ -263,8 +222,4 @@ class KernelParamBrowserActivity :
 
         dialog.show()
     }
-}
-
-interface DirectoryChangedListener {
-    fun onDirectoryChanged(newDir: File)
 }

@@ -34,7 +34,7 @@ class MainActivity2 : AppCompatActivity() {
             }
         }
 
-        return true
+        return false // Let fragments have a chance to consume it
     }
 
     override fun onSupportNavigateUp(): Boolean {

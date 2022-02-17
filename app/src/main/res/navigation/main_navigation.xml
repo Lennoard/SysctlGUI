@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigationBrowse"
-        android:name="com.androidvip.sysctlgui.ui.params.list.KernelParamListFragment"
+        android:name="com.androidvip.sysctlgui.ui.params.KernelParamsFragment"
         android:label="@string/kernel_params"
         tools:layout="@layout/fragment_kernel_param_list" />
 

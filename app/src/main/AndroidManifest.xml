@@ -44,10 +44,6 @@
             android:label="@string/kernel_params"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.params.browse.KernelParamBrowserActivity"
-            android:label="@string/browse_variables"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".ui.params.user.ManageOnStartUpParamsActivity"
             android:label="@string/manage_parameters"
             android:theme="@style/AppTheme" />

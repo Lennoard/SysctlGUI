@@ -17,11 +17,8 @@ import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.ui.main.MainActivity2
-import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import com.androidvip.sysctlgui.ui.settings.SettingsActivity
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -94,17 +91,17 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun navigate() {
-        val navigationIntent = when (this.intent.action) {
-            Actions.KernelParamBrowserActivity.name -> {
-                Intent(this, KernelParamBrowserActivity::class.java)
+        when (this.intent.action) {
+            Actions.KernelParamBrowserFragment.name -> {
+                // TODO
             }
 
-            Actions.KernelParamsListActivity.name -> {
-                Intent(this, KernelParamListActivity::class.java)
+            Actions.KernelParamsListFragment.name -> {
+                // TODO
             }
 
-            Actions.SettingsActivity.name -> {
-                Intent(this, SettingsActivity::class.java)
+            Actions.SettingsFragment.name -> {
+                // TODO
             }
 
             Actions.EditParam.name -> {
@@ -119,14 +116,13 @@ class StartActivity : AppCompatActivity() {
                             RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false
                         )
                     )
+                    startActivity(this)
                 }
             }
 
             else -> {
-                Intent(this, MainActivity2::class.java)
+                startActivity(Intent(this, MainActivity2::class.java))
             }
         }
-
-        startActivity(navigationIntent)
     }
 }

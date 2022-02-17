@@ -12,6 +12,7 @@ import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.FragmentKernelParamListBinding
 import com.androidvip.sysctlgui.domain.models.ViewState
 import com.androidvip.sysctlgui.getColorRoles
+import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
 import com.androidvip.sysctlgui.ui.base.BaseViewBindingFragment
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
@@ -20,9 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.util.Pair as PairUtil
 
 class KernelParamListFragment :
-    BaseViewBindingFragment<FragmentKernelParamListBinding>(
-        FragmentKernelParamListBinding::inflate
-    ),
+    BaseSearchFragment<FragmentKernelParamListBinding>(FragmentKernelParamListBinding::inflate),
     OnParamItemClickedListener {
 
     private val paramViewModel: ListParamsViewModel by viewModel()
@@ -81,5 +80,10 @@ class KernelParamListFragment :
     private fun renderState(state: ViewState<KernelParam>) {
         binding.swipeLayout.isRefreshing = state.isLoading
         paramsListAdapter.updateData(state.data)
+    }
+
+    override fun onQueryTextChanged() {
+        paramViewModel.setSearchExpression(searchExpression)
+        refreshList()
     }
 }

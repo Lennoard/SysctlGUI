@@ -29,7 +29,7 @@ class KernelParamBrowserAdapter(
         }
     }
 
-    fun updateData(newList: MutableList<KernelParam>) {
+    fun updateData(newList: List<KernelParam>) {
         submitList(newList)
     }
 
@@ -46,4 +46,8 @@ class KernelParamBrowserAdapter(
             binding.executePendingBindings()
         }
     }
+}
+
+interface DirectoryChangedListener {
+    fun onDirectoryChanged(newDir: File)
 }

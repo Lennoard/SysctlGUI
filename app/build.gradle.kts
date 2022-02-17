@@ -11,7 +11,6 @@ plugins {
 }
 
 android {
-
     compileSdk = 31
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -136,6 +135,7 @@ dependencies {
 
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("com.github.topjohnwu.libsu:core:2.5.1")
+    implementation("com.github.hadilq:live-event:1.3.0")
 
     kapt("androidx.room:room-compiler:2.3.0")
 }

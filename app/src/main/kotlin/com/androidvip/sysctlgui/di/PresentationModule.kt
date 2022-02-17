@@ -12,7 +12,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 internal val presentationModules = module {
-    viewModel { BrowseParamsViewModel(get(), Dispatchers.IO) }
+    viewModel { BrowseParamsViewModel(get(), Dispatchers.IO, get()) }
     viewModel { ListParamsViewModel(get()) }
     viewModel { UserParamsViewModel(get(), get(), get()) }
     viewModel { MainViewModel() }

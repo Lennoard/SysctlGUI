@@ -74,7 +74,7 @@ class ExportOptionsViewModel(
     fun doWhenRestorePressed() = _viewEffect.postValue(ExportOptionsViewEffect.RestoreRuntimeParams)
 
     fun importParams(stream: InputStream, fileExtension: String) = viewModelScope.launch {
-        _viewState.postValue(currentViewState.copy(isLoading = true))
+        _viewState.postValue(currentViewState.copyState(isLoading = true))
 
         val postError: (Int) -> Unit = {
             _viewEffect.postValue(ExportOptionsViewEffect.ShowImportError(it))
@@ -101,11 +101,11 @@ class ExportOptionsViewModel(
             else -> postError(R.string.import_error)
         }
 
-        _viewState.postValue(currentViewState.copy(isLoading = false))
+        _viewState.postValue(currentViewState.copyState(isLoading = false))
     }
 
     fun exportParams(target: Uri, context: Context, backup: Boolean) = viewModelScope.launch {
-        _viewState.postValue(currentViewState.copy(isLoading = true))
+        _viewState.postValue(currentViewState.copyState(isLoading = true))
 
         val postError: (Int) -> Unit = {
             _viewEffect.postValue(ExportOptionsViewEffect.ShowExportError(it))
@@ -130,7 +130,7 @@ class ExportOptionsViewModel(
             else -> postError(R.string.export_error)
         }
 
-        _viewState.postValue(currentViewState.copy(isLoading = false))
+        _viewState.postValue(currentViewState.copyState(isLoading = false))
     }
 
     private suspend fun exportParamsWithFileDescriptor(

@@ -15,13 +15,28 @@ class ListParamsViewModel(private val getParamsUseCase: GetRuntimeParamsUseCase)
     val viewState: LiveData<ViewState<KernelParam>> = _viewState
 
     fun requestKernelParams() {
+        val searchExpression = viewState.value?.searchExpression.orEmpty()
         viewModelScope.launch {
-            _viewState.postValue(currentViewState.copy(isLoading = true))
+            updateState { isLoading = true }
             val params = getParamsUseCase().getOrNull().orEmpty().map {
                 DomainParamMapper.map(it)
+            }.filter { param ->
+                if (searchExpression.isEmpty()) true else {
+                    param.name.lowercase()
+                        .replace(".", "")
+                        .contains(searchExpression.lowercase())
+                }
             }
-            _viewState.postValue(currentViewState.copy(isLoading = false, data = params))
+            updateState { isLoading = false; data = params }
         }
+    }
+
+    fun setSearchExpression(expression: String) = updateState {
+        searchExpression = expression
+    }
+
+    private fun updateState(state: ViewState<KernelParam>.() -> Unit) {
+        _viewState.value = currentViewState.apply(state)
     }
 
     private val currentViewState: ViewState<KernelParam>

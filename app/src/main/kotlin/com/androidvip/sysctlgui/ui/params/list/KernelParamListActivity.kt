@@ -24,8 +24,7 @@ import org.koin.android.ext.android.inject
 import androidx.core.util.Pair as PairUtil
 
 // TODO: Improve by delegating any non-presentation logic to a view model
-class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener {
-    private lateinit var binding: ActivityKernelParamsListBinding
+class KernelParamListActivity : BaseSearchActivity<ActivityKernelParamsListBinding>(ActivityKernelParamsListBinding::inflate), OnParamItemClickedListener {
     private val paramViewModel: ListParamsViewModel by inject()
     private val paramsListAdapter: KernelParamListAdapter by lazy {
         KernelParamListAdapter(this)
@@ -33,7 +32,6 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityKernelParamsListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -103,9 +101,9 @@ class KernelParamListActivity : BaseSearchActivity(), OnParamItemClickedListener
         if (searchExpression.isEmpty()) return@withContext list.toMutableList()
 
         return@withContext list.filter { param ->
-            param.name.lowercase(defaultLocale)
+            param.name.lowercase()
                 .replace(".", "")
-                .contains(searchExpression.lowercase(defaultLocale))
+                .contains(searchExpression.lowercase())
         }.toMutableList()
     }
 }
