@@ -6,13 +6,15 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.SettingsItem
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivityMainBinding
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
+import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.helpers.OnSettingsItemClickedListener
 import com.androidvip.sysctlgui.ui.export.ExportOptionsActivity
-import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
 import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.params.user.ManageFavoritesParamsActivity
 import com.androidvip.sysctlgui.ui.settings.SettingsActivity
@@ -23,9 +25,13 @@ class MainActivity : AppCompatActivity(), OnSettingsItemClickedListener {
     private lateinit var binding: ActivityMainBinding
     private val rootUtils: RootUtils by inject()
     private val viewModel: MainViewModel by viewModel()
+    private val prefs: AppPrefs by inject()
+    private val performDatabaseMigrationUseCase: PerformDatabaseMigrationUseCase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
@@ -80,10 +86,6 @@ class MainActivity : AppCompatActivity(), OnSettingsItemClickedListener {
                 Intent(this, KernelParamListActivity::class.java)
             )
 
-            is MainViewEffect.NavigateToKernelBrowser -> startActivity(
-                Intent(this, KernelParamBrowserActivity::class.java)
-            )
-
             is MainViewEffect.ExportParams -> {
                 startActivity(Intent(this, ExportOptionsActivity::class.java))
             }
@@ -95,6 +97,7 @@ class MainActivity : AppCompatActivity(), OnSettingsItemClickedListener {
             is MainViewEffect.NavigateToSettings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
+            else -> {}
         }
     }
 }

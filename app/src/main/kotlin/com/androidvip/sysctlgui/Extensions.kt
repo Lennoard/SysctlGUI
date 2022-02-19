@@ -2,29 +2,45 @@ package com.androidvip.sysctlgui
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.AttrRes
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.Fragment
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
+import com.google.android.material.color.ColorRoles
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.InputStream
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 fun View.goAway() { this.visibility = View.GONE }
 fun View.hide() { this.visibility = View.INVISIBLE }
 fun View.show() { this.visibility = View.VISIBLE }
 
+fun View.getColorRoles(@AttrRes colorAttrRes: Int = R.attr.colorPrimary): ColorRoles {
+    val color = MaterialColors.getColor(this, colorAttrRes)
+    return MaterialColors.getColorRoles(context, color)
+}
+
 fun Snackbar.showAsLight() {
-    view.setBackgroundColor(Color.parseColor("#cfd8dc"))
-    setTextColor(Color.parseColor("#DE000000"))
+    val roles = view.getColorRoles()
+    ViewCompat.setBackgroundTintList(view, ColorStateList.valueOf(roles.accentContainer))
+    setTextColor(roles.accent)
     show()
+}
+
+fun Fragment.toast(messageRes: Int, length: Int = Toast.LENGTH_SHORT) {
+    if (!isAdded) return
+    requireContext().toast(getString(messageRes), length)
 }
 
 fun Context?.toast(messageRes: Int, length: Int = Toast.LENGTH_SHORT) {

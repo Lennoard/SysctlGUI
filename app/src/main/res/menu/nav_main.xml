@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigationBrowse"
+        android:icon="@drawable/ic_folder_outline"
+        android:title="@string/browse" />
+
+    <item
+        android:id="@+id/navigationExport"
+        android:icon="@drawable/ic_export_params"
+        android:title="@string/export" />
+
+    <item
+        android:id="@+id/navigationSettings"
+        android:icon="@drawable/ic_settings_outline"
+        android:title="@string/settings" />
+
+</menu>

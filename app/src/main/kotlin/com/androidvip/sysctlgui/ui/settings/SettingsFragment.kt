@@ -51,8 +51,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         findPreference<Preference?>(Consts.Prefs.RUN_ON_START_UP)?.onPreferenceChangeListener = this
     }
 
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+        when (preference.key) {
             Consts.Prefs.RUN_ON_START_UP -> {
                 StartUpServiceToggle.toggleStartUpService(requireContext(), newValue == true)
             }

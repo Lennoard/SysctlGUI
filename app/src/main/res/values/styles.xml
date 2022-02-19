@@ -1,16 +1,8 @@
-<resources>
-
-    <style name="AppTheme" parent="Theme.MaterialComponents">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:colorBackground">@color/colorPrimary</item>
-        <item name="iconColor">@color/iconColor</item>
-    </style>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="CardStyle">
-        <item name="cardBackgroundColor">@color/colorPrimary</item>
-        <item name="strokeColor">@color/iconColor</item>
+        <item name="cardBackgroundColor">?colorSurface</item>
+        <item name="strokeColor">?colorPrimary</item>
         <item name="strokeWidth">1.25dp</item>
         <item name="cardCornerRadius">6dp</item>
     </style>
@@ -35,18 +27,21 @@
     </style>
 
     <style name="CategoryText">
-        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:textColor">?colorSecondary</item>
         <item name="android:layout_marginTop">24dp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">@color/black_87</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">@color/black_87</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarLayout.Flat" parent="AppTheme.AppBarLayout">
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
 
 </resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/gray_300</item>
+        <item name="colorPrimaryVariant">@color/gray_500</item>
+        <item name="colorOnPrimary">@color/black_87</item>
+        <item name="colorPrimaryContainer">@color/gray_800</item>
+        <item name="colorOnPrimaryContainer">@color/gray_200</item>
+        <item name="colorPrimaryInverse">@color/gray_800</item>
+
+        <item name="colorSecondary">@color/violet_300</item>
+        <item name="colorSecondaryVariant">@color/violet_500</item>
+        <item name="colorOnSecondary">@color/black_87</item>
+        <item name="colorSecondaryContainer">@color/violet_700</item>
+        <item name="colorOnSecondaryContainer">@color/violet_100</item>
+
+        <item name="colorTertiary">@color/eden_300</item>
+        <item name="colorOnTertiary">@color/black_87</item>
+        <item name="colorTertiaryContainer">@color/eden_700</item>
+        <item name="colorOnTertiaryContainer">@color/eden_100</item>
+
+        <item name="colorError">@color/red_300</item>
+        <item name="colorOnError">@color/black_87</item>
+        <item name="colorErrorContainer">@color/red_400</item>
+        <item name="colorOnErrorContainer">@color/red_100</item>
+
+        <item name="android:colorBackground">@color/neutral_900</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorOnBackground">@color/white_87</item>
+        <item name="colorSurface">@color/neutral_900</item>
+        <item name="colorOnSurface">@color/white</item>
+
+        <item name="appBarLayoutStyle">@style/AppTheme.AppBarLayout</item>
+    </style>
+
+    <style name="AppTheme.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/gray_50</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+</resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:binding="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -44,11 +44,11 @@
             android:background="@{kernelFile.directory ? @drawable/circle_folder : @drawable/circle_file}"
             android:padding="12dp"
             android:src="@{kernelFile.directory ? @drawable/ic_folder_outline : @drawable/ic_file_outline}"
-            app:tint="@color/colorAccentLight"
+            binding:iconTintForFile="@{kernelFile}"
             tools:background="@drawable/circle_folder"
             tools:src="@drawable/ic_folder_outline" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -57,8 +57,8 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@{param.shortName}"
-            android:textColor="@{kernelFile.directory ? Color.WHITE : Color.argb(150, 255, 255, 255)}"
-            android:textSize="16sp"
+            android:textAppearance="?textAppearanceBody1"
+            binding:typefaceForFile="@{kernelFile}"
             tools:text="@tools:sample/full_names" />
 
     </LinearLayout>

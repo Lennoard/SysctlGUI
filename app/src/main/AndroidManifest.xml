@@ -16,37 +16,45 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.Starting"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".ui.params.user.ManageFavoritesParamsActivity" />
+        <activity
+            android:name=".ui.params.user.ManageFavoritesParamsActivity"
+            android:label="@string/tasker_list_plugin_favorites"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:label="@string/settings" />
+            android:label="@string/settings"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.params.edit.EditKernelParamActivity"
             android:label="@string/edit_params"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.main.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.main.MainActivity2"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.params.list.KernelParamListActivity"
-            android:label="@string/kernel_params" />
-        <activity
-            android:name=".ui.params.browse.KernelParamBrowserActivity"
-            android:label="@string/browse_variables" />
+            android:label="@string/kernel_params"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.params.user.ManageOnStartUpParamsActivity"
-            android:label="@string/manage_parameters" />
+            android:label="@string/manage_parameters"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.export.ExportOptionsActivity"
             android:label="@string/export_options"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.SplashActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".ui.StartActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -59,6 +67,7 @@
         </activity>
         <activity
             android:name=".ui.tasker.TaskerPluginActivity"
+            android:exported="true"
             android:label="@string/tasker_settings">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
@@ -67,12 +76,15 @@
 
         <receiver
             android:name=".receivers.BootReceiver"
-            android:enabled="false">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".widgets.FavoritesWidget">
+        <receiver
+            android:name=".widgets.FavoritesWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -81,7 +93,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/favorites_widget_info" />
         </receiver>
-        <receiver android:name=".receivers.TaskerReceiver">
+        <receiver
+            android:name=".receivers.TaskerReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
             </intent-filter>
@@ -102,6 +116,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
             android:name=".services.tiles.StartUpTileService"
+            android:exported="false"
             android:icon="@drawable/ic_start_up_tile"
             android:label="@string/tile_toggle_start_up_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -112,6 +127,7 @@
         </service>
         <service
             android:name=".services.tiles.StartAppTileService"
+            android:exported="false"
             android:icon="@drawable/ic_start_app_tile"
             android:label="@string/tile_start_app_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">

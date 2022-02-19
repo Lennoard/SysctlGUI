@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/navigationBrowse">
+
+    <fragment
+        android:id="@+id/navigationBrowse"
+        android:name="com.androidvip.sysctlgui.ui.params.KernelParamsFragment"
+        android:label="@string/kernel_params"
+        tools:layout="@layout/fragment_kernel_param_list" />
+
+    <fragment
+        android:id="@+id/navigationExport"
+        android:name="com.androidvip.sysctlgui.ui.export.ExportOptionsFragment"
+        android:label="@string/export_options"
+        tools:layout="@layout/fragment_export_options" />
+
+    <fragment
+        android:id="@+id/navigationSettings"
+        android:name="com.androidvip.sysctlgui.ui.settings.SettingsFragment"
+        android:label="@string/settings" />
+
+</navigation>

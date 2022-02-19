@@ -8,7 +8,7 @@
         android:shortcutLongLabel="@string/show_variables_sum"
         tools:targetApi="n_mr1">
         <intent
-            android:action="KernelParamsListActivity"
+            android:action="KernelParamsListFragment"
             android:targetPackage="com.androidvip.sysctlgui"
             android:targetClass="com.androidvip.sysctlgui.ui.SplashActivity" />
         <categories android:name="android.shortcut.conversation" />
@@ -22,7 +22,7 @@
         android:shortcutLongLabel="@string/browse_variables_sum"
         tools:targetApi="n_mr1">
         <intent
-            android:action="KernelParamBrowserActivity"
+            android:action="KernelParamBrowserFragment"
             android:targetPackage="com.androidvip.sysctlgui"
             android:targetClass="com.androidvip.sysctlgui.ui.SplashActivity" />
         <categories android:name="android.shortcut.conversation" />
@@ -36,7 +36,7 @@
         android:shortcutLongLabel="@string/settings"
         tools:targetApi="n_mr1">
         <intent
-            android:action="SettingsActivity"
+            android:action="SettingsFragment"
             android:targetPackage="com.androidvip.sysctlgui"
             android:targetClass="com.androidvip.sysctlgui.ui.SplashActivity" />
         <categories android:name="android.shortcut.conversation" />

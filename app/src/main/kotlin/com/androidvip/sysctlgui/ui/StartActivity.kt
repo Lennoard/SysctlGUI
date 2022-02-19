@@ -1,12 +1,12 @@
 package com.androidvip.sysctlgui.ui
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
@@ -16,12 +16,9 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.main.MainActivity
-import com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowserActivity
+import com.androidvip.sysctlgui.ui.main.MainActivity2
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.androidvip.sysctlgui.ui.params.list.KernelParamListActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import com.androidvip.sysctlgui.ui.settings.SettingsActivity
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
-class SplashActivity : AppCompatActivity() {
+class StartActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val prefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
@@ -37,16 +34,15 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(
-                this,
-                R.color.colorPrimaryLight
-            )
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(
+            this,
+            R.color.colorPrimaryLight
+        )
 
         lifecycleScope.launch {
             val isRootAccessGiven = checkRootAccess()
@@ -65,7 +61,7 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             } else {
                 binding.splashProgress.goAway()
-                AlertDialog.Builder(this@SplashActivity)
+                AlertDialog.Builder(this@StartActivity)
                     .setTitle(R.string.error)
                     .setMessage(getString(R.string.root_not_found_sum))
                     .setPositiveButton(android.R.string.ok) { _, _ -> finish() }
@@ -95,17 +91,17 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun navigate() {
-        val navigationIntent = when (this.intent.action) {
-            Actions.KernelParamBrowserActivity.name -> {
-                Intent(this, KernelParamBrowserActivity::class.java)
+        when (this.intent.action) {
+            Actions.KernelParamBrowserFragment.name -> {
+                // TODO
             }
 
-            Actions.KernelParamsListActivity.name -> {
-                Intent(this, KernelParamListActivity::class.java)
+            Actions.KernelParamsListFragment.name -> {
+                // TODO
             }
 
-            Actions.SettingsActivity.name -> {
-                Intent(this, SettingsActivity::class.java)
+            Actions.SettingsFragment.name -> {
+                // TODO
             }
 
             Actions.EditParam.name -> {
@@ -120,14 +116,13 @@ class SplashActivity : AppCompatActivity() {
                             RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false
                         )
                     )
+                    startActivity(this)
                 }
             }
 
             else -> {
-                Intent(this, MainActivity::class.java)
+                startActivity(Intent(this, MainActivity2::class.java))
             }
         }
-
-        startActivity(navigationIntent)
     }
 }

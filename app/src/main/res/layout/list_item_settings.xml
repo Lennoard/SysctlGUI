@@ -38,11 +38,11 @@
             app:layout_constraintEnd_toStartOf="@id/itemTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/iconColor"
+            app:tint="?colorPrimary"
             binding:srcCompatRes="@{item.iconRes}"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/itemTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@tools:sample/full_names" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/itemSummary"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

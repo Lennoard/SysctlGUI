@@ -21,7 +21,7 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 style="@style/CategoryText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             android:layout_weight="0.5"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 style="@style/CategoryText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,20 +71,20 @@
                         android:layout_height="match_parent"
                         android:paddingStart="16dp"
                         app:srcCompat="@drawable/ic_info_outline"
-                        app:tint="?attr/iconColor" />
+                        app:tint="?colorPrimary" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <com.google.android.material.textview.MaterialTextView
                             style="@style/CardTitleSmall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/sysctl" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <com.google.android.material.textview.MaterialTextView
                             style="@style/CardContentText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                             android:layout_marginBottom="16dp"
                             android:background="?android:attr/listDivider" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/mainAppDescription"
                             style="@style/CardContentText"
                             android:layout_width="match_parent"

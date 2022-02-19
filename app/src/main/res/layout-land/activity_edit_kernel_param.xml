@@ -8,19 +8,17 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/editParamErrorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +26,7 @@
         android:gravity="center_horizontal"
         android:padding="16dp"
         android:text="@string/unexpected_error"
-        android:textColor="@color/error"
+        android:textColor="?colorError"
         android:textSize="22sp"
         android:visibility="gone" />
 
@@ -54,29 +52,35 @@
                 android:layout_weight="0.5"
                 android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/editParamName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#fff"
-                    android:textSize="32sp"
+                    android:textAppearance="?textAppearanceHeadline4"
                     android:textStyle="bold" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/editParamSub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed"
-                    android:textSize="18sp" />
+                    android:textAppearance="?textAppearanceHeadline6" />
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/editParamInput"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:inputType="text"
-                    android:lines="2"
-                    android:textSize="48sp" />
+                    android:layout_marginTop="24dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editParamInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:lines="2"
+                        android:textAppearance="?textAppearanceHeadline3"
+                        tools:text="30000" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -88,19 +92,19 @@
                 android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:fontFamily="sans-serif-medium"
                     android:text="@string/information"
-                    android:textColor="?attr/colorAccent" />
+                    android:textColor="?colorSecondary" />
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/editParamInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#fff"
+                    android:textAppearance="?textAppearanceBody2"
                     android:textIsSelectable="true" />
 
             </LinearLayout>
@@ -115,8 +119,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:tint="#DE000000"
-        app:backgroundTint="@color/colorAccent"
         app:srcCompat="@drawable/ic_check" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
