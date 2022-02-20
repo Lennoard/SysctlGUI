@@ -2,9 +2,13 @@ package com.androidvip.sysctlgui.ui.params.list
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import androidx.core.app.ActivityOptionsCompat
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.androidvip.sysctlgui.R
@@ -51,6 +55,20 @@ class KernelParamListFragment :
     override fun onStart() {
         super.onStart()
         refreshList()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main_search, menu)
+        setUpSearchView(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_favorites -> findNavController().navigate(R.id.navigateFavoritesParams)
+            else -> return false
+        }
+
+        return true
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {

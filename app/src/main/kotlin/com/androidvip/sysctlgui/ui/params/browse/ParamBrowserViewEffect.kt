@@ -5,6 +5,7 @@ import androidx.core.app.ActivityOptionsCompat
 import com.androidvip.sysctlgui.data.models.KernelParam
 
 sealed class ParamBrowserViewEffect {
+    object NavigateToFavorite : ParamBrowserViewEffect()
     class NavigateToParamDetails(
         val param: KernelParam,
         val options: ActivityOptionsCompat

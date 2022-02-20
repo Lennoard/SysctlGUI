@@ -16,7 +16,7 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.main.MainActivity2
+import com.androidvip.sysctlgui.ui.main.MainActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.topjohnwu.superuser.Shell
@@ -98,8 +98,8 @@ class StartActivity : AppCompatActivity() {
         )
         val nextIntent = when (intent.action) {
             in shortcutNames -> {
-                Intent(this, MainActivity2::class.java).apply {
-                    putExtra(MainActivity2.EXTRA_DESTINATION, intent.action)
+                Intent(this, MainActivity::class.java).apply {
+                    putExtra(MainActivity.EXTRA_DESTINATION, intent.action)
                 }
             }
 
@@ -119,7 +119,7 @@ class StartActivity : AppCompatActivity() {
             }
 
             else -> {
-                Intent(this, MainActivity2::class.java)
+                Intent(this, MainActivity::class.java)
             }
         }
 

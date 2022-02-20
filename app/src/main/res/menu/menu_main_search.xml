@@ -2,9 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        app:actionViewClass="android.widget.SearchView"
+        app:iconTint="?colorOnBackground"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+    <item
         android:id="@+id/action_favorites"
         android:icon="@drawable/ic_favorite_unselected"
-        android:title="@string/settings"
+        android:title="@string/show_favorites"
         app:showAsAction="never" />
 
     <item
