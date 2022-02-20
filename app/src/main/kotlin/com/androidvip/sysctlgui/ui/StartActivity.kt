@@ -91,17 +91,16 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun navigate() {
-        when (this.intent.action) {
-            Actions.KernelParamBrowserFragment.name -> {
-                // TODO
-            }
-
-            Actions.KernelParamsListFragment.name -> {
-                // TODO
-            }
-
-            Actions.SettingsFragment.name -> {
-                // TODO
+        val shortcutNames = arrayOf(
+            Actions.BrowseParams.name,
+            Actions.ExportParams.name,
+            Actions.OpenSettings.name
+        )
+        val nextIntent = when (intent.action) {
+            in shortcutNames -> {
+                Intent(this, MainActivity2::class.java).apply {
+                    putExtra(MainActivity2.EXTRA_DESTINATION, intent.action)
+                }
             }
 
             Actions.EditParam.name -> {
@@ -116,13 +115,14 @@ class StartActivity : AppCompatActivity() {
                             RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false
                         )
                     )
-                    startActivity(this)
                 }
             }
 
             else -> {
-                startActivity(Intent(this, MainActivity2::class.java))
+                Intent(this, MainActivity2::class.java)
             }
         }
+
+        startActivity(nextIntent)
     }
 }

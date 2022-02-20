@@ -13,7 +13,6 @@ import com.androidvip.sysctlgui.databinding.FragmentKernelParamListBinding
 import com.androidvip.sysctlgui.domain.models.ViewState
 import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
-import com.androidvip.sysctlgui.ui.base.BaseViewBindingFragment
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
