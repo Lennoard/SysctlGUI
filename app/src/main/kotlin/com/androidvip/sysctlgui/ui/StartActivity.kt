@@ -2,10 +2,8 @@ package com.androidvip.sysctlgui.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.WindowManager
-import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
@@ -16,10 +14,12 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.main.MainActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.topjohnwu.superuser.Shell
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,18 +31,15 @@ class StartActivity : AppCompatActivity() {
     private val prefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
     private val performDatabaseMigrationUseCase: PerformDatabaseMigrationUseCase by inject()
+    private val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Default }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+
+        splashScreen.setKeepOnScreenCondition { true }
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = ContextCompat.getColor(
-            this,
-            R.color.colorPrimaryLight
-        )
 
         lifecycleScope.launch {
             val isRootAccessGiven = checkRootAccess()
@@ -61,17 +58,13 @@ class StartActivity : AppCompatActivity() {
                 finish()
             } else {
                 binding.splashProgress.goAway()
-                AlertDialog.Builder(this@StartActivity)
-                    .setTitle(R.string.error)
-                    .setMessage(getString(R.string.root_not_found_sum))
-                    .setPositiveButton(android.R.string.ok) { _, _ -> finish() }
-                    .setCancelable(false)
-                    .show()
+                toast(R.string.root_not_found_sum, Toast.LENGTH_LONG)
+                finish()
             }
         }
     }
 
-    private suspend fun checkRootAccess() = withContext(Dispatchers.Default) {
+    private suspend fun checkRootAccess() = withContext(dispatcher) {
         delay(500)
         Shell.rootAccess()
     }
