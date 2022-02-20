@@ -9,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.databinding.ActivityMain2Binding
+import com.androidvip.sysctlgui.helpers.Actions
 
 class MainActivity2 : AppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
@@ -22,6 +23,7 @@ class MainActivity2 : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         setUpNavigation()
+        navigateFromIntent()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -50,6 +52,22 @@ class MainActivity2 : AppCompatActivity() {
         navView.setupWithNavController(navController)
     }
 
+    private fun navigateFromIntent() {
+        val fragmentName = intent.getStringExtra(EXTRA_DESTINATION) ?: return
+        when (fragmentName) {
+            Actions.BrowseParams.name -> R.id.navigationBrowse
+            Actions.ExportParams.name -> R.id.navigationExport
+            Actions.OpenSettings.name -> R.id.navigationSettings
+            else -> null
+        }?.let { id ->
+            navHost.navController.navigate(id)
+        }
+    }
+
     private val navHost: NavHostFragment
         get() = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+
+    companion object {
+        internal const val EXTRA_DESTINATION = "destination"
+    }
 }
