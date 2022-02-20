@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityOptionsCompat
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -105,6 +106,7 @@ class KernelParamBrowseFragment :
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_documentation -> viewModel.doWhenDocumentationMenuClicked()
+            R.id.action_favorites -> viewModel.doWhenFavoritesMenuClicked()
             else -> return false
         }
 
@@ -134,9 +136,12 @@ class KernelParamBrowseFragment :
 
     private fun handleViewEffect(viewEffect: ParamBrowserViewEffect) {
         when (viewEffect) {
-            is ParamBrowserViewEffect.NavigateToParamDetails -> navigateToParamDetails(
-                viewEffect.param, viewEffect.options
-            )
+            is ParamBrowserViewEffect.NavigateToParamDetails -> {
+                navigateToParamDetails(viewEffect.param, viewEffect.options)
+            }
+            is ParamBrowserViewEffect.NavigateToFavorite -> {
+                findNavController().navigate(R.id.navigateFavoritesParams)
+            }
             is ParamBrowserViewEffect.OpenDocumentationUrl -> openDocumentationUrl(viewEffect.url)
             is ParamBrowserViewEffect.ShowToast -> toast(viewEffect.stringRes)
         }

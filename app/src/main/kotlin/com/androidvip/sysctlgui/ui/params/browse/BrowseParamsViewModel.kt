@@ -109,6 +109,10 @@ class BrowseParamsViewModel(
         viewEffect.postValue(ParamBrowserViewEffect.OpenDocumentationUrl(url))
     }
 
+    fun doWhenFavoritesMenuClicked() {
+        viewEffect.postValue(ParamBrowserViewEffect.NavigateToFavorite)
+    }
+
     private suspend fun getCurrentPathFiles(path: String) = withContext(dispatcher) {
         runCatching {
             File(path).listFiles()?.toList()

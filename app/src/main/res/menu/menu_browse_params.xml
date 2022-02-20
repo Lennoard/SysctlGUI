@@ -17,4 +17,16 @@
         android:visible="false"
         app:iconTint="?colorOnBackground"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_favorites"
+        android:icon="@drawable/ic_favorite_unselected"
+        android:title="@string/show_favorites"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_exit"
+        android:icon="@drawable/ic_close"
+        android:title="@string/exit"
+        app:showAsAction="never" />
 </menu>
