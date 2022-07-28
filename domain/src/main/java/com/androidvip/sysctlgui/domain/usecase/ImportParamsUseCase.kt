@@ -17,9 +17,10 @@ class ImportParamsUseCase(
         fileExtension: String
     ): Result<List<DomainKernelParam>> {
         return runCatching {
+            val isBackup = fileExtension.endsWith(".conf")
             val importResult = when {
                 fileExtension.endsWith(".json") -> repository.importParamsFromJson(stream)
-                fileExtension.endsWith(".conf") -> repository.importParamsFromConf(stream)
+                isBackup -> repository.importParamsFromConf(stream)
                 else -> throw InvalidFileExtensionException()
             }
 
@@ -36,7 +37,11 @@ class ImportParamsUseCase(
             }
 
             clearUserParamUseCase.execute()
-            addUserParamsUseCase.execute(successfulParams)
+
+            // Prevent adding full backups to the apply-on-boot list
+            if (!isBackup) {
+                addUserParamsUseCase.execute(successfulParams)
+            }
 
             successfulParams
         }
