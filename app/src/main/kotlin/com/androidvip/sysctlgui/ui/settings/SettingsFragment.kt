@@ -7,7 +7,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.utils.RootUtils
-import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.helpers.StartUpServiceToggle
 import kotlinx.coroutines.launch

@@ -46,6 +46,7 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":common:utils"))
 
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
@@ -53,15 +54,15 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("androidx.room:room-ktx:2.3.0")
-    implementation("androidx.room:room-runtime:2.3.0")
+    implementation("androidx.room:room-ktx:2.4.0")
+    implementation("androidx.room:room-runtime:2.4.0")
 
     implementation("com.github.topjohnwu.libsu:core:2.5.1")
     implementation("com.google.code.gson:gson:2.8.6")
 
     implementation("io.insert-koin:koin-android:3.1.3")
 
-    kapt("androidx.room:room-compiler:2.3.0")
+    kapt("androidx.room:room-compiler:2.4.0")
 
     testImplementation("junit:junit:4.+")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

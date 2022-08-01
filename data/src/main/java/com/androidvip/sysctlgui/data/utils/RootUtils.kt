@@ -29,10 +29,10 @@ class RootUtils(private val dispatcher: CoroutineDispatcher = Dispatchers.Defaul
                 }
                 outputs.forEach { line ->
                     if (forEachLine != null) {
-                        forEachLine(line ?: "")
-                        appendLine(line ?: "")
+                        forEachLine(line.orEmpty())
+                        appendLine(line.orEmpty())
                     } else {
-                        appendLine(line ?: "")
+                        appendLine(line.orEmpty())
                     }
                 }
             }.trim().removeSuffix("\n")

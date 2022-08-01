@@ -24,7 +24,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.databinding.FragmentKernelParamBrowserBinding
-import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show

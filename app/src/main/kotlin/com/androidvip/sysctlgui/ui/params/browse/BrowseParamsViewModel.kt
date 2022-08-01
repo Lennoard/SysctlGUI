@@ -10,10 +10,10 @@ import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.domain.Consts
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.GetParamsFromFilesUseCase
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.utils.Consts
 import com.hadilq.liveevent.LiveEvent
 import com.hadilq.liveevent.LiveEventConfig
 import kotlinx.coroutines.CoroutineDispatcher
@@ -57,7 +57,7 @@ class BrowseParamsViewModel(
         )
         val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
             activity,
-            *sharedElements,
+            *sharedElements
         )
 
         viewEffect.postValue(ParamBrowserViewEffect.NavigateToParamDetails(param, options))
@@ -122,7 +122,7 @@ class BrowseParamsViewModel(
     private suspend fun loadBrowsableParamFiles(path: String) {
         updateState { isLoading = true }
         val files = getCurrentPathFiles(path).maybeDirectorySorted().maybeFiltered()
-        val params = getParamsFromFilesUseCase(files).getOrNull().orEmpty().map {
+        val params = getParamsFromFilesUseCase(files).map {
             DomainParamMapper.map(it)
         }
 

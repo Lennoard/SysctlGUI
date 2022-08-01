@@ -2,14 +2,11 @@ package com.androidvip.sysctlgui.utils
 
 import android.content.Context
 import android.net.Uri
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
-import com.androidvip.sysctlgui.readLines
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
-import java.lang.reflect.Type
 
 // TODO: move to repository
 object KernelParamUtils {

@@ -111,6 +111,7 @@ kapt {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":common:utils"))
 
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
@@ -127,8 +128,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.4.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.room:room-ktx:2.3.0")
-    implementation("androidx.room:room-runtime:2.3.0")
+    implementation("androidx.room:room-ktx:2.4.0")
+    implementation("androidx.room:room-runtime:2.4.0")
 
     implementation("com.google.android.material:material:1.6.0-alpha02")
     implementation("com.google.code.gson:gson:2.8.6")
@@ -137,5 +138,5 @@ dependencies {
     implementation("com.github.topjohnwu.libsu:core:2.5.1")
     implementation("com.github.hadilq:live-event:1.3.0")
 
-    kapt("androidx.room:room-compiler:2.3.0")
+    kapt("androidx.room:room-compiler:2.4.0")
 }

@@ -35,7 +35,7 @@ class FavoritesRemoteViewsFactory(
 
     override fun onCreate() {
         runBlocking {
-            params = getUserParamsUseCase().getOrNull().orEmpty().filter {
+            params = getUserParamsUseCase().filter {
                 it.favorite
             }.map {
                 DomainParamMapper.map(it)
@@ -51,7 +51,7 @@ class FavoritesRemoteViewsFactory(
 
     override fun onDataSetChanged() {
         runBlocking {
-            params = getUserParamsUseCase().getOrNull().orEmpty().filter {
+            params = getUserParamsUseCase().filter {
                 it.favorite
             }.map {
                 DomainParamMapper.map(it)

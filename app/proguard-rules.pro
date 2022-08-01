@@ -37,4 +37,4 @@
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.androidvip.sysctlgui.data.models.KernelParam { *; }
 -keep class com.androidvip.sysctlgui.data.models.RoomKernelParam { *; }
--keep class com.androidvip.sysctlgui.domain.models.param.DomainKernelParam { *; }
+-keep class com.androidvip.sysctlgui.domain.models.DomainKernelParam { *; }

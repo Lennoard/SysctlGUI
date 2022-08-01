@@ -1,8 +1,8 @@
 package com.androidvip.sysctlgui.data.models
 
 import android.os.Parcelable
-import com.androidvip.sysctlgui.domain.Consts
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.utils.Consts
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

@@ -118,7 +118,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 }
 
                 lifecycleScope.launch {
-                    updateUserParamUseCase.execute(kernelParameter)
+                    updateUserParamUseCase(kernelParameter)
                 }
                 return true
             }
@@ -137,7 +137,7 @@ class EditKernelParamActivity : AppCompatActivity() {
 
                     kernelParameter.taskerList = taskerList
                     lifecycleScope.launch {
-                        updateUserParamUseCase.execute(kernelParameter)
+                        updateUserParamUseCase(kernelParameter)
                     }
                 }
                 return true
@@ -267,10 +267,10 @@ class EditKernelParamActivity : AppCompatActivity() {
         val newValue = binding.editParamInput.text.toString()
         kernelParameter.value = newValue
 
-        val result = applyParamsUseCase.execute(kernelParameter)
+        val result = runCatching { applyParamsUseCase(kernelParameter) }
         val feedback = if (result.isSuccess) {
             setResult(Activity.RESULT_OK)
-            updateUserParamUseCase.execute(kernelParameter)
+            updateUserParamUseCase(kernelParameter)
             getString(R.string.done)
         } else {
             setResult(Activity.RESULT_CANCELED)
@@ -285,7 +285,7 @@ class EditKernelParamActivity : AppCompatActivity() {
                 binding.editParamApply, feedback, Snackbar.LENGTH_LONG
             ).setAction(R.string.undo) {
                 lifecycleScope.launchWhenResumed {
-                    updateUserParamUseCase.execute(kernelParameter)
+                    updateUserParamUseCase(kernelParameter)
                     binding.editParamInput.setText(kernelParameter.value)
                 }
             }.showAsLight()

@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.domain
+package com.androidvip.sysctlgui.utils
 
 object Consts {
     const val PROC_SYS = "/proc/sys"

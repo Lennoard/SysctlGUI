@@ -8,9 +8,9 @@ class ExportParamsUseCase(
     private val getUserParamUseCase: GetUserParamsUseCase,
     private val repository: ParamsRepository
 ) {
-    suspend fun execute(fileDescriptor: FileDescriptor): Result<Unit> {
-        val params = getUserParamUseCase().getOrNull()
-        if (params.isNullOrEmpty()) return Result.failure(NoParameterFoundException())
+    suspend operator fun invoke(fileDescriptor: FileDescriptor) {
+        val params = getUserParamUseCase()
+        if (params.isEmpty()) throw NoParameterFoundException()
 
         return repository.exportParams(params, fileDescriptor)
     }
