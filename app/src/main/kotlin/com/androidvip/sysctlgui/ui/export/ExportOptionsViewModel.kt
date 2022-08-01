@@ -13,7 +13,7 @@ import com.androidvip.sysctlgui.domain.exceptions.InvalidFileExtensionException
 import com.androidvip.sysctlgui.domain.exceptions.MalformedLineException
 import com.androidvip.sysctlgui.domain.exceptions.NoParameterFoundException
 import com.androidvip.sysctlgui.domain.exceptions.NoValidParamException
-import com.androidvip.sysctlgui.domain.models.ViewState
+import com.androidvip.sysctlgui.utils.ViewState
 import com.androidvip.sysctlgui.domain.usecase.BackupParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.ExportParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.ImportParamsUseCase
@@ -79,7 +79,7 @@ class ExportOptionsViewModel(
         val postError: (Int) -> Unit = {
             _viewEffect.postValue(ExportOptionsViewEffect.ShowImportError(it))
         }
-        val result = importParamsUseCase.execute(stream, fileExtension)
+        val result = runCatching { importParamsUseCase(stream, fileExtension) }
         when (result.exceptionOrNull()) {
             is JsonParseException,
             is JsonSyntaxException -> postError(R.string.import_error_invalid_json)
@@ -137,20 +137,24 @@ class ExportOptionsViewModel(
         target: Uri,
         context: Context
     ): Result<Unit> = withContext(ioDispatcher) {
-        val descriptor = context.contentResolver.openFileDescriptor(target, "w")
-            ?: return@withContext Result.failure(IOException())
+        return@withContext runCatching {
+            val descriptor = context.contentResolver.openFileDescriptor(target, "w")
+                ?: throw IOException()
 
-        return@withContext exportParamsUseCase.execute(descriptor.fileDescriptor)
+            exportParamsUseCase(descriptor.fileDescriptor)
+        }
     }
 
     private suspend fun backUpParamsWithFileDescriptor(
         target: Uri,
         context: Context
     ): Result<Unit> = withContext(ioDispatcher) {
-        val descriptor = context.contentResolver.openFileDescriptor(target, "w")
-            ?: return@withContext Result.failure(IOException())
+        return@withContext runCatching {
+            val descriptor = context.contentResolver.openFileDescriptor(target, "w")
+                ?: throw IOException()
 
-        return@withContext backupParamsUseCase.execute(descriptor.fileDescriptor)
+            backupParamsUseCase(descriptor.fileDescriptor)
+        }
     }
 
     private val currentViewState: ViewState<Unit>

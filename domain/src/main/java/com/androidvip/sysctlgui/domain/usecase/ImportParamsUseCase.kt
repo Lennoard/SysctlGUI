@@ -2,7 +2,7 @@ package com.androidvip.sysctlgui.domain.usecase
 
 import com.androidvip.sysctlgui.domain.exceptions.InvalidFileExtensionException
 import com.androidvip.sysctlgui.domain.exceptions.NoValidParamException
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import com.androidvip.sysctlgui.domain.repository.ParamsRepository
 import java.io.InputStream
 
@@ -12,38 +12,34 @@ class ImportParamsUseCase(
     private val applyParamsUseCase: ApplyParamsUseCase,
     private val repository: ParamsRepository
 ) {
-    suspend fun execute(
+    suspend operator fun invoke(
         stream: InputStream,
         fileExtension: String
-    ): Result<List<DomainKernelParam>> {
-        return runCatching {
-            val isBackup = fileExtension.endsWith(".conf")
-            val importResult = when {
-                fileExtension.endsWith(".json") -> repository.importParamsFromJson(stream)
-                isBackup -> repository.importParamsFromConf(stream)
-                else -> throw InvalidFileExtensionException()
-            }
-
-            val params = importResult.getOrThrow()
-            if (params.isEmpty()) throw NoValidParamException()
-
-            val successfulParams = mutableListOf<DomainKernelParam>()
-            params.forEach {
-                // Apply the param to check if valid
-                val result = applyParamsUseCase.execute(it)
-                if (result.isSuccess) {
-                    successfulParams.add(it)
-                }
-            }
-
-            clearUserParamUseCase.execute()
-
-            // Prevent adding full backups to the apply-on-boot list
-            if (!isBackup) {
-                addUserParamsUseCase.execute(successfulParams)
-            }
-
-            successfulParams
+    ): List<DomainKernelParam> {
+        val isBackup = fileExtension.endsWith(".conf")
+        val params = when {
+            fileExtension.endsWith(".json") -> repository.importParamsFromJson(stream)
+            isBackup -> repository.importParamsFromConf(stream)
+            else -> throw InvalidFileExtensionException()
         }
+
+        if (params.isEmpty()) throw NoValidParamException()
+
+        val successfulParams = mutableListOf<DomainKernelParam>()
+        params.forEach { param ->
+            // Apply the param to check if valid
+            runCatching { applyParamsUseCase(param) }.onSuccess {
+                successfulParams.add(param)
+            }
+        }
+
+        clearUserParamUseCase()
+
+        // Prevent adding full backups to the apply-on-boot list
+        if (!isBackup) {
+            addUserParamsUseCase(successfulParams)
+        }
+
+        return successfulParams
     }
 }

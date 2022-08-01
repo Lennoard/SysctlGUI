@@ -78,7 +78,7 @@ class StartActivity : AppCompatActivity() {
         if (!prefs.migrationCompleted) {
             binding.splashStatusText.setText(R.string.splash_status_performing_migration)
 
-            val result = performDatabaseMigrationUseCase.execute()
+            val result = runCatching { performDatabaseMigrationUseCase() }
             prefs.migrationCompleted = result.isSuccess
         }
     }
@@ -105,7 +105,8 @@ class StartActivity : AppCompatActivity() {
                     putExtra(
                         RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
                         intent.getBooleanExtra(
-                            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, false
+                            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
+                            false
                         )
                     )
                 }

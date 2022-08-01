@@ -1,7 +1,7 @@
 package com.androidvip.sysctlgui.data.mapper
 
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 
 object DomainParamMapper : Mapper<DomainKernelParam, KernelParam> {
     override fun map(from: DomainKernelParam): KernelParam = KernelParam().apply {

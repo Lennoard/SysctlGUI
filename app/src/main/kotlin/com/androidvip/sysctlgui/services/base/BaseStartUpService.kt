@@ -128,8 +128,8 @@ class BaseStartUpService(
     }
 
     private suspend fun applyConfig() {
-        getUserParamsUseCase().getOrNull().orEmpty().forEach {
-            applyParamsUseCase.execute(it)
+        getUserParamsUseCase().forEach {
+            applyParamsUseCase(it)
         }
     }
 

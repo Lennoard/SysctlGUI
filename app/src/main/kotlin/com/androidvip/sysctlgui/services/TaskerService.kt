@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.widget.Toast
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
@@ -56,7 +56,7 @@ class TaskerService : Service(), CoroutineScope {
     }
 
     private suspend fun applyParams(listNumber: Int) {
-        val params = getUserParamsUseCase().getOrNull().orEmpty()
+        val params = getUserParamsUseCase()
         when (listNumber) {
             Consts.LIST_NUMBER_PRIMARY_TASKER,
             Consts.LIST_NUMBER_SECONDARY_TASKER -> params.filter { it.taskerParam }
@@ -65,7 +65,7 @@ class TaskerService : Service(), CoroutineScope {
 
             else -> emptyList()
         }.forEach {
-            applyParamsUseCase.execute(it)
+            applyParamsUseCase(it)
         }
     }
 }

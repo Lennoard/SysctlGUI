@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.domain.models.ViewState
+import com.androidvip.sysctlgui.utils.ViewState
 import com.androidvip.sysctlgui.domain.usecase.GetRuntimeParamsUseCase
 import kotlinx.coroutines.launch
 
@@ -18,7 +18,7 @@ class ListParamsViewModel(private val getParamsUseCase: GetRuntimeParamsUseCase)
         val searchExpression = viewState.value?.searchExpression.orEmpty()
         viewModelScope.launch {
             updateState { isLoading = true }
-            val params = getParamsUseCase().getOrNull().orEmpty().map {
+            val params = getParamsUseCase().map {
                 DomainParamMapper.map(it)
             }.filter { param ->
                 if (searchExpression.isEmpty()) true else {

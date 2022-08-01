@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
+import android.os.Build
 import android.widget.RemoteViews
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
@@ -28,11 +29,7 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(
-                context,
-                appWidgetManager,
-                appWidgetId
-            )
+            updateAppWidget(context, appWidgetManager, appWidgetId)
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
@@ -40,12 +37,11 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
         if (intent.action != EDIT_PARAM_EXTRA) {
-            super.onReceive(context, intent)
-            return
+            return super.onReceive(context, intent)
         }
 
         runBlocking {
-            val params = getUserParamsUseCase().getOrNull().orEmpty().filter {
+            val params = getUserParamsUseCase().filter {
                 it.favorite
             }.map {
                 DomainParamMapper.map(it)
@@ -81,7 +77,6 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-
     val intent = Intent(context, FavoritesWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
@@ -103,7 +98,13 @@ internal fun updateAppWidget(
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
 
-        PendingIntent.getBroadcast(context, 0, this, PendingIntent.FLAG_UPDATE_CURRENT)
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
+        PendingIntent.getBroadcast(context, 0, this, flags)
     }
     views.setPendingIntentTemplate(R.id.favorites_list, editParamPendingIntent)
 

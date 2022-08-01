@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.isValidTaskerBundle
 import com.androidvip.sysctlgui.services.TaskerService
 import kotlin.contracts.ExperimentalContracts

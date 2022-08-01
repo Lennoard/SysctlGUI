@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.domain.models
+package com.androidvip.sysctlgui.utils
 
 open class ViewState<T>(
     var data: List<T> = listOf(),

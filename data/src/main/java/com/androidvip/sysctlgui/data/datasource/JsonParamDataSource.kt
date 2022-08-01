@@ -1,24 +1,27 @@
 package com.androidvip.sysctlgui.data.datasource
 
 import android.content.Context
-import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.domain.datasource.LocalDataSourceContract
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.lang.reflect.Type
 
-class JsonParamDataSource(private val context: Context) : LocalDataSourceContract<DomainKernelParam> {
+class JsonParamDataSource(
+    private val context: Context,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : LocalDataSourceContract<DomainKernelParam> {
     @Deprecated(
         "JSON database is no longer updated.",
         replaceWith = ReplaceWith("roomParamDatasource.add(param)"),
         level = DeprecationLevel.ERROR
     )
-    override suspend fun add(
-        param: DomainKernelParam,
-        allowBlank: Boolean
-    ): Result<Unit> = runCatching {
+    override suspend fun add(param: DomainKernelParam, allowBlank: Boolean) {
         throw UnsupportedOperationException("Adding json params is not supported")
     }
 
@@ -27,10 +30,7 @@ class JsonParamDataSource(private val context: Context) : LocalDataSourceContrac
         replaceWith = ReplaceWith("roomParamDatasource.addAll(param)"),
         level = DeprecationLevel.ERROR
     )
-    override suspend fun addAll(
-        params: List<DomainKernelParam>,
-        allowBlank: Boolean
-    ): Result<Unit> {
+    override suspend fun addAll(params: List<DomainKernelParam>, allowBlank: Boolean){
         throw UnsupportedOperationException("Adding json params is not supported")
     }
 
@@ -39,7 +39,7 @@ class JsonParamDataSource(private val context: Context) : LocalDataSourceContrac
         replaceWith = ReplaceWith("roomParamDatasource.remove(param)"),
         level = DeprecationLevel.ERROR
     )
-    override suspend fun remove(param: DomainKernelParam): Result<Unit> = runCatching {
+    override suspend fun remove(param: DomainKernelParam) {
         throw UnsupportedOperationException("Deleting params is only supported in room database")
     }
 
@@ -51,11 +51,11 @@ class JsonParamDataSource(private val context: Context) : LocalDataSourceContrac
     override suspend fun edit(
         param: DomainKernelParam,
         allowBlank: Boolean
-    ): Result<Unit> = runCatching {
+    ) {
         throw UnsupportedOperationException("Updating json params is no longer supported")
     }
 
-    override suspend fun clear(): Result<Unit> = runCatching {
+    override suspend fun clear() = withContext(dispatcher) {
         arrayOf(
             "favorites-params",
             "user-params",
@@ -69,7 +69,7 @@ class JsonParamDataSource(private val context: Context) : LocalDataSourceContrac
         }
     }
 
-    override suspend fun getData(): Result<List<DomainKernelParam>> = runCatching {
+    override suspend fun getData(): List<DomainKernelParam> = withContext(dispatcher) {
         val gson = Gson()
         val params = mutableListOf<DomainKernelParam>()
 
@@ -88,6 +88,6 @@ class JsonParamDataSource(private val context: Context) : LocalDataSourceContrac
             params.addAll(gson.fromJson(paramsFile.readText(), type))
         }
 
-        return@runCatching params.distinct()
+        return@withContext params.distinct()
     }
 }

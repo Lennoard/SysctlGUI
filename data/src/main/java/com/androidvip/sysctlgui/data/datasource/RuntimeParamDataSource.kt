@@ -2,7 +2,7 @@ package com.androidvip.sysctlgui.data.datasource
 
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.domain.datasource.RuntimeDataSourceContract
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import java.io.File
 import java.lang.IllegalArgumentException
 
@@ -14,7 +14,7 @@ class RuntimeParamDataSource(
         commitMode: String,
         useBusybox: Boolean,
         allowBlank: Boolean
-    ): Result<Unit> = runCatching {
+    ) {
         val commitResult = commitChanges(param, commitMode, useBusybox, allowBlank)
 
         when {
@@ -29,44 +29,41 @@ class RuntimeParamDataSource(
         }
     }
 
-    override suspend fun getData(useBusybox: Boolean): Result<List<DomainKernelParam>> =
-        runCatching {
-            val command = if (useBusybox) "busybox sysctl -a" else "sysctl -a"
-            val lines = mutableListOf<String>()
-            rootUtils.executeWithOutput(command, "") { lines += it }
+    override suspend fun getData(useBusybox: Boolean): List<DomainKernelParam> {
+        val command = if (useBusybox) "busybox sysctl -a" else "sysctl -a"
+        val lines = mutableListOf<String>()
+        rootUtils.executeWithOutput(command) { lines += it }
 
-            lines.filter {
-                it.isValidSysctlOutput()
-            }.map {
-                // Expected output: grandparent.parent.name = value
-                val split = it.split("=")
-                split.first().trim() to split.last().trim()
-            }.mapIndexed { index, paramPair ->
-                DomainKernelParam(
-                    id = index + 1,
-                    name = paramPair.first,
-                    value = paramPair.second,
-                ).apply {
-                    setPathFromName(paramPair.first)
-                }
+        return lines.filter {
+            it.isValidSysctlOutput()
+        }.map {
+            // Expected output: grandparent.parent.name = value
+            val split = it.split("=")
+            split.first().trim() to split.last().trim()
+        }.mapIndexed { index, paramPair ->
+            DomainKernelParam(
+                id = index + 1,
+                name = paramPair.first,
+                value = paramPair.second
+            ).apply {
+                setPathFromName(paramPair.first)
             }
         }
+    }
 
-    override suspend fun getParamsFromFiles(files: List<File>): Result<List<DomainKernelParam>> =
-        runCatching {
-            files.map {
-                it.absolutePath
-            }.mapIndexed { index, path ->
-                DomainKernelParam(
-                    id = index + 1,
-                    path = path,
-                ).apply {
-                    setNameFromPath(path)
-
-                    value = rootUtils.executeWithOutput("cat $path", "")
-                }
+    override suspend fun getParamsFromFiles(files: List<File>): List<DomainKernelParam> {
+        return files.map {
+            it.absolutePath
+        }.mapIndexed { index, path ->
+            DomainKernelParam(
+                id = index + 1,
+                path = path
+            ).apply {
+                setNameFromPath(path)
+                value = rootUtils.executeWithOutput("cat $path", "")
             }
         }
+    }
 
     private suspend fun commitChanges(
         param: DomainKernelParam,

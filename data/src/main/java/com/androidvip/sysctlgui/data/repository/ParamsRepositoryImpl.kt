@@ -5,7 +5,7 @@ import com.androidvip.sysctlgui.data.datasource.RoomParamDataSource
 import com.androidvip.sysctlgui.data.datasource.RuntimeParamDataSource
 import com.androidvip.sysctlgui.domain.exceptions.EmptyFileException
 import com.androidvip.sysctlgui.domain.exceptions.MalformedLineException
-import com.androidvip.sysctlgui.domain.models.param.DomainKernelParam
+import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import com.androidvip.sysctlgui.domain.repository.ParamsRepository
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -27,49 +27,33 @@ class ParamsRepositoryImpl(
     private val workerContext: CoroutineContext = Dispatchers.Default
 ) : ParamsRepository {
 
-    override suspend fun getUserParams(): Result<List<DomainKernelParam>> = withContext(ioContext) {
+    override suspend fun getUserParams(): List<DomainKernelParam> = withContext(ioContext) {
         return@withContext roomParamDataSource.getData()
     }
 
-    override suspend fun getJsonParams(): Result<List<DomainKernelParam>> = withContext(ioContext) {
+    override suspend fun getJsonParams(): List<DomainKernelParam> = withContext(ioContext) {
         return@withContext jsonParamDataSource.getData()
     }
 
     override suspend fun getRuntimeParams(
         useBusybox: Boolean
-    ): Result<List<DomainKernelParam>> = withContext(workerContext) {
-        val localResult = getUserParams()
-        if (localResult.isFailure) return@withContext localResult
+    ): List<DomainKernelParam> = withContext(workerContext) {
+        val localParams = getUserParams()
+        val runtimeParams = runtimeParamDataSource.getData(useBusybox)
 
-        val runtimeResult = runtimeParamDataSource.getData(useBusybox)
-        if (runtimeResult.isFailure) return@withContext runtimeResult
-
-        val localParams = localResult.getOrNull().orEmpty()
-        val runtimeParams = runtimeResult.getOrNull().orEmpty()
-
-        return@withContext runCatching {
-            runtimeParams.onEach { runtimeParam ->
-                runtimeParam.updateParamWithLocalData(localParams)
-            }
+        return@withContext runtimeParams.onEach { runtimeParam ->
+            runtimeParam.updateParamWithLocalData(localParams)
         }
     }
 
     override suspend fun getParamsFromFiles(
         files: List<File>
-    ): Result<List<DomainKernelParam>> = withContext(ioContext) {
-        val result = runtimeParamDataSource.getParamsFromFiles(files)
-        if (result.isFailure) return@withContext result
+    ): List<DomainKernelParam> = withContext(ioContext) {
+        val localParams = getUserParams()
+        val fileParams = runtimeParamDataSource.getParamsFromFiles(files)
 
-        val localResult = getUserParams()
-        if (localResult.isFailure) return@withContext localResult
-
-        val localParams = localResult.getOrNull().orEmpty()
-        val fileParams = result.getOrNull().orEmpty()
-
-        return@withContext runCatching {
-            fileParams.onEach { runtimeParam ->
-                runtimeParam.updateParamWithLocalData(localParams)
-            }
+        return@withContext fileParams.onEach { runtimeParam ->
+            runtimeParam.updateParamWithLocalData(localParams)
         }
     }
 
@@ -78,10 +62,8 @@ class ParamsRepositoryImpl(
         commitMode: String,
         useBusybox: Boolean,
         allowBlank: Boolean
-    ): Result<Unit> = withContext(workerContext) {
-        return@withContext runtimeParamDataSource.edit(
-            param, commitMode, useBusybox, allowBlank
-        ).also {
+    ) = withContext(workerContext) {
+        runtimeParamDataSource.edit(param, commitMode, useBusybox, allowBlank).also {
             changeListener?.onChange()
         }
     }
@@ -89,46 +71,50 @@ class ParamsRepositoryImpl(
     override suspend fun updateUserParam(
         param: DomainKernelParam,
         allowBlank: Boolean
-    ): Result<Unit> = withContext(ioContext) {
-        val storedParam = getUserParams().getOrNull().orEmpty().find {
+    ) = withContext(ioContext) {
+        val storedParam = getUserParams().find {
             it.name == param.name
         } ?: return@withContext addUserParam(param, allowBlank)
 
         param.id = storedParam.id
-        return@withContext roomParamDataSource.edit(param, allowBlank)
-            .also { changeListener?.onChange() }
+        return@withContext roomParamDataSource.edit(param, allowBlank).also {
+            changeListener?.onChange()
+        }
     }
 
     override suspend fun addUserParam(
         param: DomainKernelParam,
         allowBlank: Boolean
-    ): Result<Unit> = withContext(ioContext) {
-        return@withContext roomParamDataSource.add(param, allowBlank)
-            .also { changeListener?.onChange() }
+    ) = withContext(ioContext) {
+        return@withContext roomParamDataSource.add(param, allowBlank).also {
+            changeListener?.onChange()
+        }
     }
 
     override suspend fun addUserParams(
         params: List<DomainKernelParam>,
         allowBlank: Boolean
-    ): Result<Unit> = withContext(ioContext) {
-        return@withContext roomParamDataSource.addAll(params, allowBlank)
-            .also { changeListener?.onChange() }
+    ) = withContext(ioContext) {
+        return@withContext roomParamDataSource.addAll(params, allowBlank).also {
+            changeListener?.onChange()
+        }
     }
 
-    override suspend fun removeUserParam(param: DomainKernelParam): Result<Unit> =
-        withContext(ioContext) {
-            return@withContext roomParamDataSource.remove(param).also { changeListener?.onChange() }
+    override suspend fun removeUserParam(param: DomainKernelParam) = withContext(ioContext) {
+        return@withContext roomParamDataSource.remove(param).also {
+            changeListener?.onChange()
         }
+    }
 
-    override suspend fun clearUserParams(): Result<Unit> = withContext(ioContext) {
+    override suspend fun clearUserParams() = withContext(ioContext) {
         return@withContext roomParamDataSource.clear().also {
             jsonParamDataSource.clear()
             changeListener?.onChange()
         }
     }
 
-    override suspend fun performDatabaseMigration(): Result<Unit> = withContext(ioContext) {
-        val jsonParams = getJsonParams().getOrNull().orEmpty()
+    override suspend fun performDatabaseMigration() = withContext(ioContext) {
+        val jsonParams = getJsonParams()
 
         return@withContext roomParamDataSource.addAll(jsonParams, true).also {
             changeListener?.onChange()
@@ -137,75 +123,68 @@ class ParamsRepositoryImpl(
 
     override suspend fun importParamsFromJson(
         stream: InputStream
-    ): Result<List<DomainKernelParam>> = withContext(ioContext) {
-        return@withContext runCatching {
-            if (stream.available() == 0) throw EmptyFileException()
+    ): List<DomainKernelParam> = withContext(ioContext) {
+        if (stream.available() == 0) throw EmptyFileException()
 
-            val rawText = buildString {
-                stream.bufferedReader().use { reader ->
-                    reader.forEachLine { line ->
-                        append(line)
-                    }
+        val rawText = buildString {
+            stream.bufferedReader().use { reader ->
+                reader.forEachLine { line ->
+                    append(line)
                 }
             }
-            val type: Type = object : TypeToken<List<DomainKernelParam>>() {}.type
-            return@runCatching Gson().fromJson(rawText, type)
         }
+        val type: Type = object : TypeToken<List<DomainKernelParam>>() {}.type
+        return@withContext Gson().fromJson(rawText, type)
     }
 
     override suspend fun importParamsFromConf(
         stream: InputStream
-    ): Result<List<DomainKernelParam>> = withContext(ioContext) {
+    ): List<DomainKernelParam> = withContext(ioContext) {
         fun String.validConfLine() = !startsWith("#") && !startsWith(";") && isNotEmpty()
         val readParams = mutableListOf<DomainKernelParam>()
-        return@withContext runCatching {
-            if (stream.available() == 0) throw EmptyFileException()
 
-            var cont = 0
-            stream.bufferedReader().forEachLine { line ->
-                if (line.validConfLine()) runCatching {
-                    readParams.add(
-                        DomainKernelParam(
-                            id = ++cont,
-                            name = line.split("=").first().trim(),
-                            value = line.split("=")[1].trim()
-                        ).apply {
-                            setPathFromName(this.name)
-                        }
-                    )
-                }.onFailure {
-                    throw MalformedLineException()
-                }
+        if (stream.available() == 0) throw EmptyFileException()
+
+        var cont = 0
+        stream.bufferedReader().forEachLine { line ->
+            if (line.validConfLine()) runCatching {
+                readParams.add(
+                    DomainKernelParam(
+                        id = ++cont,
+                        name = line.split("=").first().trim(),
+                        value = line.split("=")[1].trim()
+                    ).apply {
+                        setPathFromName(this.name)
+                    }
+                )
+            }.onFailure {
+                throw MalformedLineException()
             }
-            readParams
         }
+        return@withContext readParams
     }
 
     override suspend fun exportParams(
         params: List<DomainKernelParam>,
         fileDescriptor: FileDescriptor
-    ): Result<Unit> {
-        return runCatching {
-            FileOutputStream(fileDescriptor).use { stream ->
-                stream.write(Gson().toJson(params).toByteArray())
-            }
+    ) = withContext(ioContext) {
+        return@withContext FileOutputStream(fileDescriptor).use { stream ->
+            stream.write(Gson().toJson(params).toByteArray())
         }
     }
 
     override suspend fun backupParams(
         params: List<DomainKernelParam>,
         fileDescriptor: FileDescriptor
-    ): Result<Unit> {
-        return runCatching {
-            val rawText = buildString {
-                params.forEach { param ->
-                    appendLine(param.toString())
-                }
+    ) = withContext(ioContext) {
+        val rawText = buildString {
+            params.forEach { param ->
+                appendLine(param.toString())
             }
+        }
 
-            FileOutputStream(fileDescriptor).use { stream ->
-                stream.write(rawText.toByteArray())
-            }
+        return@withContext FileOutputStream(fileDescriptor).use { stream ->
+            stream.write(rawText.toByteArray())
         }
     }
 

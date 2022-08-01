@@ -3,7 +3,7 @@ package com.androidvip.sysctlgui.data.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.androidvip.sysctlgui.domain.Consts
+import com.androidvip.sysctlgui.utils.Consts
 
 @Entity
 data class RoomKernelParam(

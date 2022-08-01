@@ -1,4 +1,4 @@
-package com.androidvip.sysctlgui.domain.models.param
+package com.androidvip.sysctlgui.domain.models
 
 interface KernelParamContract {
     val shortName: String

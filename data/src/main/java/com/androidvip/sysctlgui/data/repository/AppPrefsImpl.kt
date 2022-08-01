@@ -2,8 +2,8 @@ package com.androidvip.sysctlgui.data.repository
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.androidvip.sysctlgui.domain.Consts
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
+import com.androidvip.sysctlgui.utils.Consts
 
 class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
     override var listFoldersFirst: Boolean
