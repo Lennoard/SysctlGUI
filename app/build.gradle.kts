@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -38,7 +38,7 @@ android {
     defaultConfig {
         applicationId = "com.androidvip.sysctlgui"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
         versionCode = 10
         versionName = "1.1.0"
         vectorDrawables.useSupportLibrary = true
@@ -112,6 +112,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":common:utils"))
+    implementation(project(":common:design"))
 
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
@@ -119,10 +120,10 @@ dependencies {
 
     implementation("io.insert-koin:koin-android:3.1.3")
 
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.core:core-splashscreen:1.0.0-beta01")
+    implementation("androidx.appcompat:appcompat:1.6.0-alpha05")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.core:core-ktx:1.8.0")
+    implementation("androidx.core:core-splashscreen:1.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.4.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.4.0")
@@ -131,7 +132,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.4.0")
     implementation("androidx.room:room-runtime:2.4.0")
 
-    implementation("com.google.android.material:material:1.6.0-alpha02")
+    implementation("com.google.android.material:material:1.7.0-alpha03")
     implementation("com.google.code.gson:gson:2.8.6")
 
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")

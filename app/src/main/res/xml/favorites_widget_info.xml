@@ -3,7 +3,7 @@
     android:initialKeyguardLayout="@layout/favorites_widget"
     android:initialLayout="@layout/favorites_widget"
     android:minWidth="180dp"
-    android:minHeight="40dp"
+    android:minHeight="@dimen/d40"
     android:previewImage="@drawable/favorites_appwidget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000"

@@ -99,4 +99,8 @@
     <string name="export_error_io">A exportação de parâmetros falhou devido a um erro do armazenamento</string>
     <string name="export_error">Falha ao exportar parâmetros</string>
     <string name="export_options_sum">Importar, exportar ou fazer backup dos parâmetros do kernel</string>
+    <string name="please_wait">Por favor aguarde, isto pode demorar algum tempo…</string>
+    <string name="browse">Nevegar</string>
+    <string name="export">Exportar</string>
+    <string name="param_list">Lista de parâmetros</string>
 </resources>

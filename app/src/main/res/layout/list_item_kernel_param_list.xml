@@ -20,14 +20,14 @@
         android:background="?attr/selectableItemBackground"
         android:onClick="@{(view) -> onParamItemClickedListener.onParamItemClicked(param, view)}"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="@dimen/d16">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/paramName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginStart="@dimen/d4"
+            android:layout_marginEnd="@dimen/d4"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@{param.shortName}"
@@ -38,9 +38,9 @@
             android:id="@+id/paramValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="@dimen/d4"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="@dimen/d4"
             android:text="@{param.value}"
             android:textAppearance="?textAppearanceBody2"
             tools:text="@tools:sample/last_names" />

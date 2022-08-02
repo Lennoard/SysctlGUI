@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ShapeAppearance.SysctlGui.BottomSheet" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="cornerSizeTopRight">@dimen/d32</item>
+        <item name="cornerSizeTopLeft">@dimen/d32</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+</resources>
