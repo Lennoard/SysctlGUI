@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/d20">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/d32" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/d32" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sheetTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d36"
+        android:layout_marginRight="@dimen/d16"
+        android:textAppearance="?textAppearanceHeadline5"
+        app:layout_constraintStart_toStartOf="@+id/marginLeft"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/full_names" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/sheetDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/d24"
+        android:textAppearance="?textAppearanceBody2"
+        app:layout_constraintEnd_toStartOf="@+id/marginRight"
+        app:layout_constraintStart_toStartOf="@+id/marginLeft"
+        app:layout_constraintTop_toBottomOf="@+id/sheetTitle"
+        tools:text="@tools:sample/full_names" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/negativeButton"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/d4"
+        android:layout_marginTop="@dimen/d24"
+        android:layout_marginRight="@dimen/d4"
+        android:layout_marginBottom="@dimen/d4"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/positiveButton"
+        app:layout_constraintStart_toStartOf="@+id/marginLeft"
+        app:layout_constraintTop_toBottomOf="@+id/sheetDescription"
+        tools:text="@tools:sample/cities"
+        tools:visibility="visible" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/positiveButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/Widget.Material3.Button"
+        android:layout_marginLeft="@dimen/d4"
+        android:layout_marginTop="@dimen/d24"
+        android:layout_marginRight="@dimen/d4"
+        android:layout_marginBottom="@dimen/d4"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/marginRight"
+        app:layout_constraintStart_toEndOf="@+id/negativeButton"
+        app:layout_constraintTop_toBottomOf="@+id/sheetDescription"
+        tools:text="@tools:sample/cities"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

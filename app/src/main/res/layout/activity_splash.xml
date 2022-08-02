@@ -6,7 +6,7 @@
     android:fitsSystemWindows="false"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/d16">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:id="@+id/splashStatusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/d16"
             android:fontFamily="sans-serif-medium"
             android:gravity="center_horizontal"
             android:text="@string/splash_status_checking_root"
@@ -39,7 +39,7 @@
             android:id="@+id/splashProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="@dimen/d24" />
 
     </LinearLayout>
 

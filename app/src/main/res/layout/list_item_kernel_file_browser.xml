@@ -32,10 +32,10 @@
         android:gravity="center_vertical"
         android:onClick="@{(view) -> kernelFile.directory ? directoryListener.onDirectoryChanged(kernelFile) : paramListener.onParamItemClicked(param, view)}"
         android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingTop="8dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="8dp">
+        android:paddingLeft="@dimen/d16"
+        android:paddingTop="@dimen/d8"
+        android:paddingRight="@dimen/d16"
+        android:paddingBottom="@dimen/d8">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/icon"
@@ -52,7 +52,7 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/d16"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"

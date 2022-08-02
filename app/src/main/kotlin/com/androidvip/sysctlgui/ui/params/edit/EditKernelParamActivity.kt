@@ -76,12 +76,12 @@ class EditKernelParamActivity : AppCompatActivity() {
         supportFinishAfterTransition()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (this::kernelParameter.isInitialized.not()) {
             return false
         }
         menuInflater.inflate(R.menu.menu_edit_params, menu)
-        menu?.findItem(R.id.action_favorite)?.let {
+        menu.findItem(R.id.action_favorite)?.let {
             if (kernelParameter.favorite) {
                 it.setIcon(R.drawable.ic_favorite_selected)
             } else {
@@ -89,7 +89,7 @@ class EditKernelParamActivity : AppCompatActivity() {
             }
         }
 
-        menu?.findItem(R.id.action_tasker)?.let {
+        menu.findItem(R.id.action_tasker)?.let {
             if (isTaskerInstalled()) {
                 it.isVisible = true
                 if (kernelParameter.taskerParam) {

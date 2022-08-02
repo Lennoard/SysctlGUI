@@ -1,0 +1,30 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme.AppBarLayout" parent="Widget.Material3.AppBarLayout">
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">@color/black_87</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">@color/black_87</item>
+    </style>
+
+    <style name="AppTheme.AppBarLayout.Flat" parent="AppTheme.AppBarLayout">
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.Material3.Dark" />
+
+    <style name="ThemeOverlay.SysctlGui.BottomSheet.Dialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="bottomSheetStyle">@style/Widget.SysctlGui.BottomSheet.Modal</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">?colorSurface</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
+            @android:color/transparent
+        </item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.SysctlGui.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.SysctlGui.BottomSheet
+        </item>
+    </style>
+
+</resources>

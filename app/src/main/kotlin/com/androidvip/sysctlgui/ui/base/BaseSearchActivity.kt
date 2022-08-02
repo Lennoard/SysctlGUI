@@ -19,7 +19,7 @@ abstract class BaseSearchActivity<Binding : ViewBinding>(
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
         setUpSearchView(menu)
 

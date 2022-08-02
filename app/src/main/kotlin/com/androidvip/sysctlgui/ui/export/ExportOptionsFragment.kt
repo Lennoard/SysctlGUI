@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.SettingsItem
 import com.androidvip.sysctlgui.databinding.FragmentExportOptionsBinding
+import com.androidvip.sysctlgui.design.ModalBottomSheet
 import com.androidvip.sysctlgui.helpers.OnSettingsItemClickedListener
 import com.androidvip.sysctlgui.toast
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ExportOptionsFragment : Fragment(), OnSettingsItemClickedListener {
@@ -87,12 +87,12 @@ class ExportOptionsFragment : Fragment(), OnSettingsItemClickedListener {
                 is ExportOptionsViewEffect.ExportUserParams -> requestExportFile(RC_EXPORT_USER_PARAMS)
                 is ExportOptionsViewEffect.RestoreRuntimeParams -> requestImportFile(RC_RESTORE_PARAMS)
                 is ExportOptionsViewEffect.BackupRuntimeParams -> requestExportFile(RC_BACKUP_PARAMS)
-                is ExportOptionsViewEffect.ShowImportError -> showErrorDialog(it.messageRes)
-                is ExportOptionsViewEffect.ShowImportSuccess -> showSuccessDialog(
+                is ExportOptionsViewEffect.ShowImportError -> showErrorModal(it.messageRes)
+                is ExportOptionsViewEffect.ShowImportSuccess -> showSuccessModal(
                     getString(R.string.import_success_message, it.paramCount)
                 )
-                is ExportOptionsViewEffect.ShowExportError -> showErrorDialog(it.messageRes)
-                is ExportOptionsViewEffect.ShowExportSuccess -> showSuccessDialog(
+                is ExportOptionsViewEffect.ShowExportError -> showErrorModal(it.messageRes)
+                is ExportOptionsViewEffect.ShowExportSuccess -> showSuccessModal(
                     getString(R.string.export_success_message)
                 )
             }
@@ -123,26 +123,24 @@ class ExportOptionsFragment : Fragment(), OnSettingsItemClickedListener {
         startActivityForResult(intent, requestCode)
     }
 
-    private fun showErrorDialog(@StringRes messageRes: Int) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.error)
-            .setMessage(messageRes)
-            .setIcon(R.drawable.ic_close)
-            .create()
-            .also { dialog ->
-                if (isAdded) dialog.show()
-            }
+    private fun showErrorModal(@StringRes messageRes: Int) {
+        ModalBottomSheet.newInstance(
+            getString(R.string.error),
+            getString(messageRes),
+            getString(android.R.string.ok)
+        ).also {
+            if (isAdded) it.show(childFragmentManager, "sheet")
+        }
     }
 
-    private fun showSuccessDialog(message: String) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.done)
-            .setMessage(message)
-            .setIcon(R.drawable.ic_check)
-            .create()
-            .also { dialog ->
-                if (isAdded) dialog.show()
-            }
+    private fun showSuccessModal(message: String) {
+        ModalBottomSheet.newInstance(
+            getString(R.string.done),
+            message,
+            getString(android.R.string.ok)
+        ).also {
+            if (isAdded) it.show(childFragmentManager, "sheet")
+        }
     }
 
     companion object {

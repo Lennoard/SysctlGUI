@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="@dimen/d16"
+        android:layout_marginBottom="@dimen/d16"
         android:text="@string/done"
         app:backgroundTint="?colorSecondary"
         app:icon="@drawable/ic_check" />
@@ -26,32 +26,32 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/d24"
             app:srcCompat="@drawable/tasker" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/d16"
             android:fontFamily="sans-serif-medium"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/d16"
             android:text="@string/tasker_select_list"
             android:textColor="?colorSecondary" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="@dimen/d16"
+            android:paddingRight="@dimen/d16"
             android:text="@string/tasker_plugin_description" />
 
         <Spinner
             android:id="@+id/taskerListSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/d16"
             android:entries="@array/tasker_plugins_lists"
-            android:padding="8dp" />
+            android:padding="@dimen/d8" />
 
     </LinearLayout>
 

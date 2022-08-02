@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:padding="32dp"
+            android:padding="@dimen/d32"
             android:text="@string/please_wait"
             android:textAppearance="?textAppearanceSubtitle1"
             android:visibility="gone" />

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 32
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -18,8 +18,9 @@ android {
     }
 
     defaultConfig {
+        testInstrumentationRunnerArguments += mapOf("clearPackageData" to "true")
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf(
@@ -30,9 +31,6 @@ android {
         }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments += mutableMapOf(
-            "clearPackageData" to "true"
-        )
 
         testOptions {
             execution = "ANDROIDX_TEST_ORCHESTRATOR"
@@ -51,8 +49,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
 
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.appcompat:appcompat:1.6.0-alpha05")
+    implementation("androidx.core:core-ktx:1.8.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("androidx.room:room-ktx:2.4.0")
     implementation("androidx.room:room-runtime:2.4.0")
