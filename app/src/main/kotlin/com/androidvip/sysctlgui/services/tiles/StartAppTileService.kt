@@ -5,7 +5,7 @@ import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
-import com.androidvip.sysctlgui.ui.StartActivity
+import com.androidvip.sysctlgui.ui.start.StartActivity
 
 @RequiresApi(Build.VERSION_CODES.N)
 class StartAppTileService : TileService() {

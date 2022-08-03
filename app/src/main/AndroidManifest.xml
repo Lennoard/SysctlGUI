@@ -34,7 +34,7 @@
             android:label="@string/manage_parameters"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.StartActivity"
+            android:name=".ui.start.StartActivity"
             android:exported="true"
             android:theme="@style/AppTheme.Starting">
             <intent-filter>
@@ -47,6 +47,9 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+        <activity
+            android:name=".ui.start.StartErrorActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.tasker.TaskerPluginActivity"
             android:exported="true"
