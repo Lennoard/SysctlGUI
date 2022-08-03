@@ -13,7 +13,7 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.StartActivity
+import com.androidvip.sysctlgui.ui.start.StartActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
 import kotlinx.coroutines.runBlocking

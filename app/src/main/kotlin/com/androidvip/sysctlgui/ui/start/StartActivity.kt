@@ -1,6 +1,7 @@
-package com.androidvip.sysctlgui.ui
+package com.androidvip.sysctlgui.ui.start
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -59,6 +60,11 @@ class StartActivity : AppCompatActivity() {
             } else {
                 binding.splashProgress.goAway()
                 toast(R.string.root_not_found_sum, Toast.LENGTH_LONG)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    startActivity(
+                        Intent(this@StartActivity, StartErrorActivity::class.java)
+                    )
+                }
                 finish()
             }
         }
