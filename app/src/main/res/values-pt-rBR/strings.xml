@@ -103,4 +103,5 @@
     <string name="browse">Nevegar</string>
     <string name="export">Exportar</string>
     <string name="param_list">Lista de parâmetros</string>
+    <string name="try_again">Tentar novamente</string>
 </resources>
