@@ -28,7 +28,7 @@ A GUI application for Android <code>sysctl</code> to edit kernel variables
 -  Reapply parameters at startup
 -  Mark parameters as favorite for easy access
 
-## Techlologies
+## Technologies
 
 -  MVVM for user params
 -  [Jetpack Data Binding](https://developer.android.com/topic/libraries/data-binding)
