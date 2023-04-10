@@ -100,4 +100,8 @@
     <string name="export_success_message">Parameter wurden erfolgreich exportiert</string>
     <string name="export_options_sum">Kernel Parameter importieren, exportieren oder ein Backup erstellen</string>
     <string name="please_wait">Bitte warten, dies kann eine Weile dauern…</string>
+    <string name="browse">Browse</string>
+    <string name="export">Export</string>
+    <string name="param_list">Param list</string>
+    <string name="try_again">Try again</string>
 </resources>
