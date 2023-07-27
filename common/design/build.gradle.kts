@@ -28,6 +28,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 
     compileOptions {
@@ -38,13 +39,25 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
+    }
 }
 
 dependencies {
+    val composeBom = platform(Compose.BoM)
+    api(composeBom)
+    androidTestImplementation(composeBom)
+
     api(AndroidX.appCompat)
     api(AndroidX.constraintLayout)
     api(AndroidX.core)
     api(AndroidX.swipeRefreshLayout)
+    api(Compose.material3)
+    api(Compose.activity)
+    api(Compose.uiTooling)
+    debugApi(Compose.uiTooling)
     implementation(AndroidX.splashScreen)
     implementation(Google.material)
 }
