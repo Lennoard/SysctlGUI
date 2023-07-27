@@ -3,7 +3,11 @@ object AndroidX {
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"
     const val core = "androidx.core:core-ktx:1.10.1"
     const val splashScreen = "androidx.core:core-splashscreen:1.0.1"
-    const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
+
+    private const val lifecycleVersion = "2.6.1"
+    const val lifecycleLiveData = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    const val lifecycleViewModel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+
     const val preference = "androidx.preference:preference-ktx:1.2.0"
     const val swipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
