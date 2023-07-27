@@ -11,6 +11,7 @@ plugins {
 }
 
 android {
+    namespace = "com.androidvip.sysctlgui"
     compileSdk = 32
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
