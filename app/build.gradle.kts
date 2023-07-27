@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.util.Properties
 
-val devCycle = false
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -11,15 +9,25 @@ plugins {
 }
 
 android {
-    namespace = "com.androidvip.sysctlgui"
-    compileSdk = 32
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    namespace = AppConfig.appId
+    compileSdk = AppConfig.compileSdkVersion
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    defaultConfig {
+        applicationId = AppConfig.appId
+        minSdk = AppConfig.minSdkVersion
+        targetSdk = AppConfig.targetSdlVersion
+        versionCode = 11
+        versionName = "2.0.0"
+        vectorDrawables.useSupportLibrary = true
+        resourceConfigurations.addAll(listOf("en", "de", "pt-rBR"))
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                    "room.incremental" to "true",
+                    "room.schemaLocation" to "$projectDir/schemas"
+                )
+            }
+        }
     }
 
     signingConfigs {
@@ -36,29 +44,11 @@ android {
         }
     }
 
-    defaultConfig {
-        applicationId = "com.androidvip.sysctlgui"
-        minSdk = 21
-        targetSdk = 32
-        versionCode = 11
-        versionName = "2.0.0"
-        vectorDrawables.useSupportLibrary = true
-        resourceConfigurations.addAll(listOf("en", "de", "pt-rBR"))
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += mapOf(
-                    "room.incremental" to "true",
-                    "room.schemaLocation" to "$projectDir/schemas"
-                )
-            }
-        }
-    }
-
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = !devCycle
-            isShrinkResources = !devCycle
-            isDebuggable = devCycle
+            isMinifyEnabled = !AppConfig.devCycle
+            isShrinkResources = !AppConfig.devCycle
+            isDebuggable = AppConfig.devCycle
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -69,8 +59,8 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
-        dataBinding = true
+        android.buildFeatures.viewBinding = true
+        android.buildFeatures.dataBinding = true
     }
 
     sourceSets {
@@ -92,16 +82,14 @@ android {
             )
         )
     }
-}
 
-android.applicationVariants.forEach { variant ->
-    val defaultConfig = android.defaultConfig
-    variant.outputs.all {
-        var fileName = "sysctlgui"
-        fileName += "-v${defaultConfig.versionName}(${defaultConfig.versionCode})"
-        fileName += if (variant.buildType.name == "release") ".apk" else "-SNAPSHOT.apk"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
-        outputFile.renameTo(File(outputFile.path, fileName))
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -110,35 +98,27 @@ kapt {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":data"))
-    implementation(project(":common:utils"))
-    implementation(project(":common:design"))
-
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2")
 
-    implementation("io.insert-koin:koin-android:3.1.3")
+    implementation(project(Modules.domain))
+    implementation(project(Modules.data))
+    implementation(project(Modules.utils))
+    implementation(project(Modules.design))
 
-    implementation("androidx.appcompat:appcompat:1.6.0-alpha05")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.core:core-splashscreen:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.4.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.4.0")
-    implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.room:room-ktx:2.4.0")
-    implementation("androidx.room:room-runtime:2.4.0")
+    implementation(AndroidX.splashScreen)
+    implementation(AndroidX.lifecycleLiveData)
+    implementation(AndroidX.navigationFragment)
+    implementation(AndroidX.navigationUi)
+    implementation(AndroidX.preference)
+    implementation(AndroidX.room)
+    implementation(AndroidX.roomRuntime)
+    kapt(AndroidX.roomCompiler)
 
-    implementation("com.google.android.material:material:1.7.0-alpha03")
-    implementation("com.google.code.gson:gson:2.8.6")
+    implementation(Google.gson)
 
-    implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
-    implementation("com.github.topjohnwu.libsu:core:2.5.1")
-    implementation("com.github.hadilq:live-event:1.3.0")
-
-    kapt("androidx.room:room-compiler:2.4.0")
+    implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.libSuCore)
+    implementation(Dependencies.liveEvent)
+    implementation(Dependencies.tapTargetView)
 }
