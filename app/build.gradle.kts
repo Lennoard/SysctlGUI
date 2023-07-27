@@ -61,6 +61,7 @@ android {
     buildFeatures {
         android.buildFeatures.viewBinding = true
         android.buildFeatures.dataBinding = true
+        compose = true
     }
 
     sourceSets {
@@ -90,6 +91,10 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
 }
 
