@@ -4,20 +4,21 @@ plugins {
 }
 
 android {
-    namespace = "com.androidvip.sysctlgui.design"
-    compileSdk = 32
+    namespace = "${AppConfig.appId}.design"
+    compileSdk = AppConfig.compileSdkVersion
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 32
+        minSdk = AppConfig.minSdkVersion
+        targetSdk = AppConfig.targetSdlVersion
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
+        testInstrumentationRunner = AppConfig.testInstrumentationRunner
+        consumerProguardFiles(AppConfig.proguardConsumerRules)
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = !AppConfig.devCycle
+            isShrinkResources = !AppConfig.devCycle
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -40,11 +41,10 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.0-alpha05")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.core:core-splashscreen:1.0.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-
-    implementation("com.google.android.material:material:1.7.0-alpha03")
+    api(AndroidX.appCompat)
+    api(AndroidX.constraintLayout)
+    api(AndroidX.core)
+    api(AndroidX.swipeRefreshLayout)
+    implementation(AndroidX.splashScreen)
+    implementation(Google.material)
 }
