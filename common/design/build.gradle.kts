@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    namespace = "com.androidvip.sysctlgui.design"
     compileSdk = 32
 
     defaultConfig {
