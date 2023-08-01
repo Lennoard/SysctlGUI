@@ -24,6 +24,7 @@
         <activity
             android:name=".ui.params.edit.EditKernelParamActivity"
             android:label="@string/edit_params"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".ui.main.MainActivity"

@@ -33,15 +33,15 @@ class ListParamsViewModel(
 
     override fun processEvent(event: ParamViewEvent) {
         when (event) {
-            is ParamViewEvent.OnParamClicked -> setEffect {
-                ParamViewEffect.OpenParamDetails(DomainParamMapper.map(event.param))
+            is ParamViewEvent.ParamClicked -> setEffect {
+                ParamViewEffect.NavigateToParamDetails(DomainParamMapper.map(event.param))
             }
-            is ParamViewEvent.OnSearchExpressionChanged -> {
+            is ParamViewEvent.SearchExpressionChanged -> {
                 searchExpression = event.data
                 requestKernelParams()
             }
-
-            ParamViewEvent.OnRefreshRequested -> requestKernelParams()
+            ParamViewEvent.RefreshRequested -> requestKernelParams()
+            else -> Unit
         }
     }
 }
