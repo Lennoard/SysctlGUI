@@ -55,6 +55,7 @@ dependencies {
     api(AndroidX.core)
     api(AndroidX.swipeRefreshLayout)
     api(Compose.material3)
+    api(Compose.material)
     api(Compose.activity)
     api(Compose.uiTooling)
     debugApi(Compose.uiTooling)

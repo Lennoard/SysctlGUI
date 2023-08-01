@@ -1,44 +1,47 @@
 package com.androidvip.sysctlgui.ui.params.list
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
-import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.utils.ViewState
 import com.androidvip.sysctlgui.domain.usecase.GetRuntimeParamsUseCase
+import com.androidvip.sysctlgui.utils.BaseViewModel
 import kotlinx.coroutines.launch
 
-class ListParamsViewModel(private val getParamsUseCase: GetRuntimeParamsUseCase) : ViewModel() {
-    private val _viewState = MutableLiveData<ViewState<KernelParam>>()
-    val viewState: LiveData<ViewState<KernelParam>> = _viewState
+class ListParamsViewModel(
+    private val getParamsUseCase: GetRuntimeParamsUseCase
+) : BaseViewModel<ParamViewEvent, ParamViewState, ParamViewEffect>() {
+    private var searchExpression = ""
 
-    fun requestKernelParams() {
-        val searchExpression = viewState.value?.searchExpression.orEmpty()
+    private fun requestKernelParams() {
         viewModelScope.launch {
-            updateState { isLoading = true }
-            val params = getParamsUseCase().map {
-                DomainParamMapper.map(it)
-            }.filter { param ->
-                if (searchExpression.isEmpty()) true else {
-                    param.name.lowercase()
-                        .replace(".", "")
-                        .contains(searchExpression.lowercase())
+            setState { copy(isLoading = true) }
+            val params = getParamsUseCase()
+                .map(DomainParamMapper::map)
+                .filter { param ->
+                    if (searchExpression.isNotEmpty()) {
+                        param.name.lowercase()
+                            .replace(".", "")
+                            .contains(searchExpression.lowercase())
+                    } else {
+                        true
+                    }
                 }
-            }
-            updateState { isLoading = false; data = params }
+            setState { copy(isLoading = false, data = params, showEmptyState = params.isEmpty()) }
         }
     }
 
-    fun setSearchExpression(expression: String) = updateState {
-        searchExpression = expression
-    }
+    override fun createInitialState(): ParamViewState = ParamViewState()
 
-    private fun updateState(state: ViewState<KernelParam>.() -> Unit) {
-        _viewState.value = currentViewState.apply(state)
-    }
+    override fun processEvent(event: ParamViewEvent) {
+        when (event) {
+            is ParamViewEvent.OnParamClicked -> setEffect {
+                ParamViewEffect.OpenParamDetails(DomainParamMapper.map(event.param))
+            }
+            is ParamViewEvent.OnSearchExpressionChanged -> {
+                searchExpression = event.data
+                requestKernelParams()
+            }
 
-    private val currentViewState: ViewState<KernelParam>
-        get() = viewState.value ?: ViewState()
+            ParamViewEvent.OnRefreshRequested -> requestKernelParams()
+        }
+    }
 }

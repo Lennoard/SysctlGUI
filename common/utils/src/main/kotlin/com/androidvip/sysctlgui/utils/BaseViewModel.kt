@@ -18,10 +18,10 @@ abstract class BaseViewModel<Event, State, Effect> : ViewModel() {
     val currentState: State get() = uiState.value
 
     private val _uiState: MutableStateFlow<State> = MutableStateFlow(initialState)
-    private val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val _effect: Channel<Effect> = Channel()
-    private val effect = _effect
+    val effect = _effect
         .receiveAsFlow()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
