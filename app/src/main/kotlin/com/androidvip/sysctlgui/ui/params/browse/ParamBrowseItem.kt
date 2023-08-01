@@ -33,12 +33,12 @@ fun ParamBrowseItem(
     paramFile: File
 ) {
     val isDir = paramFile.isDirectory
-    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val surfaceColor = MaterialTheme.colorScheme.surfaceVariant
     val tintColor = if (isDir) {
-        MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
         MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        MaterialTheme.colorScheme.onSurface
     }
 
     Box(
@@ -56,7 +56,7 @@ fun ParamBrowseItem(
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Canvas(modifier = Modifier.size(42.dp), onDraw = {
-                    drawCircle(color = if (isDir) primaryContainerColor else surfaceColor)
+                    drawCircle(color = if (isDir) surfaceColor else outlineColor)
                 })
 
                 val iconResource = if (isDir) {
@@ -74,6 +74,7 @@ fun ParamBrowseItem(
                 text = param.shortName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onBackground,
                 style = if (isDir) {
                     MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
                 } else {
