@@ -48,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:fitsSystemWindows="true"
+        app:itemRippleColor="?attr/colorTertiaryContainer"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         app:menu="@menu/nav_main" />
 

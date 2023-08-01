@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.widget.SearchView
-import androidx.viewbinding.ViewBinding
+import androidx.fragment.app.Fragment
 import com.androidvip.sysctlgui.R
 
-abstract class BaseSearchFragment<Binding : ViewBinding>(
-    private val inflate: Inflate<Binding>
-) : BaseViewBindingFragment<Binding>(inflate::invoke) {
+abstract class BaseSearchFragment : Fragment() {
     protected var searchExpression: String = ""
     private var searchView: SearchView? = null
 
@@ -43,7 +41,8 @@ abstract class BaseSearchFragment<Binding : ViewBinding>(
                         this@BaseSearchFragment.onQueryTextChanged()
                         return true
                     }
-                })
+                }
+            )
 
             // expand and show keyboard
             isIconifiedByDefault = false

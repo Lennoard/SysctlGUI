@@ -1,7 +1,7 @@
 package com.androidvip.sysctlgui.ui.params.edit
 
 import android.app.Activity
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.transition.Explode
@@ -26,9 +26,9 @@ import com.androidvip.sysctlgui.showAsLight
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.google.android.material.snackbar.Snackbar
+import java.io.InputStream
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import java.io.InputStream
 
 // TODO: Improve by delegating any non-presentation logic to a view model
 class EditKernelParamActivity : AppCompatActivity() {
@@ -51,25 +51,12 @@ class EditKernelParamActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val extraParam = RemovableParamAdapter.EXTRA_PARAM
-        (intent.getParcelableExtra(extraParam) as? KernelParam)?.also {
-            kernelParameter = it
+        handleIntent(intent)
+    }
 
-            if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidName()) {
-                showInvalidParamError()
-            } else {
-                defineInputTypeForValue(kernelParameter.value)
-                binding.editParamInput.setText(kernelParameter.value)
-                updateTextUi(kernelParameter)
-                binding.editParamApply.setOnClickListener {
-                    lifecycleScope.launch {
-                        applyParam()
-                    }
-                }
-            }
-        } ?: run {
-            showInvalidParamError()
-        }
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent ?: return)
     }
 
     override fun onBackPressed() {
@@ -146,6 +133,28 @@ class EditKernelParamActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun handleIntent(intent: Intent) {
+        val extraParam = RemovableParamAdapter.EXTRA_PARAM
+        (intent.getParcelableExtra(extraParam) as? KernelParam)?.also {
+            kernelParameter = it
+
+            if (!kernelParameter.hasValidPath() || !kernelParameter.hasValidName()) {
+                showInvalidParamError()
+            } else {
+                defineInputTypeForValue(kernelParameter.value)
+                binding.editParamInput.setText(kernelParameter.value)
+                updateTextUi(kernelParameter)
+                binding.editParamApply.setOnClickListener {
+                    lifecycleScope.launch {
+                        applyParam()
+                    }
+                }
+            }
+        } ?: run {
+            showInvalidParamError()
+        }
+    }
+
     private fun updateTextUi(param: KernelParam) {
         ViewCompat.setTransitionName(binding.editParamName, NAME_TRANSITION_NAME)
         ViewCompat.setTransitionName(binding.editParamInput, VALUE_TRANSITION_NAME)
@@ -216,7 +225,9 @@ class EditKernelParamActivity : AppCompatActivity() {
             runCatching {
                 getString(resId)
             }.getOrNull()
-        } else null
+        } else {
+            null
+        }
 
         // Prefer the documented string resource
         if (stringRes != null) return stringRes
@@ -282,7 +293,9 @@ class EditKernelParamActivity : AppCompatActivity() {
             finish()
         } else {
             Snackbar.make(
-                binding.editParamApply, feedback, Snackbar.LENGTH_LONG
+                binding.editParamApply,
+                feedback,
+                Snackbar.LENGTH_LONG
             ).setAction(R.string.undo) {
                 lifecycleScope.launchWhenResumed {
                     updateUserParamUseCase(kernelParameter)
