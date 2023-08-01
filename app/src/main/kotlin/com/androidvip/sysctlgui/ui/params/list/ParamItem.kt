@@ -1,6 +1,8 @@
 package com.androidvip.sysctlgui.ui.params.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.androidvip.sysctlgui.data.models.KernelParam
+import com.androidvip.sysctlgui.design.theme.md_theme_light_background
 
 @Composable
 fun ParamItem(onParamClick: (KernelParam) -> Unit, param: KernelParam) {
@@ -27,13 +30,15 @@ fun ParamItem(onParamClick: (KernelParam) -> Unit, param: KernelParam) {
             text = param.shortName,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
             text = param.value,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -42,5 +47,7 @@ fun ParamItem(onParamClick: (KernelParam) -> Unit, param: KernelParam) {
 @Composable
 fun ParamItemPreview() {
     val param = KernelParam(name = "test", value = "success")
-    ParamItem(onParamClick = {}, param = param)
+    Box(modifier = Modifier.background(md_theme_light_background)) {
+        ParamItem(onParamClick = {}, param = param)
+    }
 }
