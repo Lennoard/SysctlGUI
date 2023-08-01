@@ -4,78 +4,113 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityOptionsCompat
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.databinding.FragmentKernelParamBrowserBinding
-import com.androidvip.sysctlgui.utils.Consts
+import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
+import com.androidvip.sysctlgui.ui.params.EmptyParamsWarning
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
+import com.androidvip.sysctlgui.utils.Consts
 import com.google.android.material.color.MaterialColors
-import org.koin.android.ext.android.inject
 import java.io.File
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
-class KernelParamBrowseFragment :
-    BaseSearchFragment<FragmentKernelParamBrowserBinding>(FragmentKernelParamBrowserBinding::inflate),
-    OnParamItemClickedListener,
-    DirectoryChangedListener {
-
+class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListener {
     private var actionBarMenu: Menu? = null
     private val viewModel: BrowseParamsViewModel by inject()
-    private val paramsBrowserAdapter: KernelParamBrowserAdapter by lazy {
-        KernelParamBrowserAdapter(this, this)
+
+    @OptIn(ExperimentalMaterialApi::class)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                SysctlGuiTheme {
+                    val state by viewModel.uiState.collectAsState()
+                    val refreshing = state.isLoading
+                    val refreshState = rememberPullRefreshState(
+                        refreshing = refreshing,
+                        onRefresh = { refresh() }
+                    )
+
+                    actionBarMenu
+                        ?.findItem(R.id.action_documentation)
+                        ?.isVisible = state.showDocumentationMenu
+
+                    Box(Modifier.pullRefresh(refreshState)) {
+                        if (state.showEmptyState) {
+                            EmptyParamsWarning()
+                        } else {
+                            KernelParamsExplorer(state.data)
+                        }
+
+                        PullRefreshIndicator(
+                            modifier = Modifier.align(Alignment.TopCenter),
+                            refreshing = refreshing,
+                            state = refreshState,
+                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    }
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(viewModel) {
-            viewState.observe(viewLifecycleOwner, ::renderState)
-            viewEffect.observe(viewLifecycleOwner, ::handleViewEffect)
-            setPath(Consts.PROC_SYS)
-        }
-
-        binding.swipeLayout.apply {
-            val roles = getColorRoles()
-            setColorSchemeColors(roles.accent)
-            setProgressBackgroundColorSchemeColor(roles.accentContainer)
-            setOnRefreshListener { refresh() }
-        }
-
-        binding.recyclerView.apply {
-            setHasFixedSize(true)
-            addItemDecoration(DividerItemDecoration(this.context, LinearLayout.VERTICAL))
-            layoutManager = GridLayoutManager(this.context, recyclerViewColumns)
-            adapter = paramsBrowserAdapter
+        lifecycleScope.launch {
+            viewModel.processEvent(ParamBrowserViewEvent.DirectoryChanged(File(Consts.PROC_SYS)))
+            viewModel.effect.collect(::handleViewEffect)
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val currentPath = viewModel.viewState.value?.currentPath.orEmpty()
+                    val currentPath = viewModel.currentState.currentPath
                     if (currentPath == Consts.PROC_SYS) {
                         if (isEnabled) {
                             isEnabled = false
@@ -105,8 +140,12 @@ class KernelParamBrowseFragment :
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_documentation -> viewModel.doWhenDocumentationMenuClicked()
-            R.id.action_favorites -> viewModel.doWhenFavoritesMenuClicked()
+            R.id.action_documentation -> {
+                viewModel.processEvent(ParamBrowserViewEvent.DocumentationMenuClicked)
+            }
+            R.id.action_favorites -> {
+                viewModel.processEvent(ParamBrowserViewEvent.FavoritesMenuClicked)
+            }
             else -> return false
         }
 
@@ -114,30 +153,22 @@ class KernelParamBrowseFragment :
     }
 
     override fun onQueryTextChanged() {
-        viewModel.setSearchExpression(searchExpression)
-        refresh()
+        viewModel.processEvent(ParamBrowserViewEvent.SearchExpressionChanged(searchExpression))
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
-        viewModel.doWhenParamItemClicked(param, itemLayout, requireActivity())
+        viewModel.processEvent(ParamBrowserViewEvent.ParamClicked(param))
     }
 
-    override fun onDirectoryChanged(newDir: File) {
-        viewModel.doWhenDirectoryChanges(newDir)
+    private fun onDirectoryChanged(newDir: File) {
+        viewModel.processEvent(ParamBrowserViewEvent.DirectoryChanged(newDir))
         resetSearchExpression()
-    }
-
-    private fun renderState(state: ParamBrowserViewState) {
-        actionBarMenu?.findItem(R.id.action_documentation)?.isVisible = state.showDocumentationMenu
-        binding.swipeLayout.isRefreshing = state.isLoading
-
-        paramsBrowserAdapter.updateData(state.data)
     }
 
     private fun handleViewEffect(viewEffect: ParamBrowserViewEffect) {
         when (viewEffect) {
             is ParamBrowserViewEffect.NavigateToParamDetails -> {
-                navigateToParamDetails(viewEffect.param, viewEffect.options)
+                navigateToParamDetails(viewEffect.param)
             }
             is ParamBrowserViewEffect.NavigateToFavorite -> {
                 findNavController().navigate(R.id.navigateFavoritesParams)
@@ -147,14 +178,16 @@ class KernelParamBrowseFragment :
         }
     }
 
-    private fun navigateToParamDetails(param: KernelParam, options: ActivityOptionsCompat) {
+    private fun navigateToParamDetails(param: KernelParam) {
         Intent(requireContext(), EditKernelParamActivity::class.java).apply {
             putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
-            startActivity(this, options.toBundle())
+            startActivity(this)
         }
     }
 
-    private fun refresh() = viewModel.setPath(viewModel.viewState.value?.currentPath.orEmpty())
+    private fun refresh() {
+        viewModel.processEvent(ParamBrowserViewEvent.RefreshRequested)
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun openDocumentationUrl(url: String) {
@@ -183,10 +216,12 @@ class KernelParamBrowseFragment :
                     swipeLayout.isRefreshing = false
 
                     val containerColorInt = MaterialColors.getColor(
-                        swipeLayout, R.attr.colorPrimaryContainer
+                        swipeLayout,
+                        R.attr.colorPrimaryContainer
                     )
                     val colorInt = MaterialColors.getColor(
-                        swipeLayout, R.attr.colorOnPrimaryContainer
+                        swipeLayout,
+                        R.attr.colorOnPrimaryContainer
                     )
 
                     val containerColorHex = "#%06X".format(0xFFFFFF and containerColorInt)
@@ -199,7 +234,8 @@ class KernelParamBrowseFragment :
                                 |document.querySelector('body').style.color='$containerColorHex'; 
                                 |document.querySelector('body').style.background='$colorHex';
                             |}
-                        |)()""".trimMargin()
+                        |)()
+                        """.trimMargin()
                     )
                 }
             }
@@ -226,5 +262,26 @@ class KernelParamBrowseFragment :
         }
 
         dialog.show()
+    }
+
+    @Composable
+    private fun KernelParamsExplorer(params: List<KernelParam>) {
+        LazyColumn {
+            itemsIndexed(params) { index, param ->
+                ParamBrowseItem(
+                    onParamClick = {
+                        viewModel.processEvent(ParamBrowserViewEvent.ParamClicked(param))
+                    },
+                    onDirectoryChanged = {
+                        viewModel.processEvent(ParamBrowserViewEvent.DirectoryChanged(it))
+                    },
+                    param = param,
+                    paramFile = File(param.path)
+                )
+                if (index < params.lastIndex) {
+                    Divider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+                }
+            }
+        }
     }
 }

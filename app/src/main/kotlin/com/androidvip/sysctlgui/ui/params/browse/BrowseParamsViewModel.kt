@@ -1,116 +1,102 @@
 package com.androidvip.sysctlgui.ui.params.browse
 
-import android.app.Activity
-import android.view.View
-import androidx.core.app.ActivityOptionsCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
-import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.GetParamsFromFilesUseCase
-import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.utils.BaseViewModel
 import com.androidvip.sysctlgui.utils.Consts
-import com.hadilq.liveevent.LiveEvent
-import com.hadilq.liveevent.LiveEventConfig
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import androidx.core.util.Pair as PairUtil
 
 class BrowseParamsViewModel(
     private val getParamsFromFilesUseCase: GetParamsFromFilesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    appPrefs: AppPrefs
-) : ViewModel() {
-    private val _viewState = MutableLiveData<ParamBrowserViewState>()
-    val viewState: LiveData<ParamBrowserViewState> = _viewState
-    val viewEffect = LiveEvent<ParamBrowserViewEffect>(config = LiveEventConfig.PreferFirstObserver)
-
-    var listFoldersFirst = true
+    appPrefs: AppPrefs,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<ParamBrowserViewEvent, ParamBrowserViewState, ParamBrowserViewEffect>() {
+    private var listFoldersFirst = true
+    private var searchExpression = ""
 
     init {
         listFoldersFirst = appPrefs.listFoldersFirst
     }
 
-    fun setPath(path: String) {
+    override fun createInitialState(): ParamBrowserViewState = ParamBrowserViewState()
+
+    override fun processEvent(event: ParamBrowserViewEvent) {
+        when (event) {
+            ParamBrowserViewEvent.RefreshRequested -> setPath(currentState.currentPath)
+            is ParamBrowserViewEvent.DirectoryChanged -> onDirectoryChanged(event.dir)
+            is ParamBrowserViewEvent.SearchExpressionChanged -> searchExpression = event.data
+            is ParamBrowserViewEvent.ParamClicked -> setEffect {
+                ParamBrowserViewEffect.NavigateToParamDetails(DomainParamMapper.map(event.param))
+            }
+            ParamBrowserViewEvent.DocumentationMenuClicked -> setEffect {
+                ParamBrowserViewEffect.OpenDocumentationUrl(currentState.docUrl)
+            }
+            ParamBrowserViewEvent.FavoritesMenuClicked -> setEffect {
+                ParamBrowserViewEffect.NavigateToFavorite
+            }
+        }
+    }
+
+    private fun setPath(path: String) {
         viewModelScope.launch {
             loadBrowsableParamFiles(path)
         }
     }
 
-    fun setSearchExpression(expression: String) = updateState {
-        searchExpression = expression
-    }
-
-    fun doWhenParamItemClicked(param: KernelParam, itemLayout: View, activity: Activity) {
-        val sharedElements = arrayOf<PairUtil<View, String>>(
-            PairUtil(
-                itemLayout.findViewById(R.id.name),
-                EditKernelParamActivity.NAME_TRANSITION_NAME
-            )
-        )
-        val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            activity,
-            *sharedElements
-        )
-
-        viewEffect.postValue(ParamBrowserViewEffect.NavigateToParamDetails(param, options))
-    }
-
-    fun doWhenDirectoryChanges(newDir: File) {
+    private fun onDirectoryChanged(newDir: File) {
         val newPath = newDir.absolutePath
         if (newPath.isEmpty() || !newPath.startsWith(Consts.PROC_SYS)) {
-            viewEffect.postValue(ParamBrowserViewEffect.ShowToast(R.string.invalid_path))
+            setEffect { ParamBrowserViewEffect.ShowToast(R.string.invalid_path) }
             return
         }
 
         setPath(newPath)
 
         when {
-            newPath.startsWith("/proc/sys/abi") -> updateState {
-                docUrl = "https://www.kernel.org/doc/Documentation/sysctl/abi.txt"
-                showDocumentationMenu = true
+            newPath.startsWith("/proc/sys/abi") -> setState {
+                copy(
+                    docUrl = "https://www.kernel.org/doc/Documentation/sysctl/abi.txt",
+                    showDocumentationMenu = true
+                )
             }
 
-            newPath.startsWith("/proc/sys/fs") -> updateState {
-                docUrl = "https://www.kernel.org/doc/Documentation/sysctl/fs.txt"
-                showDocumentationMenu = true
+            newPath.startsWith("/proc/sys/fs") -> setState {
+                copy(
+                    docUrl = "https://www.kernel.org/doc/Documentation/sysctl/fs.txt",
+                    showDocumentationMenu = true
+                )
             }
 
-            newPath.startsWith("/proc/sys/kernel") -> updateState {
-                docUrl = "https://www.kernel.org/doc/Documentation/sysctl/kernel.txt"
-                showDocumentationMenu = true
+            newPath.startsWith("/proc/sys/kernel") -> setState {
+                copy(
+                    docUrl = "https://www.kernel.org/doc/Documentation/sysctl/kernel.txt",
+                    showDocumentationMenu = true
+                )
             }
 
-            newPath.startsWith("/proc/sys/net") -> updateState {
-                docUrl = "https://www.kernel.org/doc/Documentation/sysctl/net.txt"
-                showDocumentationMenu = true
+            newPath.startsWith("/proc/sys/net") -> setState {
+                copy(
+                    docUrl = "https://www.kernel.org/doc/Documentation/sysctl/net.txt",
+                    showDocumentationMenu = true
+                )
             }
 
-            newPath.startsWith("/proc/sys/vm") -> updateState {
-                docUrl = "https://www.kernel.org/doc/Documentation/sysctl/vm.txt"
-                showDocumentationMenu = true
+            newPath.startsWith("/proc/sys/vm") -> setState {
+                copy(
+                    docUrl = "https://www.kernel.org/doc/Documentation/sysctl/vm.txt",
+                    showDocumentationMenu = true
+                )
             }
 
-            else -> updateState {
-                showDocumentationMenu = false
-            }
+            else -> setState { copy(showDocumentationMenu = false) }
         }
-    }
-
-    fun doWhenDocumentationMenuClicked() {
-        val url = viewState.value?.docUrl.orEmpty()
-        viewEffect.postValue(ParamBrowserViewEffect.OpenDocumentationUrl(url))
-    }
-
-    fun doWhenFavoritesMenuClicked() {
-        viewEffect.postValue(ParamBrowserViewEffect.NavigateToFavorite)
     }
 
     private suspend fun getCurrentPathFiles(path: String) = withContext(dispatcher) {
@@ -120,28 +106,28 @@ class BrowseParamsViewModel(
     }
 
     private suspend fun loadBrowsableParamFiles(path: String) {
-        updateState { isLoading = true }
+        setState { copy(isLoading = true) }
         val files = getCurrentPathFiles(path).maybeDirectorySorted().maybeFiltered()
         val params = getParamsFromFilesUseCase(files).map {
             DomainParamMapper.map(it)
         }
 
-        updateState {
-            currentPath = path
-            isLoading = false
-            data = params
+        setState {
+            copy(currentPath = path, isLoading = false, data = params)
         }
     }
+
     private suspend fun List<File>?.maybeDirectorySorted() = withContext(dispatcher) {
         return@withContext this@maybeDirectorySorted?.run {
             if (listFoldersFirst) {
                 sortedByDescending { it.isDirectory }
-            } else this
+            } else {
+                this
+            }
         }?.toList().orEmpty()
     }
 
     private suspend fun List<File>?.maybeFiltered() = withContext(dispatcher) {
-        val searchExpression = viewState.value?.searchExpression.orEmpty()
         return@withContext this@maybeFiltered?.run {
             if (searchExpression.isNotEmpty()) {
                 filter { param ->
@@ -149,14 +135,9 @@ class BrowseParamsViewModel(
                         .replace(".", "")
                         .contains(searchExpression.lowercase())
                 }
-            } else this
+            } else {
+                this
+            }
         }?.toList().orEmpty()
     }
-
-    private fun updateState(state: ParamBrowserViewState.() -> Unit) {
-        _viewState.value = currentViewState.apply(state)
-    }
-
-    private val currentViewState: ParamBrowserViewState
-        get() = viewState.value ?: ParamBrowserViewState()
 }
