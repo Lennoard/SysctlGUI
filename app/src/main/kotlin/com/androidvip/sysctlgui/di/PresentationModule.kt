@@ -9,13 +9,14 @@ import com.androidvip.sysctlgui.widgets.FavoriteWidgetParamUpdater
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 internal val presentationModules = module {
     viewModel { BrowseParamsViewModel(get(), Dispatchers.IO, get()) }
-    viewModel { ListParamsViewModel(get()) }
-    viewModel { UserParamsViewModel(get(), get(), get()) }
-    viewModel { MainViewModel() }
+    viewModelOf(::ListParamsViewModel)
+    viewModelOf(::UserParamsViewModel)
+    viewModelOf(::MainViewModel)
     viewModel { ExportOptionsViewModel(get(), get(), get()) }
 
     single { FavoriteWidgetParamUpdater(androidContext()).getListener() }
