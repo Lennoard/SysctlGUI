@@ -7,6 +7,11 @@
         android:title="@string/browse" />
 
     <item
+        android:id="@+id/navigationList"
+        android:icon="@drawable/ic_search"
+        android:title="@string/param_list" />
+
+    <item
         android:id="@+id/navigationExport"
         android:icon="@drawable/ic_export_params"
         android:title="@string/export" />
