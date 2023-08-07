@@ -45,17 +45,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpNavigation() = with(binding) {
         val navController = navHost.navController
-        val defaultIds = setOf(R.id.navigationBrowse, R.id.navigationExport, R.id.navigationSettings)
+        val defaultIds = setOf(
+            R.id.navigationBrowse,
+            R.id.navigationList,
+            R.id.navigationExport,
+            R.id.navigationSettings
+        )
         val appBarConfiguration = AppBarConfiguration(defaultIds)
 
-        toolbarLayout.setupWithNavController(toolbar, navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        toolbar.setupWithNavController(navController, appBarConfiguration)
+        navView?.setupWithNavController(navController)
+        navRail?.setupWithNavController(navController)
     }
 
     private fun navigateFromIntent() {
         val fragmentName = intent.getStringExtra(EXTRA_DESTINATION) ?: return
         when (fragmentName) {
             Actions.BrowseParams.name -> R.id.navigationBrowse
+            Actions.ListParams.name -> R.id.navigationList
             Actions.ExportParams.name -> R.id.navigationExport
             Actions.OpenSettings.name -> R.id.navigationSettings
             else -> null
