@@ -7,8 +7,17 @@
 
     <fragment
         android:id="@+id/navigationBrowse"
-        android:name="com.androidvip.sysctlgui.ui.params.KernelParamsFragment"
-        android:label="@string/kernel_params">
+        android:name="com.androidvip.sysctlgui.ui.params.browse.KernelParamBrowseFragment"
+        android:label="@string/browse">
+        <action
+            android:id="@+id/navigateFavoritesParams"
+            app:destination="@id/manageFavoritesParamsActivity" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigationList"
+        android:name="com.androidvip.sysctlgui.ui.params.list.KernelParamListFragment"
+        android:label="@string/param_list">
         <action
             android:id="@+id/navigateFavoritesParams"
             app:destination="@id/manageFavoritesParamsActivity" />

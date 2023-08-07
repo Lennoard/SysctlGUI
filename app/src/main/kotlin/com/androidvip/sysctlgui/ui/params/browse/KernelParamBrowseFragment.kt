@@ -114,7 +114,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
                     if (currentPath == Consts.PROC_SYS) {
                         if (isEnabled) {
                             isEnabled = false
-                            requireActivity().onBackPressed()
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
                         }
                     } else {
                         onDirectoryChanged(
