@@ -10,7 +10,7 @@
 
   <!-- FIXME: Hacky trick abusing toolbar color, might as well use PNGs -->
   <path
-      android:fillColor="#232F34"
+      android:fillColor="?colorTertiary"
       android:pathData="m16.24747,11.25255a6,6 0 0 0 -6,6a6,6 0 0 0 6,6a6,6 0 0 0 6,-6a6,6 0 0 0 -6,-6l-0,0l0,0z"/>
 
   <path

@@ -11,6 +11,8 @@ open class DomainKernelParam(
 ) : KernelParamContract {
     override val shortName: String get() = name.split(".").last()
 
+    val configName: String get() = name.removeSuffix(shortName).removeSuffix(".")
+
     override fun setNameFromPath(path: String) {
         if (path.trim().isEmpty() || !path.startsWith(PROC_SYS)) return
         if (path.contains(".")) return
@@ -25,7 +27,7 @@ open class DomainKernelParam(
         if (kernelParam.trim().isEmpty() || kernelParam.contains("/")) return
         if (kernelParam.startsWith(".") || kernelParam.endsWith(".")) return
 
-        path = "${PROC_SYS}/${kernelParam.replace(".", "/")}"
+        path = "$PROC_SYS/${kernelParam.replace(".", "/")}"
     }
 
     override fun hasValidPath(): Boolean {

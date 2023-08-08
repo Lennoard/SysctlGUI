@@ -102,7 +102,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            viewModel.processEvent(ParamBrowserViewEvent.DirectoryChanged(File(Consts.PROC_SYS)))
+            viewModel.onEvent(ParamBrowserViewEvent.DirectoryChanged(File(Consts.PROC_SYS)))
             viewModel.effect.collect(::handleViewEffect)
         }
 
@@ -141,10 +141,10 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_documentation -> {
-                viewModel.processEvent(ParamBrowserViewEvent.DocumentationMenuClicked)
+                viewModel.onEvent(ParamBrowserViewEvent.DocumentationMenuClicked)
             }
             R.id.action_favorites -> {
-                viewModel.processEvent(ParamBrowserViewEvent.FavoritesMenuClicked)
+                viewModel.onEvent(ParamBrowserViewEvent.FavoritesMenuClicked)
             }
             else -> return false
         }
@@ -153,15 +153,15 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
     }
 
     override fun onQueryTextChanged() {
-        viewModel.processEvent(ParamBrowserViewEvent.SearchExpressionChanged(searchExpression))
+        viewModel.onEvent(ParamBrowserViewEvent.SearchExpressionChanged(searchExpression))
     }
 
     override fun onParamItemClicked(param: KernelParam, itemLayout: View) {
-        viewModel.processEvent(ParamBrowserViewEvent.ParamClicked(param))
+        viewModel.onEvent(ParamBrowserViewEvent.ParamClicked(param))
     }
 
     private fun onDirectoryChanged(newDir: File) {
-        viewModel.processEvent(ParamBrowserViewEvent.DirectoryChanged(newDir))
+        viewModel.onEvent(ParamBrowserViewEvent.DirectoryChanged(newDir))
         resetSearchExpression()
     }
 
@@ -186,7 +186,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
     }
 
     private fun refresh() {
-        viewModel.processEvent(ParamBrowserViewEvent.RefreshRequested)
+        viewModel.onEvent(ParamBrowserViewEvent.RefreshRequested)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -270,10 +270,10 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
             itemsIndexed(params) { index, param ->
                 ParamBrowseItem(
                     onParamClick = {
-                        viewModel.processEvent(ParamBrowserViewEvent.ParamClicked(param))
+                        viewModel.onEvent(ParamBrowserViewEvent.ParamClicked(param))
                     },
                     onDirectoryChanged = {
-                        viewModel.processEvent(ParamBrowserViewEvent.DirectoryChanged(it))
+                        viewModel.onEvent(ParamBrowserViewEvent.DirectoryChanged(it))
                     },
                     param = param,
                     paramFile = File(param.path)
