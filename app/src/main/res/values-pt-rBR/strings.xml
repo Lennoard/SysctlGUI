@@ -81,6 +81,7 @@
     <string name="tasker_list_plugin_secondary">Lista secundária do Tasker</string>
     <string name="tasker_list_plugin_favorites">Lista de favoritos</string>
     <string name="tasker_list_plugin_apply_on_boot">Lista de aplicar na inicialização</string>
+    <string name="add_to_tasker_list">Adicionar ao Tasker</string>
     <string name="apply_failure_format">Falha ao aplicar: %s</string>
     <string name="undo">Desfazer</string>
     <string name="splash_status_performing_migration">Migrando banco de dados</string>
@@ -104,4 +105,12 @@
     <string name="export">Exportar</string>
     <string name="param_list">Lista de parâmetros</string>
     <string name="try_again">Tentar novamente</string>
+    <string name="apply_param">Aplicar</string>
+    <string name="restore_param">Restaurar</string>
+    <string name="param">Parâmetro</string>
+    <string name="value">Valor</string>
+    <string name="last_applied_value">Valor aplicado</string>
+    <string name="current_value">Valor atual</string>
+    <string name="remove_from_tasker_list">Remover do Tasker</string>
+    <string name="remove_from_favorites">Remover dos favoritos</string>
 </resources>

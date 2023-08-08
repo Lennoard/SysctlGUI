@@ -25,7 +25,7 @@ abstract class BaseViewModel<Event, State, Effect> : ViewModel() {
         .receiveAsFlow()
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
 
-    abstract fun processEvent(event: Event)
+    abstract fun onEvent(event: Event)
 
     protected fun setState(block: State.() -> State) {
         _uiState.value = currentState.block()
