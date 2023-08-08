@@ -27,7 +27,7 @@ class BrowseParamsViewModel(
 
     override fun createInitialState(): ParamBrowserViewState = ParamBrowserViewState()
 
-    override fun processEvent(event: ParamBrowserViewEvent) {
+    override fun onEvent(event: ParamBrowserViewEvent) {
         when (event) {
             ParamBrowserViewEvent.RefreshRequested -> setPath(currentState.currentPath)
             is ParamBrowserViewEvent.DirectoryChanged -> onDirectoryChanged(event.dir)

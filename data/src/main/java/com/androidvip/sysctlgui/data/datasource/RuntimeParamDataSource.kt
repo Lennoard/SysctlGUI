@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.data.datasource
 
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.domain.datasource.RuntimeDataSourceContract
+import com.androidvip.sysctlgui.domain.exceptions.ApplyValueException
 import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -24,7 +25,7 @@ class RuntimeParamDataSource(
                 }
             }
             commitResult == "error" -> {
-                throw Exception("Value refused to apply")
+                throw ApplyValueException("Value refused to apply")
             }
         }
     }

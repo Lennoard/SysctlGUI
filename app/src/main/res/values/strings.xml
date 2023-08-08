@@ -69,6 +69,7 @@
     <string name="startup_delay_sum">Execution will be delayed by %d seconds</string>
     <string name="startup_delay_disabled">Execution will not delayed</string>
     <string name="set_favorite">Set as favorite</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
     <string name="empty_favorites_widget">no favorites selected</string>
     <string name="tasker_list">Tasker list</string>
     <string name="tasker_list_primary">Primary list</string>
@@ -84,6 +85,8 @@
     <string name="tasker_select_list">Select a list to be used with Tasker</string>
     <string name="tasker_plugin_description">Once triggered by Tasker, the plugin will immediately reapply all parameters from the selected list with their respective values.</string>
     <string name="tasker_settings">Tasker settings</string>
+    <string name="add_to_tasker_list">Add to Tasker</string>
+    <string name="remove_from_tasker_list">Remove from Tasker</string>
     <string name="apply_failure_format">Failed to apply params: %s</string>
     <string name="undo">Undo</string>
     <string name="tile_start_app_label">Start Sysctl GUI</string>
@@ -104,4 +107,10 @@
     <string name="export">Export</string>
     <string name="param_list">Param list</string>
     <string name="try_again">Try again</string>
+    <string name="apply_param">Apply</string>
+    <string name="restore_param">Restore</string>
+    <string name="param">Parameter</string>
+    <string name="value">Value</string>
+    <string name="last_applied_value">Last applied value</string>
+    <string name="current_value">Current value</string>
 </resources>
