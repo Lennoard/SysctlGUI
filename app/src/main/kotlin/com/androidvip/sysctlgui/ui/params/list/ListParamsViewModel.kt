@@ -31,7 +31,7 @@ class ListParamsViewModel(
 
     override fun createInitialState(): ParamViewState = ParamViewState()
 
-    override fun processEvent(event: ParamViewEvent) {
+    override fun onEvent(event: ParamViewEvent) {
         when (event) {
             is ParamViewEvent.ParamClicked -> setEffect {
                 ParamViewEffect.NavigateToParamDetails(DomainParamMapper.map(event.param))

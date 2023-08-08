@@ -103,7 +103,7 @@ class KernelParamListFragment : BaseSearchFragment() {
     }
 
     override fun onQueryTextChanged() {
-        viewModel.processEvent(ParamViewEvent.SearchExpressionChanged(searchExpression))
+        viewModel.onEvent(ParamViewEvent.SearchExpressionChanged(searchExpression))
     }
 
     private fun onParamItemClicked(param: KernelParam) {
@@ -114,7 +114,7 @@ class KernelParamListFragment : BaseSearchFragment() {
     }
 
     private fun refreshList() {
-        viewModel.processEvent(ParamViewEvent.RefreshRequested)
+        viewModel.onEvent(ParamViewEvent.RefreshRequested)
     }
 
     private fun processEffect(effect: ParamViewEffect) {
@@ -128,7 +128,7 @@ class KernelParamListFragment : BaseSearchFragment() {
         LazyColumn {
             itemsIndexed(params) { index, param ->
                 ParamItem(
-                    onParamClick = { viewModel.processEvent(ParamViewEvent.ParamClicked(param)) },
+                    onParamClick = { viewModel.onEvent(ParamViewEvent.ParamClicked(param)) },
                     param = param
                 )
                 if (index < params.lastIndex) {
