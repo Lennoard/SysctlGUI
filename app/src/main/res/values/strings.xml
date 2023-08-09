@@ -113,4 +113,6 @@
     <string name="value">Value</string>
     <string name="last_applied_value">Last applied value</string>
     <string name="current_value">Current value</string>
+    <string name="apply_value_error">Selected value could not be applied</string>
+    <string name="commit_value_error">Selected value could not be applied. Try using \"echo\" mode.</string>
 </resources>
