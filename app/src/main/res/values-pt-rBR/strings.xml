@@ -113,4 +113,6 @@
     <string name="current_value">Valor atual</string>
     <string name="remove_from_tasker_list">Remover do Tasker</string>
     <string name="remove_from_favorites">Remover dos favoritos</string>
+    <string name="apply_value_error">O valor selecionado não pôde ser aplicado</string>
+    <string name="commit_value_error">O valor selecionado não pôde ser aplicado. Tente usar o modo \"echo\".</string>
 </resources>

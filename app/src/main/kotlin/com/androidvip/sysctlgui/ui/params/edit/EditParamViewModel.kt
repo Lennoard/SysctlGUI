@@ -4,14 +4,18 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
+import com.androidvip.sysctlgui.domain.exceptions.ApplyValueException
+import com.androidvip.sysctlgui.domain.exceptions.CommitModeException
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpdateUserParamUseCase
 import com.androidvip.sysctlgui.readLines
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import java.io.InputStream
+import kotlinx.coroutines.launch
 
 class EditParamViewModel(
     private val prefs: AppPrefs,
@@ -22,15 +26,30 @@ class EditParamViewModel(
 
     override fun onEvent(event: EditParamViewEvent) {
         when (event) {
-            EditParamViewEvent.ApplyPressed -> TODO()
-            EditParamViewEvent.BackPressed -> TODO()
-            EditParamViewEvent.FavoritePressed -> TODO()
+            EditParamViewEvent.ApplyPressed -> {
+                applyParam(currentState.param.copy(value = currentState.typedValue))
+            }
+            EditParamViewEvent.BackPressed -> {
+                setEffect { EditParamViewEffect.NavigateBack }
+            }
+            EditParamViewEvent.FavoritePressed -> {
+                updateParam(currentState.param.copy(favorite = !currentState.param.favorite))
+            }
+            is EditParamViewEvent.TaskerListSelected -> {
+                updateParam(currentState.param.copy(taskerList = event.listId))
+            }
             is EditParamViewEvent.ParamValueInputChanged -> {
                 setState { copy(typedValue = event.newValue) }
             }
-            is EditParamViewEvent.ReceivedParam -> setInitialState(event.param, event.context)
-            EditParamViewEvent.ResetPressed -> TODO()
-            EditParamViewEvent.TaskerPressed -> TODO()
+            is EditParamViewEvent.ReceivedParam -> {
+                setInitialState(event.param, event.context)
+            }
+            EditParamViewEvent.ResetPressed -> {
+                applyParam(currentState.param.copy(value = currentState.restoreValue))
+            }
+            EditParamViewEvent.TaskerPressed -> {
+                setEffect { EditParamViewEffect.ShowTaskerListSelection }
+            }
         }
     }
 
@@ -42,13 +61,45 @@ class EditParamViewModel(
         setState {
             copy(
                 param = param,
-                appliedValue = param.value,
+                restoreValue = param.value,
                 typedValue = param.value,
                 paramInfo = findParamInfo(param, context),
                 taskerAvailable = isTaskerInstalled(context),
                 keyboardType = keyboardType,
                 singleLine = singleLine
             )
+        }
+    }
+
+    private fun applyParam(param: KernelParam) {
+        viewModelScope.launch {
+            runCatching {
+                applyParams(param)
+            }.onFailure {
+                val messageRes = when (it) {
+                    is ApplyValueException -> R.string.apply_value_error
+                    is CommitModeException -> R.string.commit_value_error
+                    else -> R.string.error
+                }
+                setEffect { EditParamViewEffect.ShowApplyError(messageRes) }
+            }.onSuccess {
+                setEffect { EditParamViewEffect.ShowApplySuccess }
+                setState {
+                    copy(param = param, hasApplied = param.value != currentState.restoreValue)
+                }
+            }
+        }
+    }
+
+    private fun updateParam(param: KernelParam) {
+        viewModelScope.launch {
+            runCatching {
+                updateUserParam(param)
+            }.onFailure {
+                setEffect { EditParamViewEffect.ShowApplyError(R.string.error) }
+            }.onSuccess {
+                setState { copy(param = param) }
+            }
         }
     }
 
@@ -71,7 +122,7 @@ class EditParamViewModel(
             "string",
             packageName
         )
-        val stringRes = if (resId != 0) runCatching { getString(resId) }.getOrNull() else null
+        val stringRes = runCatching { getString(resId) }.getOrNull()
 
         // Prefer the documented string resource
         if (stringRes != null) return stringRes
@@ -121,7 +172,7 @@ class EditParamViewModel(
                 .last()
         }.getOrNull()
 
-        return if (!info.isNullOrEmpty()) info else null
+        return info.takeIf { it.isNullOrEmpty().not() }
     }
 
     private fun isTaskerInstalled(context: Context): Boolean {

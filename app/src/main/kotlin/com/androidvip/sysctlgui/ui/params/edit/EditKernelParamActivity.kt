@@ -3,32 +3,35 @@ package com.androidvip.sysctlgui.ui.params.edit
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
-import com.androidvip.sysctlgui.domain.usecase.UpdateUserParamUseCase
-import com.androidvip.sysctlgui.showAsLight
+import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class EditKernelParamActivity : AppCompatActivity() {
+class EditKernelParamActivity : ComponentActivity() {
     private val viewModel by viewModel<EditParamViewModel>()
-    private val applyParamsUseCase: ApplyParamsUseCase by inject()
-    private val updateUserParamUseCase: UpdateUserParamUseCase by inject()
-
-    private lateinit var kernelParameter: KernelParam
+    private val isEditingSavedParam: Boolean
+        get() = intent.getBooleanExtra(
+            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
+            false
+        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setContent {
+            SysctlGuiTheme {
+                EditParamScreen(viewModel = viewModel)
+            }
+        }
 
         lifecycleScope.launch {
             viewModel.effect.collect(::handleViewEffect)
@@ -40,47 +43,6 @@ class EditKernelParamActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         handleIntent(intent ?: return)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> onBackPressed()
-            R.id.action_favorite -> {
-                if (kernelParameter.favorite) {
-                    kernelParameter.favorite = false
-                    item.setIcon(R.drawable.ic_favorite_unselected)
-                } else {
-                    kernelParameter.favorite = true
-                    item.setIcon(R.drawable.ic_favorite_selected)
-                }
-
-                lifecycleScope.launch {
-                    updateUserParamUseCase(kernelParameter)
-                }
-                return true
-            }
-
-            R.id.action_tasker -> {
-                selectTaskerListAsDialog { taskerList ->
-                    if (kernelParameter.taskerParam) {
-                        kernelParameter.taskerParam = false
-                        item.setIcon(R.drawable.ic_action_tasker_add)
-                        toast(getString(R.string.removed_from_tasker_list, taskerList))
-                    } else {
-                        kernelParameter.favorite = true
-                        item.setIcon(R.drawable.ic_action_tasker_remove)
-                        toast(getString(R.string.added_to_tasker_list, taskerList))
-                    }
-
-                    kernelParameter.taskerList = taskerList
-                    lifecycleScope.launch {
-                        updateUserParamUseCase(kernelParameter)
-                    }
-                }
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     private fun handleIntent(intent: Intent) {
@@ -99,7 +61,17 @@ class EditKernelParamActivity : AppCompatActivity() {
     }
 
     private fun handleViewEffect(effect: EditParamViewEffect) {
+        when (effect) {
+            EditParamViewEffect.NavigateBack -> onBackPressedDispatcher.onBackPressed()
+            EditParamViewEffect.ShowTaskerListSelection -> {
+                selectTaskerListAsDialog { listId ->
+                    viewModel.onEvent(EditParamViewEvent.TaskerListSelected(listId))
+                }
+            }
 
+            is EditParamViewEffect.ShowApplyError -> doAfterParamNotApplied(effect.messageRes)
+            is EditParamViewEffect.ShowApplySuccess -> doAfterParamApplied()
+        }
     }
 
     private fun selectTaskerListAsDialog(block: (Int) -> Unit) {
@@ -116,46 +88,20 @@ class EditKernelParamActivity : AppCompatActivity() {
             }
     }
 
-    private suspend fun applyParam() {
-        val isEditingSavedParam = intent.getBooleanExtra(
-            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
-            false
-        )
-
-        val newValue = "binding.editParamInput.text.toString()"
-        kernelParameter.value = newValue
-
-        val result = runCatching { applyParamsUseCase(kernelParameter) }
-        val feedback = if (result.isSuccess) {
-            setResult(Activity.RESULT_OK)
-            updateUserParamUseCase(kernelParameter)
-            getString(R.string.done)
-        } else {
-            setResult(Activity.RESULT_CANCELED)
-            getString(R.string.apply_failure_format, result.exceptionOrNull()?.message.orEmpty())
-        }
-
+    private fun doAfterParamApplied() {
         if (isEditingSavedParam) {
-            toast(feedback)
+            setResult(Activity.RESULT_OK)
+            toast(R.string.done)
             finish()
-        } else {
-            Snackbar.make(
-                View(this),
-                feedback,
-                Snackbar.LENGTH_LONG
-            ).setAction(R.string.undo) {
-                lifecycleScope.launchWhenResumed {
-                    updateUserParamUseCase(kernelParameter)
-                }
-            }.showAsLight()
         }
     }
 
-    private fun isTaskerInstalled(): Boolean {
-        return runCatching {
-            packageManager.getPackageInfo("net.dinglisch.android.taskerm", 0)
-            true
-        }.getOrDefault(false)
+    private fun doAfterParamNotApplied(@StringRes messageRes: Int) {
+        toast(messageRes)
+        if (isEditingSavedParam) {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
     }
 
     companion object {
