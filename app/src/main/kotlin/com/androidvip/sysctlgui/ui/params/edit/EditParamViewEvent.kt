@@ -10,5 +10,6 @@ sealed interface EditParamViewEvent {
     object TaskerPressed : EditParamViewEvent
     object ApplyPressed : EditParamViewEvent
     object ResetPressed : EditParamViewEvent
+    class TaskerListSelected(val listId: Int) : EditParamViewEvent
     class ParamValueInputChanged(val newValue: String) : EditParamViewEvent
 }

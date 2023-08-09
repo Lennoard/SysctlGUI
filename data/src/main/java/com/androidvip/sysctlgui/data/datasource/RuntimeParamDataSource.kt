@@ -3,6 +3,7 @@ package com.androidvip.sysctlgui.data.datasource
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.domain.datasource.RuntimeDataSourceContract
 import com.androidvip.sysctlgui.domain.exceptions.ApplyValueException
+import com.androidvip.sysctlgui.domain.exceptions.CommitModeException
 import com.androidvip.sysctlgui.domain.models.DomainKernelParam
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -21,7 +22,7 @@ class RuntimeParamDataSource(
         when {
             commitMode == "sysctl" -> {
                 if (commitResult == "error" || !commitResult.contains(param.name)) {
-                    throw Exception("Value refused to apply. Try using 'echo' mode.")
+                    throw CommitModeException("Value refused to apply. Try using 'echo' mode.")
                 }
             }
             commitResult == "error" -> {
