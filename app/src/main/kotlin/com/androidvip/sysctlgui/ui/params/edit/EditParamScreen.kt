@@ -31,9 +31,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -58,6 +62,7 @@ import com.androidvip.sysctlgui.data.models.KernelParam
 @Composable
 fun EditParamScreen(viewModel: EditParamViewModel) {
     val state by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val expandedFabState = remember {
         derivedStateOf {
@@ -80,6 +85,7 @@ fun EditParamScreen(viewModel: EditParamViewModel) {
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButtonColumn(
                 onReset = { viewModel.onEvent(EditParamViewEvent.ResetPressed) },
@@ -99,7 +105,7 @@ fun EditParamScreen(viewModel: EditParamViewModel) {
             item {
                 ParamValues(
                     param = state.param,
-                    appliedValue = state.appliedValue,
+                    appliedValue = state.restoreValue,
                     keyboardType = state.keyboardType,
                     singleLine = state.singleLine
                 )
@@ -113,6 +119,26 @@ fun EditParamScreen(viewModel: EditParamViewModel) {
                 )
             }
             item { ParamDocs(info = state.paramInfo) }
+        }
+    }
+
+    val successMessage = stringResource(id = R.string.done)
+    val undoMessage = stringResource(id = R.string.undo)
+    LaunchedEffect(key1 = Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is EditParamViewEffect.ShowApplySuccess -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = successMessage,
+                        actionLabel = undoMessage
+                    )
+
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.onEvent(EditParamViewEvent.ResetPressed)
+                    }
+                }
+                else -> Unit
+            }
         }
     }
 }
@@ -240,6 +266,7 @@ private fun ParamValues(
                 imeAction = ImeAction.Done
             ),
             maxLines = 3,
+            singleLine = singleLine,
             value = typedValue,
             onValueChange = { typedValue = it }
         )

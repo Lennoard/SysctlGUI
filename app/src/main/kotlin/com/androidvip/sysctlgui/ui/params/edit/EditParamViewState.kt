@@ -5,7 +5,7 @@ import com.androidvip.sysctlgui.data.models.KernelParam
 
 data class EditParamViewState(
     val param: KernelParam = KernelParam(),
-    val appliedValue: String = "", // Backup,
+    val restoreValue: String = "", // Backup,
     val typedValue: String = "",
     val hasApplied: Boolean = false,
     val paramInfo: String? = null,
