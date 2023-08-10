@@ -30,22 +30,24 @@ A GUI application for Android <code>sysctl</code> to edit kernel variables
 
 ## Technologies
 
--  MVVM for user params
+-  MVI / MVVM for user params
+-  [Jetpack Compose](https://developer.android.com/jetpack/compose)  Material 3 UI
 -  [Jetpack Data Binding](https://developer.android.com/topic/libraries/data-binding)
 -  [Jetpack View Binding](https://developer.android.com/topic/libraries/view-binding)
 -  Lifecycle-aware Kotlin Coroutines
+-  Kotlin Flows
 -  Dependency injection with [Koin](https://insert-koin.io/)
 
 ## Download
 
-<a href='https://apt.izzysoft.de/fdroid/index/apk/com.androidvip.sysctlgui'><img alt='Get it on IzzyOnDroid' height="64" src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>
+<a href='https://apt.izzysoft.de/fdroid/index/apk/com.androidvip.sysctlgui'><img alt='Get it on IzzyOnDroid' height="64" src='https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png'/></a>  
 <a href='https://play.google.com/store/apps/details?id=com.androidvip.sysctlgui&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' height="64" src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 
 ## License
 
 This project is licensed under the terms of the MIT license.
 
-> Copyright (c) 2019-2022 Lennoard.
+> Copyright (c) 2019-2023 Lennoard.
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
