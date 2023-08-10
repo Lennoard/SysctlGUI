@@ -10,4 +10,6 @@ interface AppPrefs {
     var startUpDelay: Int
     var showTaskerToast: Boolean
     var migrationCompleted: Boolean
+    var forceDark: Boolean
+    var dynamicColors: Boolean
 }

@@ -15,6 +15,19 @@
             app:summary="@string/guess_input_type_sum"
             app:defaultValue="true"/>
 
+        <SwitchPreferenceCompat
+            app:key="force_dark_theme"
+            app:title="@string/dark_theme"
+            app:summary="@string/dark_them_sum"
+            app:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            app:key="dynamic_colors"
+            app:title="@string/dynamic_colors"
+            app:summary="@string/dynamic_colors_sum"
+            android:enabled="false"
+            app:defaultValue="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/operations">

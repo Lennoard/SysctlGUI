@@ -8,10 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import com.androidvip.sysctlgui.databinding.ActivityTaskerPluginBinding
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
+import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
-class TaskerPluginActivity : AppCompatActivity() {
+class TaskerPluginActivity : BaseAppCompatActivity() {
     private lateinit var binding: ActivityTaskerPluginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

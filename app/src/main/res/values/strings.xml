@@ -115,4 +115,8 @@
     <string name="current_value">Current value</string>
     <string name="apply_value_error">Selected value could not be applied</string>
     <string name="commit_value_error">Selected value could not be applied. Try using \"echo\" mode.</string>
+    <string name="dynamic_colors">Dynamic colors</string>
+    <string name="dynamic_colors_sum">Use dynamic colors (Monet theme) when available</string>
+    <string name="dark_theme">Force dark theme</string>
+    <string name="dark_them_sum">Force dark theme when available</string>
 </resources>

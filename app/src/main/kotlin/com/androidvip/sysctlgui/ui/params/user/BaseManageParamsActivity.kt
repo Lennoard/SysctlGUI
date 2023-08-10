@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.utils.ComposeTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 abstract class BaseManageParamsActivity : ComponentActivity() {
@@ -18,8 +18,8 @@ abstract class BaseManageParamsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent { 
-            SysctlGuiTheme {
+        setContent {
+            ComposeTheme {
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
                 UserParamsScreen(
                     topBarTitle = title,
