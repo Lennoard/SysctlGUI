@@ -37,7 +37,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
@@ -46,6 +45,7 @@ import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
 import com.androidvip.sysctlgui.ui.params.EmptyParamsWarning
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.utils.ComposeTheme
 import com.androidvip.sysctlgui.utils.Consts
 import com.google.android.material.color.MaterialColors
 import java.io.File
@@ -64,7 +64,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                SysctlGuiTheme {
+                ComposeTheme {
                     val state by viewModel.uiState.collectAsStateWithLifecycle()
                     val refreshing = state.isLoading
                     val refreshState = rememberPullRefreshState(
