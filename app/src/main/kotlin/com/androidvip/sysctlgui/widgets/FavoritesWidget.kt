@@ -13,8 +13,8 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.ui.start.StartActivity
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinComponent
@@ -53,8 +53,8 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
             Intent(context, StartActivity::class.java).apply {
                 flags = FLAG_ACTIVITY_NEW_TASK
                 action = Actions.EditParam.name
-                putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
-                putExtra(RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM, true)
+                putExtra(EditKernelParamActivity.EXTRA_PARAM, param)
+                putExtra(EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM, true)
                 context.startActivity(this)
             }
         }

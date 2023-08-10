@@ -1,6 +1,7 @@
 package com.androidvip.sysctlgui.ui.params.edit
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,17 +13,13 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.toast
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EditKernelParamActivity : ComponentActivity() {
     private val viewModel by viewModel<EditParamViewModel>()
     private val isEditingSavedParam: Boolean
-        get() = intent.getBooleanExtra(
-            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
-            false
-        )
+        get() = intent.getBooleanExtra(EXTRA_EDIT_SAVED_PARAM, false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +43,7 @@ class EditKernelParamActivity : ComponentActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
-        val extraParam = RemovableParamAdapter.EXTRA_PARAM
-        val param = intent.getParcelableExtra(extraParam) as? KernelParam
+        val param = intent.getParcelableExtra(EXTRA_PARAM) as? KernelParam
         if (param != null) {
             viewModel.onEvent(EditParamViewEvent.ReceivedParam(param, this))
         } else {
@@ -105,7 +101,13 @@ class EditKernelParamActivity : ComponentActivity() {
     }
 
     companion object {
-        const val NAME_TRANSITION_NAME = "transition_title"
-        const val VALUE_TRANSITION_NAME = "transition_value"
+        const val EXTRA_EDIT_SAVED_PARAM = "edit_saved_param"
+        const val EXTRA_PARAM = "param"
+
+        fun getIntent(context: Context, param: KernelParam): Intent {
+            return Intent(context, EditKernelParamActivity::class.java).apply {
+                putExtra(EXTRA_PARAM, param)
+            }
+        }
     }
 }

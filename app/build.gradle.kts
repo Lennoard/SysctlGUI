@@ -113,6 +113,7 @@ dependencies {
 
     implementation(AndroidX.splashScreen)
     implementation(AndroidX.lifecycleLiveData)
+    implementation(AndroidX.lifecycleRuntimeCompose)
     implementation(AndroidX.navigationFragment)
     implementation(AndroidX.navigationUi)
     implementation(AndroidX.preference)
