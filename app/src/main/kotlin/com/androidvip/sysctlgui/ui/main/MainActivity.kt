@@ -2,7 +2,6 @@ package com.androidvip.sysctlgui.ui.main
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,8 +9,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.databinding.ActivityMain2Binding
 import com.androidvip.sysctlgui.helpers.Actions
+import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseAppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
 
     override fun onCreate(savedInstanceState: Bundle?) {

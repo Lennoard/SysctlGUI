@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
@@ -16,17 +15,16 @@ import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.toast
+import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 import com.androidvip.sysctlgui.ui.main.MainActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
-class StartActivity : AppCompatActivity() {
+class StartActivity : BaseAppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val prefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
@@ -69,10 +67,7 @@ class StartActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun checkRootAccess() = withContext(dispatcher) {
-        delay(500)
-        Shell.rootAccess()
-    }
+    private suspend fun checkRootAccess() = true
 
     private suspend fun checkBusyBox() = rootUtils.isBusyboxAvailable().also {
         delay(500)

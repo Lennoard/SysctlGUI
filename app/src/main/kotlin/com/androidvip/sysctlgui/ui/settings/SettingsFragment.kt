@@ -7,9 +7,10 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.utils.RootUtils
-import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.helpers.StartUpServiceToggle
+import com.androidvip.sysctlgui.utils.Consts
+import com.google.android.material.color.DynamicColors
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -22,10 +23,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         val currCommitMode = prefs.commitMode
         val commitModePref = findPreference<Preference?>(Consts.Prefs.COMMIT_MODE)
-        commitModePref?.summary = if (currCommitMode == "sysctl")
+        commitModePref?.summary = if (currCommitMode == "sysctl") {
             "Use sysctl -w"
-        else
+        } else {
             "Use echo 'value' > /proc/sys/…"
+        }
 
         val startupDelay = prefs.startUpDelay
         val startupDelayPref = findPreference<Preference?>(Consts.Prefs.START_UP_DELAY)
@@ -46,9 +48,14 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             }
         }
 
+        val dynamicColorsPref = findPreference(Consts.Prefs.DYNAMIC_COLORS) as SwitchPreferenceCompat?
+        dynamicColorsPref?.isEnabled = DynamicColors.isDynamicColorAvailable()
+
         commitModePref?.onPreferenceChangeListener = this
         startupDelayPref?.onPreferenceChangeListener = this
+        dynamicColorsPref?.onPreferenceChangeListener = this
         findPreference<Preference?>(Consts.Prefs.RUN_ON_START_UP)?.onPreferenceChangeListener = this
+        findPreference<Preference?>(Consts.Prefs.FORCE_DARK_THEME)?.onPreferenceChangeListener = this
     }
 
     override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
@@ -58,10 +65,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             }
 
             Consts.Prefs.COMMIT_MODE -> {
-                preference.summary = if (newValue == "sysctl")
+                preference.summary = if (newValue == "sysctl") {
                     "Use sysctl -w"
-                else
+                } else {
                     "Use echo 'value' > /proc/sys/…"
+                }
             }
 
             Consts.Prefs.START_UP_DELAY -> {
@@ -72,6 +80,17 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
                 } else {
                     getString(R.string.startup_delay_disabled)
                 }
+            }
+
+            Consts.Prefs.FORCE_DARK_THEME -> {
+                requireActivity().recreate()
+            }
+
+            Consts.Prefs.DYNAMIC_COLORS -> {
+                if (newValue == true) {
+                    DynamicColors.applyToActivitiesIfAvailable(requireActivity().application)
+                }
+                requireActivity().recreate()
             }
         }
 

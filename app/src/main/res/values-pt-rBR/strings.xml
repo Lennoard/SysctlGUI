@@ -115,4 +115,8 @@
     <string name="remove_from_favorites">Remover dos favoritos</string>
     <string name="apply_value_error">O valor selecionado não pôde ser aplicado</string>
     <string name="commit_value_error">O valor selecionado não pôde ser aplicado. Tente usar o modo \"echo\".</string>
+    <string name="dynamic_colors">Cores dinâmicas</string>
+    <string name="dynamic_colors_sum">Usar cores dinâmicas (Tema Monet) quando disponível</string>
+    <string name="dark_theme">Forçar tema escuro</string>
+    <string name="dark_them_sum">Forçar o uso do tema escuro quando disponível</string>
 </resources>

@@ -19,5 +19,7 @@ object Consts {
         const val START_UP_DELAY = "startup_delay"
         const val SHOW_TASKER_TOAST = "show_tasker_toast"
         const val MIGRATION_COMPLETED = "migration_completed"
+        const val FORCE_DARK_THEME = "force_dark_theme"
+        const val DYNAMIC_COLORS = "dynamic_colors"
     }
 }
