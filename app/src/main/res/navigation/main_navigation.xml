@@ -45,7 +45,6 @@
     <activity
         android:id="@+id/manageFavoritesParamsActivity"
         android:name="com.androidvip.sysctlgui.ui.params.user.ManageFavoritesParamsActivity"
-        android:label="ManageFavoritesParamsActivity"
-        tools:layout="@layout/activity_manage_param_set"/>
+        android:label="ManageFavoritesParamsActivity" />
 
 </navigation>

@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -38,7 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,13 +55,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditParamScreen(viewModel: EditParamViewModel) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     val expandedFabState = remember {
@@ -107,12 +108,17 @@ fun EditParamScreen(viewModel: EditParamViewModel) {
                     param = state.param,
                     appliedValue = state.restoreValue,
                     keyboardType = state.keyboardType,
-                    singleLine = state.singleLine
+                    singleLine = state.singleLine,
+                    onValueChange = {
+                        viewModel.onEvent(EditParamViewEvent.ParamValueInputChanged(it))
+                    }
                 )
             }
             item {
                 ParamActions(
-                    onFavoriteClicked = { viewModel.onEvent(EditParamViewEvent.FavoritePressed) },
+                    onFavoriteClicked = {
+                        viewModel.onEvent(EditParamViewEvent.FavoritePressed(state.param.favorite))
+                    },
                     onTaskerClicked = { viewModel.onEvent(EditParamViewEvent.TaskerPressed) },
                     param = state.param,
                     taskerAvailable = state.taskerAvailable
@@ -130,7 +136,8 @@ fun EditParamScreen(viewModel: EditParamViewModel) {
                 is EditParamViewEffect.ShowApplySuccess -> {
                     val result = snackbarHostState.showSnackbar(
                         message = successMessage,
-                        actionLabel = undoMessage
+                        actionLabel = undoMessage,
+                        duration = SnackbarDuration.Short
                     )
 
                     if (result == SnackbarResult.ActionPerformed) {
@@ -158,13 +165,13 @@ private fun FloatingActionButtonColumn(
         if (hasApplied) {
             SmallFloatingActionButton(
                 onClick = onReset,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Refresh,
                     contentDescription = stringResource(id = R.string.restore_param),
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    tint = MaterialTheme.colorScheme.onTertiaryContainer
                 )
             }
         }
@@ -173,19 +180,19 @@ private fun FloatingActionButtonColumn(
             text = {
                 Text(
                     text = stringResource(id = R.string.apply_param),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             },
             icon = {
                 Icon(
                     imageVector = Icons.Outlined.Check,
                     contentDescription = stringResource(id = R.string.apply_param),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             },
             onClick = onApply,
             expanded = expanded,
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     }
 }
@@ -235,6 +242,7 @@ private fun ParamRow(@DrawableRes iconRes: Int, text: String) {
 @Composable
 private fun ParamValues(
     param: KernelParam,
+    onValueChange: (String) -> Unit,
     appliedValue: String,
     keyboardType: KeyboardType,
     singleLine: Boolean
@@ -268,7 +276,7 @@ private fun ParamValues(
             maxLines = 3,
             singleLine = singleLine,
             value = typedValue,
-            onValueChange = { typedValue = it }
+            onValueChange = { typedValue = it; onValueChange(it) }
         )
 
         Text(
@@ -350,12 +358,12 @@ private fun ParamActions(
                     modifier = Modifier.size(74.dp),
                     onClick = onTaskerClicked,
                     containerColor = if (param.taskerParam) {
-                        MaterialTheme.colorScheme.tertiaryContainer
+                        MaterialTheme.colorScheme.primaryContainer
                     } else {
                         MaterialTheme.colorScheme.outlineVariant
                     },
                     contentColor = if (param.taskerParam) {
-                        MaterialTheme.colorScheme.onTertiaryContainer
+                        MaterialTheme.colorScheme.onPrimaryContainer
                     } else {
                         MaterialTheme.colorScheme.outline
                     },
@@ -364,7 +372,7 @@ private fun ParamActions(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_action_tasker),
                         contentDescription = stringResource(id = R.string.set_favorite),
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
                 Text(

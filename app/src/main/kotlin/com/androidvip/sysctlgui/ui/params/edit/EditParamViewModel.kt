@@ -32,7 +32,7 @@ class EditParamViewModel(
             EditParamViewEvent.BackPressed -> {
                 setEffect { EditParamViewEffect.NavigateBack }
             }
-            EditParamViewEvent.FavoritePressed -> {
+            is EditParamViewEvent.FavoritePressed -> {
                 updateParam(currentState.param.copy(favorite = !currentState.param.favorite))
             }
             is EditParamViewEvent.TaskerListSelected -> {
