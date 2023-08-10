@@ -36,7 +36,7 @@ class EditParamViewModel(
                 updateParam(currentState.param.copy(favorite = !currentState.param.favorite))
             }
             is EditParamViewEvent.TaskerListSelected -> {
-                updateParam(currentState.param.copy(taskerList = event.listId))
+                updateParam(currentState.param.copy(taskerList = event.listId, taskerParam = true))
             }
             is EditParamViewEvent.ParamValueInputChanged -> {
                 setState { copy(typedValue = event.newValue) }

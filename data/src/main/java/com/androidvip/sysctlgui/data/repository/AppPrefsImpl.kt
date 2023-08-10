@@ -51,4 +51,14 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
         set(value) {
             prefs.edit { putBoolean(Consts.Prefs.MIGRATION_COMPLETED, value) }
         }
+    override var forceDark: Boolean
+        get() = prefs.getBoolean(Consts.Prefs.FORCE_DARK_THEME, true)
+        set(value) {
+            prefs.edit { putBoolean(Consts.Prefs.FORCE_DARK_THEME, value) }
+        }
+    override var dynamicColors: Boolean
+        get() = prefs.getBoolean(Consts.Prefs.DYNAMIC_COLORS, false)
+        set(value) {
+            prefs.edit { putBoolean(Consts.Prefs.DYNAMIC_COLORS, value) }
+        }
 }

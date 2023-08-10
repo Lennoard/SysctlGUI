@@ -27,10 +27,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
 import com.androidvip.sysctlgui.ui.params.EmptyParamsWarning
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.utils.ComposeTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -45,7 +45,7 @@ class KernelParamListFragment : BaseSearchFragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                SysctlGuiTheme {
+                ComposeTheme {
                     val state by viewModel.uiState.collectAsStateWithLifecycle()
                     val refreshing = state.isLoading
                     val refreshState = rememberPullRefreshState(

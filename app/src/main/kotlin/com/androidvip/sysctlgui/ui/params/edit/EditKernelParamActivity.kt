@@ -11,8 +11,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.toast
+import com.androidvip.sysctlgui.utils.ComposeTheme
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,7 +25,7 @@ class EditKernelParamActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            SysctlGuiTheme {
+            ComposeTheme {
                 EditParamScreen(viewModel = viewModel)
             }
         }

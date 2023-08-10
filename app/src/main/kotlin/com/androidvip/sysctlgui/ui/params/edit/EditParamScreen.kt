@@ -405,12 +405,14 @@ private fun ParamDocs(info: String?) {
     )
 
     if (info != null) {
-        Text(
-            modifier = Modifier.padding(top = 4.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-            text = info,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        SelectionContainer {
+            Text(
+                modifier = Modifier.padding(top = 4.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+                text = info,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
     } else {
         Card(
             modifier = Modifier
