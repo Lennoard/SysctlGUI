@@ -2,7 +2,6 @@ package com.androidvip.sysctlgui.ui.params.browse
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -27,12 +26,12 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -47,7 +46,6 @@ import com.androidvip.sysctlgui.ui.base.BaseSearchFragment
 import com.androidvip.sysctlgui.ui.params.EmptyParamsWarning
 import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.androidvip.sysctlgui.utils.Consts
 import com.google.android.material.color.MaterialColors
 import java.io.File
@@ -67,7 +65,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
         return ComposeView(requireContext()).apply {
             setContent {
                 SysctlGuiTheme {
-                    val state by viewModel.uiState.collectAsState()
+                    val state by viewModel.uiState.collectAsStateWithLifecycle()
                     val refreshing = state.isLoading
                     val refreshState = rememberPullRefreshState(
                         refreshing = refreshing,
@@ -179,10 +177,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
     }
 
     private fun navigateToParamDetails(param: KernelParam) {
-        Intent(requireContext(), EditKernelParamActivity::class.java).apply {
-            putExtra(RemovableParamAdapter.EXTRA_PARAM, param)
-            startActivity(this)
-        }
+        startActivity(EditKernelParamActivity.getIntent(requireContext(), param))
     }
 
     private fun refresh() {

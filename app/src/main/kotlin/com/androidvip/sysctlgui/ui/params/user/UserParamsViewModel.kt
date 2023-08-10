@@ -1,15 +1,12 @@
 package com.androidvip.sysctlgui.ui.params.user
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
 import com.androidvip.sysctlgui.data.models.KernelParam
-import com.androidvip.sysctlgui.utils.ViewState
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.RemoveUserParamUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpdateUserParamUseCase
+import com.androidvip.sysctlgui.utils.BaseViewModel
 import kotlinx.coroutines.launch
 
 typealias ParamFilterPredicate = (KernelParam) -> Boolean
@@ -18,45 +15,65 @@ class UserParamsViewModel(
     private val getParamsUseCase: GetUserParamsUseCase,
     private val removeParamUseCase: RemoveUserParamUseCase,
     private val updateParamUseCase: UpdateUserParamUseCase
-) : ViewModel() {
-    private val _viewState = MutableLiveData<ViewState<KernelParam>>()
-    private val _filterPredicate = MutableLiveData<ParamFilterPredicate>()
-    val viewState: LiveData<ViewState<KernelParam>> = _viewState
+) : BaseViewModel<UserParamsViewEvent, UserParamsViewState, Nothing>() {
+    private var baseFilterPredicate: ParamFilterPredicate = { true }
+    private var currentFilterPredicate: ParamFilterPredicate = { true }
 
-    fun getParams() {
+    override fun createInitialState(): UserParamsViewState = UserParamsViewState()
+
+    override fun onEvent(event: UserParamsViewEvent) {
+        when (event) {
+            UserParamsViewEvent.ParamsRequested -> getParams()
+            UserParamsViewEvent.SearchPressed -> getParams()
+            UserParamsViewEvent.CloseSearchPressed -> {
+                setState { copy(searchViewVisible = false) }
+            }
+            UserParamsViewEvent.SearchViewPressed -> {
+                setState { copy(searchViewVisible = true) }
+            }
+            is UserParamsViewEvent.DeleteSwipe -> {
+                if (event.param.favorite) {
+                    event.param.favorite = false
+                    update(event.param)
+                } else {
+                    delete(event.param)
+                }
+            }
+            is UserParamsViewEvent.SearchQueryChanged -> {
+                currentFilterPredicate = {
+                    it.name
+                        .replace(".", "")
+                        .contains(event.query, ignoreCase = true) && 
+                        baseFilterPredicate(it)
+                }
+            }
+        }
+    }
+    private fun getParams() {
         viewModelScope.launch {
-            _viewState.postValue(currentViewState.copyState(isLoading = true))
             val params = getParamsUseCase()
                 .map { DomainParamMapper.map(it) }
                 .filter(currentFilterPredicate)
-            _viewState.postValue(currentViewState.copyState(isLoading = false, data = params))
+
+            setState { copy(params = params) }
         }
     }
 
-    fun setFilterPredicate(predicate: ParamFilterPredicate) {
-        _filterPredicate.value = predicate
-        getParams()
+    fun setBaseFilterPredicate(predicate: ParamFilterPredicate) {
+        baseFilterPredicate = predicate
     }
 
-    fun delete(kernelParam: KernelParam) {
-        _viewState.postValue(currentViewState.copyState(isLoading = true))
+    private fun delete(kernelParam: KernelParam) {
         viewModelScope.launch {
             removeParamUseCase.execute(kernelParam)
             getParams()
         }
     }
 
-    fun update(kernelParam: KernelParam) {
-        _viewState.postValue(currentViewState.copyState(isLoading = true))
+    private fun update(kernelParam: KernelParam) {
         viewModelScope.launch {
             updateParamUseCase(kernelParam)
             getParams()
         }
     }
-
-    private val currentViewState: ViewState<KernelParam>
-        get() = viewState.value ?: ViewState()
-
-    private val currentFilterPredicate: ParamFilterPredicate
-        get() = _filterPredicate.value ?: { true }
 }
