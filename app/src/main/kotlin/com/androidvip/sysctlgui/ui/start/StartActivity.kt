@@ -18,7 +18,6 @@ import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.main.MainActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.androidvip.sysctlgui.ui.params.user.RemovableParamAdapter
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -105,13 +104,15 @@ class StartActivity : AppCompatActivity() {
             Actions.EditParam.name -> {
                 Intent(this, EditKernelParamActivity::class.java).apply {
                     putExtra(
-                        RemovableParamAdapter.EXTRA_PARAM,
-                        intent.extras!!.getParcelable<KernelParam>(RemovableParamAdapter.EXTRA_PARAM)
+                        EditKernelParamActivity.EXTRA_PARAM,
+                        intent.extras!!.getParcelable<KernelParam>(
+                            EditKernelParamActivity.EXTRA_PARAM
+                        )
                     )
                     putExtra(
-                        RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
+                        EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM,
                         intent.getBooleanExtra(
-                            RemovableParamAdapter.EXTRA_EDIT_SAVED_PARAM,
+                            EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM,
                             false
                         )
                     )
