@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.util.Properties
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
     id("com.android.application")
@@ -16,8 +16,8 @@ android {
         applicationId = AppConfig.appId
         minSdk = AppConfig.minSdkVersion
         targetSdk = AppConfig.targetSdlVersion
-        versionCode = 11
-        versionName = "2.0.0"
+        versionCode = 12
+        versionName = "2.1.0"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations.addAll(listOf("en", "de", "pt-rBR"))
         javaCompileOptions {
@@ -32,9 +32,12 @@ android {
 
     signingConfigs {
         create("release") {
-            val localPropFile = rootProject.file("local.properties")
+            val propFile = rootProject.file("keystore.properties")
+            if (!propFile.exists()) {
+                propFile.createNewFile()
+            }
             val keystoreProps = Properties().apply {
-                load(localPropFile.inputStream())
+                load(propFile.inputStream())
             }
 
             keyAlias = keystoreProps["keyAlias"] as? String ?: ""
