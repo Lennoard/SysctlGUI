@@ -26,6 +26,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +56,16 @@ import org.koin.android.ext.android.inject
 class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListener {
     private var actionBarMenu: Menu? = null
     private val viewModel: BrowseParamsViewModel by inject()
+    private val currentPath: String get() = viewModel.currentState.currentPath
+    private val canGoBack: Boolean get() = currentPath != Consts.PROC_SYS
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (canGoBack) {
+                onDirectoryChanged(File(currentPath).parentFile ?: File(Consts.PROC_SYS))
+            }
+        }
+    }
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreateView(
@@ -91,6 +102,8 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
                             contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
+
+                    SideEffect { onBackPressedCallback.isEnabled = canGoBack }
                 }
             }
         }
@@ -104,24 +117,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
             viewModel.effect.collect(::handleViewEffect)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    val currentPath = viewModel.currentState.currentPath
-                    if (currentPath == Consts.PROC_SYS) {
-                        if (isEnabled) {
-                            isEnabled = false
-                            requireActivity().onBackPressedDispatcher.onBackPressed()
-                        }
-                    } else {
-                        onDirectoryChanged(
-                            File(currentPath).parentFile ?: File(Consts.PROC_SYS)
-                        )
-                    }
-                }
-            }
-        )
+        requireActivity().onBackPressedDispatcher.addCallback(onBackPressedCallback)
     }
 
     override fun onStart() {

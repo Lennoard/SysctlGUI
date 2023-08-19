@@ -114,6 +114,7 @@ dependencies {
     implementation(project(Modules.utils))
     implementation(project(Modules.design))
 
+    implementation(AndroidX.activity)
     implementation(AndroidX.splashScreen)
     implementation(AndroidX.lifecycleLiveData)
     implementation(AndroidX.lifecycleRuntimeCompose)
