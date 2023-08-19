@@ -27,7 +27,6 @@ import org.koin.android.ext.android.inject
 
 class StartActivity : BaseAppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
-    private val prefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
     private val performDatabaseMigrationUseCase: PerformDatabaseMigrationUseCase by inject()
     private val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Default }
