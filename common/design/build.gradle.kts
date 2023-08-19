@@ -49,6 +49,7 @@ dependencies {
     api(composeBom)
     androidTestImplementation(composeBom)
 
+    api(AndroidX.activity)
     api(AndroidX.appCompat)
     api(AndroidX.constraintLayout)
     api(AndroidX.core)
