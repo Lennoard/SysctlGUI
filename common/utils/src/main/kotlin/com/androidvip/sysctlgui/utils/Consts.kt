@@ -21,5 +21,6 @@ object Consts {
         const val MIGRATION_COMPLETED = "migration_completed"
         const val FORCE_DARK_THEME = "force_dark_theme"
         const val DYNAMIC_COLORS = "dynamic_colors"
+        const val ASKED_NOTIFICATION_PERMISSION = "asked_notification_permission"
     }
 }

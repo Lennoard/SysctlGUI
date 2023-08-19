@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".SysctlGuiApp"
@@ -95,9 +96,6 @@
             android:exported="false" />
         <service
             android:name=".services.StartUpService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".services.LegacyStartUpService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".widgets.FavoritesWidgetService"

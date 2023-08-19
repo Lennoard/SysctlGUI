@@ -1,7 +1,13 @@
 package com.androidvip.sysctlgui.ui.main
 
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.postDelayed
 import androidx.core.view.WindowCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,6 +20,9 @@ import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 class MainActivity : BaseAppCompatActivity() {
     private lateinit var binding: ActivityMain2Binding
 
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -21,6 +30,10 @@ class MainActivity : BaseAppCompatActivity() {
         binding = ActivityMain2Binding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+
+        Handler(mainLooper).postDelayed(1000) {
+            checkNotificationPermission()
+        }
 
         setUpNavigation()
         navigateFromIntent()
@@ -69,6 +82,16 @@ class MainActivity : BaseAppCompatActivity() {
         }?.let { id ->
             navHost.navController.navigate(id)
         }
+    }
+
+    private fun checkNotificationPermission() {
+        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (prefs.askedForNotificationPermission || !prefs.runOnStartUp) return
+        if (manager.areNotificationsEnabled()) return
+
+        notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        prefs.askedForNotificationPermission = true
     }
 
     private val navHost: NavHostFragment

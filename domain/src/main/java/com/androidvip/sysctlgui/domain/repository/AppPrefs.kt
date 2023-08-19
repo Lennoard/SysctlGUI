@@ -12,4 +12,5 @@ interface AppPrefs {
     var migrationCompleted: Boolean
     var forceDark: Boolean
     var dynamicColors: Boolean
+    var askedForNotificationPermission: Boolean
 }
