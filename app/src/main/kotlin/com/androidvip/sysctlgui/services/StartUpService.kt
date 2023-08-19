@@ -6,11 +6,9 @@ import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.androidvip.sysctlgui.services.base.BaseStartUpService
 import java.lang.ref.WeakReference
 
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 class StartUpService : JobService(), BaseStartUpService.ServiceHandler {
 
     override fun onStartJob(params: JobParameters?): Boolean {

@@ -12,7 +12,7 @@ import org.koin.android.ext.android.inject
  * TODO: Temporary until 100% compose
  */
 abstract class BaseAppCompatActivity : AppCompatActivity() {
-    private val prefs by inject<AppPrefs>()
+    protected val prefs by inject<AppPrefs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

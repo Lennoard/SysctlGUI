@@ -32,7 +32,7 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
             prefs.edit { putBoolean(Consts.Prefs.USE_BUSYBOX, value) }
         }
     override var runOnStartUp: Boolean
-        get() = prefs.getBoolean(Consts.Prefs.RUN_ON_START_UP, true)
+        get() = prefs.getBoolean(Consts.Prefs.RUN_ON_START_UP, false)
         set(value) {
             prefs.edit { putBoolean(Consts.Prefs.RUN_ON_START_UP, value) }
         }
@@ -52,7 +52,7 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
             prefs.edit { putBoolean(Consts.Prefs.MIGRATION_COMPLETED, value) }
         }
     override var forceDark: Boolean
-        get() = prefs.getBoolean(Consts.Prefs.FORCE_DARK_THEME, true)
+        get() = prefs.getBoolean(Consts.Prefs.FORCE_DARK_THEME, false)
         set(value) {
             prefs.edit { putBoolean(Consts.Prefs.FORCE_DARK_THEME, value) }
         }
@@ -60,5 +60,10 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
         get() = prefs.getBoolean(Consts.Prefs.DYNAMIC_COLORS, false)
         set(value) {
             prefs.edit { putBoolean(Consts.Prefs.DYNAMIC_COLORS, value) }
+        }
+    override var askedForNotificationPermission: Boolean
+        get() = prefs.getBoolean(Consts.Prefs.ASKED_NOTIFICATION_PERMISSION, false)
+        set(value) {
+            prefs.edit { putBoolean(Consts.Prefs.ASKED_NOTIFICATION_PERMISSION, value) }
         }
 }
