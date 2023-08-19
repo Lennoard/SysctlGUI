@@ -1,6 +1,10 @@
 package com.androidvip.sysctlgui.ui.settings
 
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -17,6 +21,9 @@ import org.koin.android.ext.android.inject
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     private val prefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
+
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
@@ -62,6 +69,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         when (preference.key) {
             Consts.Prefs.RUN_ON_START_UP -> {
                 StartUpServiceToggle.toggleStartUpService(requireContext(), newValue == true)
+                askForNotificationPermission()
             }
 
             Consts.Prefs.COMMIT_MODE -> {
@@ -95,5 +103,18 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         }
 
         return true
+    }
+
+    private fun askForNotificationPermission() {
+        val manager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE)
+            as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!manager.areNotificationsEnabled()) {
+                notificationPermissionLauncher.launch(
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
     }
 }

@@ -1,10 +1,13 @@
 package com.androidvip.sysctlgui.services.base
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.androidvip.sysctlgui.R
@@ -13,6 +16,8 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.topjohnwu.superuser.Shell
+import java.lang.ref.WeakReference
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,8 +29,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.lang.ref.WeakReference
-import kotlin.coroutines.CoroutineContext
 
 class BaseStartUpService(
     private var weakContext: WeakReference<Context?>,
@@ -67,7 +70,10 @@ class BaseStartUpService(
     private inline fun showNotificationAndThen(crossinline onShow: () -> Unit) {
         val context = weakContext.get() ?: return
         val resources = context.resources
-        val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, NOTIFICATION_ID)
+        val builder: NotificationCompat.Builder = NotificationCompat.Builder(
+            context,
+            NOTIFICATION_ID
+        )
             .setSmallIcon(R.drawable.app_icon_foreground)
             .setContentTitle(resources.getString(R.string.notification_start_up_title))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -82,7 +88,9 @@ class BaseStartUpService(
                 resources.getString(R.string.notification_start_up_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = resources.getString(R.string.notification_start_up_channel_description)
+                description = resources.getString(
+                    R.string.notification_start_up_channel_description
+                )
                 notificationManager.createNotificationChannel(this)
             }
         }
@@ -104,14 +112,30 @@ class BaseStartUpService(
                     for (i in startupDelay downTo 0) {
                         if (i == 0) {
                             builder.setProgress(0, 0, true)
-                            builder.setContentTitle(context.getString(R.string.notification_start_up_title))
-                            builder.setContentText(context.getString(R.string.notification_start_up_description))
+                            builder.setContentTitle(
+                                context.getString(R.string.notification_start_up_title)
+                            )
+                            builder.setContentText(
+                                context.getString(R.string.notification_start_up_description)
+                            )
 
-                            notify(SERVICE_ID, builder.build())
+                            if (ActivityCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                ) == PackageManager.PERMISSION_GRANTED ||
+                                Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU
+                            ) {
+                                notify(SERVICE_ID, builder.build())
+                            }
                             handler?.onStartForeground(SERVICE_ID, builder.build())
                             onShow()
                         } else {
-                            builder.setContentTitle(context.getString(R.string.notification_start_up_description_delay, i))
+                            builder.setContentTitle(
+                                context.getString(
+                                    R.string.notification_start_up_description_delay,
+                                    i
+                                )
+                            )
                             builder.setProgress(startupDelay, delayCount, false)
                             notify(SERVICE_ID, builder.build())
                             delay(1100)
