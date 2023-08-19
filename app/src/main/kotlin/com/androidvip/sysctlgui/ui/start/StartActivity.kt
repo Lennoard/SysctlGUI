@@ -10,7 +10,6 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
-import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.helpers.Actions
@@ -18,10 +17,12 @@ import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 import com.androidvip.sysctlgui.ui.main.MainActivity
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 class StartActivity : BaseAppCompatActivity() {
@@ -67,7 +68,10 @@ class StartActivity : BaseAppCompatActivity() {
         }
     }
 
-    private suspend fun checkRootAccess() = true
+    private suspend fun checkRootAccess() = withContext(dispatcher) {
+        delay(500)
+        Shell.rootAccess()
+    }
 
     private suspend fun checkBusyBox() = rootUtils.isBusyboxAvailable().also {
         delay(500)
