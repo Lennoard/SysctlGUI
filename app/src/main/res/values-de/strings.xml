@@ -69,6 +69,7 @@
     <string name="startup_delay_sum">Die Ausführung wird auf %d Sekunden verzögert</string>
     <string name="startup_delay_disabled">Ausführung findet sofort statt</string>
     <string name="set_favorite">Als Favorit auswählen</string>
+    <string name="remove_from_favorites">Aus Favoriten entfernen</string>
     <string name="empty_favorites_widget">keine Favoriten ausgewählt</string>
     <string name="tasker_list">Tasker Liste</string>
     <string name="tasker_list_primary">Primäre Liste</string>
@@ -84,6 +85,8 @@
     <string name="tasker_select_list">Wähle eine Liste aus die mit Tasker verwendet werden soll</string>
     <string name="tasker_plugin_description">Wenn Tasker dieses Plugin ausführt, werden alle Parameter dieser Liste mit ihren Werten angewendet.</string>
     <string name="tasker_settings">Tasker Einstellungen</string>
+    <string name="add_to_tasker_list">Zu Tasker hinzufügen</string>
+    <string name="remove_from_tasker_list">Aus Tasker entfernen</string>
     <string name="apply_failure_format">Es ist ein Fehler beim Anwenden der Parameter: %s aufgetreten</string>
     <string name="undo">Rückgängig</string>
     <string name="tile_start_app_label">Sysctl GUI starten</string>
@@ -104,4 +107,16 @@
     <string name="export">Export</string>
     <string name="param_list">Param list</string>
     <string name="try_again">Try again</string>
+    <string name="apply_param">Anwenden</string>
+    <string name="restore_param">Wiederhestellen</string>
+    <string name="param">Parameter</string>
+    <string name="value">Wert</string>
+    <string name="last_applied_value">Zuletzt angewendeter Wert</string>
+    <string name="current_value">Aktueller Wert</string>
+    <string name="apply_value_error">Der ausgewählte Wert konnte nicht angewendet werden</string>
+    <string name="commit_value_error">Der ausgewählte Wert konnte nicht angewendet werden. Versuche \"echo\" Modus.</string>
+    <string name="dynamic_colors">Dynamische Farben</string>
+    <string name="dynamic_colors_sum">Dynamische Farben (Monet Theme) verwenden wenn möglich</string>
+    <string name="dark_theme">Dark Theme erzwingen</string>
+    <string name="dark_them_sum">Dark Theme erzwingen wenn möglich</string>
 </resources>
