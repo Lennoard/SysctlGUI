@@ -5,6 +5,7 @@ import com.androidvip.sysctlgui.utils.Consts
 
 data class ParamBrowserViewState(
     var data: List<KernelParam> = listOf(),
+    var totalData: List<KernelParam> = listOf(),
     var isLoading: Boolean = true,
     var showEmptyState: Boolean = false,
     var currentPath: String = Consts.PROC_SYS,
