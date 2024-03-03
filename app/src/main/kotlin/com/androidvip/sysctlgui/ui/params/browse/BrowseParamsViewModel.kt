@@ -31,13 +31,15 @@ class BrowseParamsViewModel(
         when (event) {
             ParamBrowserViewEvent.RefreshRequested -> setPath(currentState.currentPath)
             is ParamBrowserViewEvent.DirectoryChanged -> onDirectoryChanged(event.dir)
-            is ParamBrowserViewEvent.SearchExpressionChanged -> searchExpression = event.data
+            is ParamBrowserViewEvent.SearchExpressionChanged -> onSearchExpressionChanged(event.data)
             is ParamBrowserViewEvent.ParamClicked -> setEffect {
                 ParamBrowserViewEffect.NavigateToParamDetails(DomainParamMapper.map(event.param))
             }
+
             ParamBrowserViewEvent.DocumentationMenuClicked -> setEffect {
                 ParamBrowserViewEffect.OpenDocumentationUrl(currentState.docUrl)
             }
+
             ParamBrowserViewEvent.FavoritesMenuClicked -> setEffect {
                 ParamBrowserViewEffect.NavigateToFavorite
             }
@@ -107,13 +109,18 @@ class BrowseParamsViewModel(
 
     private suspend fun loadBrowsableParamFiles(path: String) {
         setState { copy(isLoading = true) }
-        val files = getCurrentPathFiles(path).maybeDirectorySorted().maybeFiltered()
+        val files = getCurrentPathFiles(path).maybeDirectorySorted()
         val params = getParamsFromFilesUseCase(files).map {
             DomainParamMapper.map(it)
         }
 
         setState {
-            copy(currentPath = path, isLoading = false, data = params)
+            copy(
+                currentPath = path,
+                isLoading = false,
+                data = params.filter { param -> byName(param.name, searchExpression) },
+                totalData = params
+            )
         }
     }
 
@@ -127,17 +134,25 @@ class BrowseParamsViewModel(
         }?.toList().orEmpty()
     }
 
-    private suspend fun List<File>?.maybeFiltered() = withContext(dispatcher) {
-        return@withContext this@maybeFiltered?.run {
-            if (searchExpression.isNotEmpty()) {
-                filter { param ->
-                    param.name.lowercase()
-                        .replace(".", "")
-                        .contains(searchExpression.lowercase())
-                }
-            } else {
-                this
-            }
-        }?.toList().orEmpty()
+    private fun onSearchExpressionChanged(expression: String) {
+        searchExpression = expression
+
+        setState {
+            copy(data = this.totalData.filter { kernelParam ->
+                byName(
+                    kernelParam.name,
+                    searchExpression
+                )
+            })
+        }
+    }
+
+    private fun byName(current: String, expected: String): Boolean {
+        if (expected.isEmpty()) {
+            return true
+        }
+        return current.lowercase()
+            .replace(".", "")
+            .contains(expected.lowercase())
     }
 }
