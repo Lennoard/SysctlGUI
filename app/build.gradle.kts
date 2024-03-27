@@ -129,6 +129,7 @@ dependencies {
 
     implementation(Dependencies.koinAndroid)
     implementation(Dependencies.libSuCore)
+    implementation(Dependencies.libSuIo)
     implementation(Dependencies.liveEvent)
     implementation(Dependencies.tapTargetView)
 }

@@ -48,10 +48,9 @@ import com.androidvip.sysctlgui.ui.params.OnParamItemClickedListener
 import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
 import com.androidvip.sysctlgui.utils.ComposeTheme
 import com.androidvip.sysctlgui.utils.Consts
-import com.google.android.material.color.MaterialColors
-import java.io.File
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import java.io.File
 
 class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListener {
     private var actionBarMenu: Menu? = null
@@ -194,6 +193,7 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
         val swipeLayout: SwipeRefreshLayout = dialog.findViewById(R.id.webDialogSwipeLayout)
 
         val webView = dialog.findViewById<WebView>(R.id.webDialogWebView).apply {
+            val colorRoles = getColorRoles()
             settings.apply {
                 javaScriptEnabled = true
                 cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
@@ -206,14 +206,8 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
                     super.onPageFinished(view, url)
                     swipeLayout.isRefreshing = false
 
-                    val containerColorInt = MaterialColors.getColor(
-                        swipeLayout,
-                        R.attr.colorPrimaryContainer
-                    )
-                    val colorInt = MaterialColors.getColor(
-                        swipeLayout,
-                        R.attr.colorOnPrimaryContainer
-                    )
+                    val containerColorInt = colorRoles.accentContainer
+                    val colorInt = colorRoles.onAccentContainer
 
                     val containerColorHex = "#%06X".format(0xFFFFFF and containerColorInt)
                     val colorHex = "#%06X".format(0xFFFFFF and colorInt)
@@ -222,8 +216,8 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
                         """
                         |javascript:(
                             |function() { 
-                                |document.querySelector('body').style.color='$containerColorHex'; 
-                                |document.querySelector('body').style.background='$colorHex';
+                                |document.querySelector('body').style.color='$colorHex'; 
+                                |document.querySelector('body').style.background='$containerColorHex';
                             |}
                         |)()
                         """.trimMargin()
