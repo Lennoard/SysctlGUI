@@ -1,6 +1,7 @@
 package com.androidvip.sysctlgui.ui.params.edit
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -162,7 +163,7 @@ private fun FloatingActionButtonColumn(
         horizontalAlignment = Alignment.End,
         modifier = Modifier.padding(bottom = 8.dp)
     ) {
-        if (hasApplied) {
+        AnimatedVisibility(hasApplied) {
             SmallFloatingActionButton(
                 onClick = onReset,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -180,7 +181,8 @@ private fun FloatingActionButtonColumn(
             text = {
                 Text(
                     text = stringResource(id = R.string.apply_param),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    fontWeight = FontWeight.Medium
                 )
             },
             icon = {
