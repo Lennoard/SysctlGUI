@@ -7,6 +7,7 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.GetParamsFromFilesUseCase
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import com.androidvip.sysctlgui.utils.Consts
+import com.topjohnwu.superuser.io.SuFile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -103,7 +104,7 @@ class BrowseParamsViewModel(
 
     private suspend fun getCurrentPathFiles(path: String) = withContext(dispatcher) {
         runCatching {
-            File(path).listFiles()?.toList()
+            SuFile.open(path).listFiles()?.toList()
         }.getOrDefault(emptyList())
     }
 
