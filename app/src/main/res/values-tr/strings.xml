@@ -17,7 +17,7 @@
     <string name="exit">Çıkış</string>
     <string name="kernel_params">Çekirdek parametreleri</string>
     <string name="browse_variables">Değişkenlere göz at</string>
-    <string name="browse_variables_sum">Belirli bir çekirdek parametresi için /proc/sys'ye göz atın</string>
+    <string name="browse_variables_sum">Belirli bir çekirdek parametresi için /proc/sys\'ye göz atın</string>
     <string name="edit_params">Parametreleri düzenle</string>
     <string name="unexpected_error">Yanlış olan bir şey doğru değil</string>
     <string name="error_empty_input_field">Lütfen giriş alanlarını kontrol edin</string>
@@ -89,8 +89,8 @@
     <string name="remove_from_tasker_list">Görevliden kaldır</string>
     <string name="apply_failure_format">Parametreler uygulanamadı: %s</string>
     <string name="undo">Geri al</string>
-    <string name="tile_start_app_label">Sysctl GUI'yi başlat</string>
-    <string name="tile_toggle_start_up_label">Önyüklemede Sysctl GUI'yi çalıştır</string>
+    <string name="tile_start_app_label">Sysctl GUI\'yi başlat</string>
+    <string name="tile_toggle_start_up_label">Önyüklemede Sysctl GUI\'yi çalıştır</string>
     <string name="tile_toggle_start_up_no_root_access_label">Kök erişimi gerektirir</string>
     <string name="tile_toggle_start_up_no_root_access_toast">Kök erişimi gerekli</string>
     <string name="import_parameters">Parametreleri içe aktar</string>
