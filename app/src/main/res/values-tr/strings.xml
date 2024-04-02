@@ -17,7 +17,7 @@
     <string name="exit">Çıkış</string>
     <string name="kernel_params">Çekirdek parametreleri</string>
     <string name="browse_variables">Değişkenlere göz at</string>
-    <string name="browse_variables_sum">Belirli bir çekirdek parametresi için /proc/sys\'ye göz atın</string>
+    <string name="browse_variables_sum">Belirli bir çekirdek parametresi için /proc/sys \'ye göz atın</string>
     <string name="edit_params">Parametreleri düzenle</string>
     <string name="unexpected_error">Yanlış olan bir şey doğru değil</string>
     <string name="error_empty_input_field">Lütfen giriş alanlarını kontrol edin</string>
