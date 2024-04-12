@@ -104,7 +104,9 @@ class BrowseParamsViewModel(
 
     private suspend fun getCurrentPathFiles(path: String) = withContext(dispatcher) {
         runCatching {
-            SuFile.open(path).listFiles()?.toList()
+            val baseFile = File(path)
+            val file = if (baseFile.canRead()) baseFile else SuFile.open(path)
+            file.listFiles()?.toList()
         }.getOrDefault(emptyList())
     }
 
