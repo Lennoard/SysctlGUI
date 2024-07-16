@@ -138,10 +138,9 @@ class ExportOptionsViewModel(
         context: Context
     ): Result<Unit> = withContext(ioDispatcher) {
         return@withContext runCatching {
-            val descriptor = context.contentResolver.openFileDescriptor(target, "w")
-                ?: throw IOException()
-
-            exportParamsUseCase(descriptor.fileDescriptor)
+            context.contentResolver.openFileDescriptor(target, "w").use {
+                exportParamsUseCase(it!!.fileDescriptor)
+            }
         }
     }
 
@@ -150,10 +149,9 @@ class ExportOptionsViewModel(
         context: Context
     ): Result<Unit> = withContext(ioDispatcher) {
         return@withContext runCatching {
-            val descriptor = context.contentResolver.openFileDescriptor(target, "w")
-                ?: throw IOException()
-
-            backupParamsUseCase(descriptor.fileDescriptor)
+            context.contentResolver.openFileDescriptor(target, "w").use {
+                backupParamsUseCase(it!!.fileDescriptor)
+            }
         }
     }
 

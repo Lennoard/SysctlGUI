@@ -61,6 +61,7 @@ class UserParamsViewModel(
 
     fun setBaseFilterPredicate(predicate: ParamFilterPredicate) {
         baseFilterPredicate = predicate
+        currentFilterPredicate = baseFilterPredicate
     }
 
     private fun delete(kernelParam: KernelParam) {
