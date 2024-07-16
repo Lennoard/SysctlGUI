@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.isValidTaskerBundle
-import com.androidvip.sysctlgui.services.TaskerService
+import com.androidvip.sysctlgui.utils.Consts
+import com.androidvip.sysctlgui.work.TaskerWorker
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
@@ -19,11 +19,7 @@ class TaskerReceiver : BroadcastReceiver() {
         val bundle: Bundle? = intent.getBundleExtra(EXTRA_BUNDLE)
         if (bundle.isValidTaskerBundle()) {
             val taskerList = bundle.getInt(BUNDLE_EXTRA_LIST_NUMBER, Consts.LIST_NUMBER_INVALID)
-            val serviceIntent = Intent(context, TaskerService::class.java).apply {
-                putExtra(BUNDLE_EXTRA_LIST_NUMBER, taskerList)
-            }
-
-            context.startService(serviceIntent)
+            TaskerWorker.enqueue(context.applicationContext, taskerList)
         } else {
             Log.w(TAG, "Invalid tasker bundle: $bundle")
         }
