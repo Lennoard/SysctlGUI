@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.ui.params.edit
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -75,6 +76,7 @@ class EditParamViewModel(
         viewModelScope.launch {
             runCatching {
                 applyParams(param)
+                updateUserParam(param)
             }.onFailure {
                 val messageRes = when (it) {
                     is ApplyValueException -> R.string.apply_value_error
@@ -115,6 +117,7 @@ class EditParamViewModel(
         return KeyboardType.Text
     }
 
+    @SuppressLint("DiscouragedApi")
     private fun findParamInfo(param: KernelParam, context: Context): String? = with(context) {
         val paramName = param.shortName
         val resId = resources.getIdentifier(
@@ -185,7 +188,6 @@ class EditParamViewModel(
                     PackageManager.PackageInfoFlags.of(0L)
                 )
             } else {
-                @Suppress("DEPRECATION")
                 packageManager.getPackageInfo(TASKER_PACKAGE_NAME, 0)
             }
             true

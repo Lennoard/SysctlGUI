@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <queries>
+        <package android:name="net.dinglisch.android.taskerm" />
+    </queries>
+
     <application
         android:name=".SysctlGuiApp"
         android:allowBackup="false"
@@ -66,7 +70,7 @@
         <receiver
             android:name=".receivers.BootReceiver"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -91,18 +95,11 @@
         </receiver>
 
         <service
-            android:name=".services.TaskerService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
-            android:name=".services.StartUpService"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
             android:name=".widgets.FavoritesWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
             android:name=".services.tiles.StartUpTileService"
-            android:exported="false"
+            android:exported="true"
             android:icon="@drawable/ic_start_up_tile"
             android:label="@string/tile_toggle_start_up_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -113,7 +110,7 @@
         </service>
         <service
             android:name=".services.tiles.StartAppTileService"
-            android:exported="false"
+            android:exported="true"
             android:icon="@drawable/ic_start_app_tile"
             android:label="@string/tile_start_app_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
