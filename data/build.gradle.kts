@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -12,7 +10,7 @@ android {
 
     defaultConfig {
         minSdk = AppConfig.minSdkVersion
-        targetSdk = AppConfig.targetSdlVersion
+        targetSdk = AppConfig.targetSdkVersion
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf(
