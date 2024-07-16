@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -29,15 +29,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        jvmToolchain(17)
     }
-
-
 
     sourceSets {
         maybeCreate("main").java.srcDir("src/main/kotlin")
@@ -51,7 +49,7 @@ dependencies {
     implementation(AndroidX.preference)
     implementation(AndroidX.room)
     implementation(AndroidX.roomRuntime)
-    kapt(AndroidX.roomCompiler)
+    ksp(AndroidX.roomCompiler)
 
     implementation(Dependencies.libSuCore)
     implementation(Google.gson)
