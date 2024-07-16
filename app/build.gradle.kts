@@ -123,6 +123,7 @@ dependencies {
     implementation(AndroidX.preference)
     implementation(AndroidX.room)
     implementation(AndroidX.roomRuntime)
+    implementation(AndroidX.workManager)
     kapt(AndroidX.roomCompiler)
 
     implementation(Google.gson)
