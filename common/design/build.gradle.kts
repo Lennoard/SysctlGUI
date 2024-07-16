@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdk = AppConfig.minSdkVersion
-        targetSdk = AppConfig.targetSdlVersion
+        targetSdk = AppConfig.targetSdkVersion
 
         testInstrumentationRunner = AppConfig.testInstrumentationRunner
         consumerProguardFiles(AppConfig.proguardConsumerRules)
