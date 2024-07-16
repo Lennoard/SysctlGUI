@@ -21,4 +21,7 @@ object AndroidX {
     const val room = "androidx.room:room-ktx:$roomVersion"
     const val roomRuntime = "androidx.room:room-runtime:$roomVersion"
     const val roomCompiler = "androidx.room:room-compiler:$roomVersion"
+
+    private const val workManagerVersion = "2.9.0"
+    const val workManager = "androidx.work:work-runtime-ktx:$workManagerVersion"
 }
