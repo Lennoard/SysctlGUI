@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = AppConfig.appId
         minSdk = AppConfig.minSdkVersion
-        targetSdk = AppConfig.targetSdlVersion
+        targetSdk = AppConfig.targetSdkVersion
         versionCode = 15
         versionName = "2.2.1"
         vectorDrawables.useSupportLibrary = true
@@ -62,8 +62,8 @@ android {
     }
 
     buildFeatures {
-        android.buildFeatures.viewBinding = true
-        android.buildFeatures.dataBinding = true
+        viewBinding = true
+        dataBinding = true
         compose = true
     }
 
