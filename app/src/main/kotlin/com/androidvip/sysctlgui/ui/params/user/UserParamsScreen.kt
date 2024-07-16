@@ -11,22 +11,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,7 +74,7 @@ fun UserParamsScreen(
                     navigationIcon = {
                         IconButton(onClick = onBackPressed) {
                             Icon(
-                                imageVector = Icons.Outlined.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                                 contentDescription = stringResource(id = R.string.restore_param),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
@@ -127,9 +126,9 @@ private fun SwipeToDismissContent(
     param: KernelParam
 ) {
     val currentParam by rememberUpdatedState(newValue = param)
-    val dismissState = rememberDismissState(
+    val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
-            return@rememberDismissState if (it == DismissValue.DismissedToStart) {
+            return@rememberSwipeToDismissBoxState if (it == SwipeToDismissBoxValue.EndToStart) {
                 onDelete(currentParam)
                 true
             } else {
@@ -138,10 +137,10 @@ private fun SwipeToDismissContent(
         }
     )
 
-    SwipeToDismiss(
+    SwipeToDismissBox(
         state = dismissState,
-        directions = setOf(DismissDirection.EndToStart),
-        background = {
+        enableDismissFromEndToStart = true,
+        backgroundContent = {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -155,20 +154,19 @@ private fun SwipeToDismissContent(
                     tint = MaterialTheme.colorScheme.onError
                 )
             }
-        },
-        dismissContent = {
-            Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                ParamItem(
-                    onParamClick = onParamClick,
-                    param = param
-                )
-                Divider(
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    thickness = 1.dp
-                )
-            }
         }
-    )
+    ) {
+        Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+            ParamItem(
+                onParamClick = onParamClick,
+                param = param
+            )
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

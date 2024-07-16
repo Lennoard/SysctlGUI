@@ -1,10 +1,11 @@
-import java.util.Properties
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
 
@@ -73,7 +74,7 @@ android {
         getByName("androidTest").assets.srcDir("$projectDir/schemas")
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.addAll(
             arrayOf(
                 "/META-INF/**",
@@ -88,21 +89,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        jvmToolchain(17)
     }
 
     composeOptions {
         kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
     }
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 dependencies {
@@ -124,7 +121,7 @@ dependencies {
     implementation(AndroidX.room)
     implementation(AndroidX.roomRuntime)
     implementation(AndroidX.workManager)
-    kapt(AndroidX.roomCompiler)
+    ksp(AndroidX.roomCompiler)
 
     implementation(Google.gson)
 
