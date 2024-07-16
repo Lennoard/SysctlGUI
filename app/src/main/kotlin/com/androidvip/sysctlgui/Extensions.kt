@@ -16,17 +16,17 @@ import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import com.google.android.material.color.ColorRoles
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.InputStream
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 fun View.goAway() { this.visibility = View.GONE }
 fun View.hide() { this.visibility = View.INVISIBLE }
 fun View.show() { this.visibility = View.VISIBLE }
 
-fun View.getColorRoles(@AttrRes colorAttrRes: Int = R.attr.colorPrimary): ColorRoles {
+fun View.getColorRoles(@AttrRes colorAttrRes: Int = androidx.appcompat.R.attr.colorPrimary): ColorRoles {
     val color = MaterialColors.getColor(this, colorAttrRes)
     return MaterialColors.getColorRoles(context, color)
 }
