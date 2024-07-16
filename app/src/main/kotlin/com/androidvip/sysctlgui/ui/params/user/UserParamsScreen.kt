@@ -128,12 +128,14 @@ private fun SwipeToDismissContent(
     val currentParam by rememberUpdatedState(newValue = param)
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
-            return@rememberSwipeToDismissBoxState if (it == SwipeToDismissBoxValue.EndToStart) {
-                onDelete(currentParam)
-                true
-            } else {
-                false
+            fun getResultFromValueChange(): Boolean {
+                if (it == SwipeToDismissBoxValue.EndToStart) {
+                    onDelete(currentParam)
+                    return true
+                }
+                return false
             }
+            getResultFromValueChange()
         }
     )
 

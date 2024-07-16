@@ -17,8 +17,8 @@ android {
         applicationId = AppConfig.appId
         minSdk = AppConfig.minSdkVersion
         targetSdk = AppConfig.targetSdkVersion
-        versionCode = 15
-        versionName = "2.2.1"
+        versionCode = 16
+        versionName = "2.2.2"
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations.addAll(listOf("en", "de", "pt-rBR"))
         javaCompileOptions {
