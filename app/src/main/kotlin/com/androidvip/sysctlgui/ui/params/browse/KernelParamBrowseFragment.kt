@@ -23,7 +23,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -38,6 +38,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.models.KernelParam
+import com.androidvip.sysctlgui.design.DesignIds
+import com.androidvip.sysctlgui.design.DesignLayouts
 import com.androidvip.sysctlgui.getColorRoles
 import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.show
@@ -185,14 +187,14 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
 
         val dialog = Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.dialog_web)
+            setContentView(DesignLayouts.dialog_web)
             setCancelable(true)
         }
 
-        val progressBar: ProgressBar = dialog.findViewById(R.id.webDialogProgress)
-        val swipeLayout: SwipeRefreshLayout = dialog.findViewById(R.id.webDialogSwipeLayout)
+        val progressBar: ProgressBar = dialog.findViewById(DesignIds.webDialogProgress)
+        val swipeLayout: SwipeRefreshLayout = dialog.findViewById(DesignIds.webDialogSwipeLayout)
 
-        val webView = dialog.findViewById<WebView>(R.id.webDialogWebView).apply {
+        val webView = dialog.findViewById<WebView>(DesignIds.webDialogWebView).apply {
             val colorRoles = getColorRoles()
             settings.apply {
                 javaScriptEnabled = true
@@ -264,7 +266,10 @@ class KernelParamBrowseFragment : BaseSearchFragment(), OnParamItemClickedListen
                     paramFile = File(param.path)
                 )
                 if (index < params.lastIndex) {
-                    Divider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant
+                    )
                 }
             }
         }
