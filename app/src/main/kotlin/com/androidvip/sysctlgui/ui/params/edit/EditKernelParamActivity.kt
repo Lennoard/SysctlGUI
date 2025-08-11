@@ -37,11 +37,6 @@ class EditKernelParamActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        handleIntent(intent ?: return)
-    }
-
     private fun handleIntent(intent: Intent) {
         val param = intent.getParcelableExtra(EXTRA_PARAM) as? KernelParam
         if (param != null) {

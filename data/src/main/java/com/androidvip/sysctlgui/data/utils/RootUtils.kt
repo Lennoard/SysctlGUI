@@ -9,10 +9,9 @@ import kotlinx.coroutines.withContext
 class RootUtils(private val dispatcher: CoroutineDispatcher = Dispatchers.Default) {
 
     suspend fun isBusyboxAvailable(): Boolean = withContext(dispatcher) {
-        val results: List<String> = Shell.sh("which busybox").exec().out
-        return@withContext if (ShellUtils.isValidOutput(results)) {
-            results.first().isNotEmpty()
-        } else false
+        val results: List<String> = Shell.cmd("which busybox").exec().out
+        return@withContext ShellUtils.isValidOutput(results) && results.firstOrNull()
+            ?.isNotEmpty() == true
     }
 
     suspend fun executeWithOutput(
@@ -22,7 +21,7 @@ class RootUtils(private val dispatcher: CoroutineDispatcher = Dispatchers.Defaul
     ): String = withContext(dispatcher) {
         return@withContext runCatching {
             buildString {
-                val outputs = Shell.su(command).exec().out
+                val outputs = Shell.cmd(command).exec().out
                 if (!ShellUtils.isValidOutput(outputs)) {
                     append(defaultOutput)
                     return@buildString

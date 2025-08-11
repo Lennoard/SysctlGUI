@@ -1,14 +1,34 @@
 plugins {
-    id("java-library")
-    id("kotlin")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+android {
+    namespace = "${AppConfig.appId}.domain"
+    compileSdk = AppConfig.compileSdkVersion
+
+    defaultConfig {
+        minSdk = AppConfig.minSdkVersion
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
-    implementation(Dependencies.koinCore)
-}
+    implementation(project(":common:utils"))
+    implementation(libs.androidx.core.ktx)
 
+    implementation(libs.koin)
+
+    testImplementation(libs.junit)
+}

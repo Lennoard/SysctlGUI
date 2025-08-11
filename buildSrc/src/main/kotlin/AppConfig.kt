@@ -1,10 +1,10 @@
 object AppConfig {
-    val devCycle = false
+    val devCycle = true
 
     const val appId = "com.androidvip.sysctlgui"
-    const val compileSdkVersion = 34
-    const val minSdkVersion = 21
-    const val targetSdkVersion = 34
+    const val compileSdkVersion = 36
+    const val minSdkVersion = 24
+    const val targetSdkVersion = 36
 
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     const val proguardConsumerRules =  "consumer-rules.pro"
