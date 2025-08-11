@@ -1,7 +1,8 @@
 package com.androidvip.sysctlgui.domain.usecase
 
-import com.androidvip.sysctlgui.domain.repository.ParamsRepository
+import com.androidvip.sysctlgui.domain.repository.UserRepository
+import kotlinx.coroutines.flow.single
 
-class GetUserParamsUseCase(private val repository: ParamsRepository) {
-    suspend operator fun invoke() = repository.getUserParams()
+class GetUserParamsUseCase(private val repository: UserRepository) {
+    suspend operator fun invoke() = repository.userParams.single()
 }
