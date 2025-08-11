@@ -1,5 +1,11 @@
 package com.androidvip.sysctlgui.domain.repository
 
+/**
+ * Interface for accessing and modifying application preferences.
+ *
+ * This interface defines the contract for interacting with the application's settings,
+ * allowing various parts of the app to read and write preference values.
+ */
 interface AppPrefs {
     var listFoldersFirst: Boolean
     var guessInputType: Boolean
@@ -9,8 +15,12 @@ interface AppPrefs {
     var runOnStartUp: Boolean
     var startUpDelay: Int
     var showTaskerToast: Boolean
-    var migrationCompleted: Boolean
     var forceDark: Boolean
     var dynamicColors: Boolean
     var askedForNotificationPermission: Boolean
+    var useOnlineDocs: Boolean
+    var contrastLevel: Int
+    val searchHistory: Set<String>
+    fun addSearchToHistory(query: String)
+    fun removeSearchFromHistory(query: String)
 }
