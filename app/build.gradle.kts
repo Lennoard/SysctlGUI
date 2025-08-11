@@ -1,11 +1,12 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
     kotlin("kapt")
-    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
 
@@ -93,28 +94,38 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlin {
-        jvmToolchain(17)
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
+    implementation(project(":common:design"))
+    implementation(project(":common:utils"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
 
-    implementation(project(Modules.domain))
-    implementation(project(Modules.data))
-    implementation(project(Modules.utils))
-    implementation(project(Modules.design))
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.android)
 
-    implementation(AndroidX.activity)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.window)
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    //ksp(libs.androidx.lifecycle.compiler)
+
     implementation(AndroidX.splashScreen)
     implementation(AndroidX.lifecycleLiveData)
-    implementation(AndroidX.lifecycleRuntimeCompose)
     implementation(AndroidX.navigationFragment)
     implementation(AndroidX.navigationUi)
     implementation(AndroidX.preference)
@@ -125,8 +136,10 @@ dependencies {
 
     implementation(Google.gson)
 
-    implementation(Dependencies.koinAndroid)
-    implementation(Dependencies.libSuCore)
+    implementation(libs.koin)
+    implementation(libs.koin.compose)
+    implementation(libs.bundles.libsu)
+
     implementation(Dependencies.libSuIo)
     implementation(Dependencies.liveEvent)
     implementation(Dependencies.tapTargetView)

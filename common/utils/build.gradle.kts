@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -9,7 +9,6 @@ android {
 
     defaultConfig {
         minSdk = AppConfig.minSdkVersion
-        targetSdk = AppConfig.targetSdkVersion
 
         testInstrumentationRunner = AppConfig.testInstrumentationRunner
         consumerProguardFiles(AppConfig.proguardConsumerRules)
@@ -36,6 +35,10 @@ android {
 }
 
 dependencies {
-    implementation(AndroidX.lifecycleViewModel)
-    api(Dependencies.coroutinesCore)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
 }

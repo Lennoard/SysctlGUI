@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -9,7 +10,6 @@ android {
 
     defaultConfig {
         minSdk = AppConfig.minSdkVersion
-        targetSdk = AppConfig.targetSdkVersion
 
         testInstrumentationRunner = AppConfig.testInstrumentationRunner
         consumerProguardFiles(AppConfig.proguardConsumerRules)
@@ -38,27 +38,27 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = Compose.kotlinCompilerExtensionVersion
-    }
 }
 
 dependencies {
-    val composeBom = platform(Compose.BoM)
-    api(composeBom)
-    androidTestImplementation(composeBom)
+    implementation(libs.androidx.core.ktx)
 
-    api(AndroidX.activity)
-    api(AndroidX.appCompat)
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.ui)
+    api(libs.androidx.ui.graphics)
+    api(libs.androidx.ui.tooling.preview)
+    api(libs.androidx.material3)
+    api(libs.androidx.material.icons.core)
+    api(libs.androidx.window)
+
     api(AndroidX.constraintLayout)
-    api(AndroidX.core)
     api(AndroidX.swipeRefreshLayout)
-    api(Compose.material3)
     api(Compose.material)
-    api(Compose.activity)
-    api(Compose.uiTooling)
-    debugApi(Compose.uiTooling)
     implementation(AndroidX.splashScreen)
     implementation(Google.material)
+
+    androidTestApi(platform(libs.androidx.compose.bom))
+    debugApi(libs.androidx.ui.tooling)
+    debugApi(libs.androidx.ui.test.manifest)
 }
+
