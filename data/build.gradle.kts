@@ -50,16 +50,17 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.preference)
 
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.koin)
+    implementation(libs.jsoup)
+    implementation(libs.bundles.ktor.clients)
+    implementation(libs.bundles.libsu)
+
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.koin)
-    implementation(libs.bundles.libsu)
-    implementation(Google.gson)
 
     testImplementation(libs.junit)
 }
