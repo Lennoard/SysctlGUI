@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<Event, State, Effect> : ViewModel() {
@@ -28,7 +29,7 @@ abstract class BaseViewModel<Event, State, Effect> : ViewModel() {
     abstract fun onEvent(event: Event)
 
     protected fun setState(block: State.() -> State) {
-        _uiState.value = currentState.block()
+        _uiState.update(block)
     }
 
     protected fun setEffect(block: () -> Effect) {

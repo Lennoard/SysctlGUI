@@ -1,207 +1,133 @@
 package com.androidvip.sysctlgui.data.repository
 
-import com.androidvip.sysctlgui.data.datasource.JsonParamDataSource
-import com.androidvip.sysctlgui.data.datasource.RoomParamDataSource
-import com.androidvip.sysctlgui.data.datasource.RuntimeParamDataSource
-import com.androidvip.sysctlgui.domain.exceptions.EmptyFileException
-import com.androidvip.sysctlgui.domain.exceptions.MalformedLineException
-import com.androidvip.sysctlgui.domain.models.DomainKernelParam
+import android.util.Log
+import com.androidvip.sysctlgui.data.utils.RootUtils
+import com.androidvip.sysctlgui.domain.enums.CommitMode
+import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.repository.ParamsRepository
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.androidvip.sysctlgui.utils.isValidSysctlLine
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.toList
 import java.io.File
-import java.io.FileDescriptor
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.lang.reflect.Type
-import kotlin.coroutines.CoroutineContext
 
 class ParamsRepositoryImpl(
-    private val jsonParamDataSource: JsonParamDataSource,
-    private val roomParamDataSource: RoomParamDataSource,
-    private val runtimeParamDataSource: RuntimeParamDataSource,
-    private val changeListener: ChangeListener?,
-    private val ioContext: CoroutineContext = Dispatchers.IO,
-    private val workerContext: CoroutineContext = Dispatchers.Default
+    private val rootUtils: RootUtils,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ParamsRepository {
-
-    override suspend fun getUserParams(): List<DomainKernelParam> = withContext(ioContext) {
-        return@withContext roomParamDataSource.getData()
-    }
-
-    override suspend fun getJsonParams(): List<DomainKernelParam> = withContext(ioContext) {
-        return@withContext jsonParamDataSource.getData()
-    }
-
-    override suspend fun getRuntimeParams(
-        useBusybox: Boolean
-    ): List<DomainKernelParam> = withContext(workerContext) {
-        val localParams = getUserParams()
-        val runtimeParams = runtimeParamDataSource.getData(useBusybox)
-
-        return@withContext runtimeParams.onEach { runtimeParam ->
-            runtimeParam.updateParamWithLocalData(localParams)
-        }
-    }
-
-    override suspend fun getParamsFromFiles(
-        files: List<File>
-    ): List<DomainKernelParam> = withContext(ioContext) {
-        val localParams = getUserParams()
-        val fileParams = runtimeParamDataSource.getParamsFromFiles(files)
-
-        return@withContext fileParams.onEach { runtimeParam ->
-            runtimeParam.updateParamWithLocalData(localParams)
-        }
-    }
-
-    override suspend fun applyParam(
-        param: DomainKernelParam,
-        commitMode: String,
+    override fun getRuntimeParams(
         useBusybox: Boolean,
-        allowBlank: Boolean
-    ) = withContext(workerContext) {
-        runtimeParamDataSource.edit(param, commitMode, useBusybox, allowBlank).also {
-            changeListener?.onChange()
-        }
+        userParams: List<KernelParam>
+    ): Flow<List<KernelParam>> = flow {
+        val command = if (useBusybox) BUSYBOX_SYSCTL_GET_ALL_COMMAND else SYSCTL_GET_ALL_COMMAND
+        val paramsList = rootUtils.executeCommandAndStreamOutput(command)
+            .filter { line -> line.isValidSysctlOutput() }
+            .mapNotNull { line ->
+                // Expected output: "grandparent.parent.name = value"
+                val parts = line.split("=", limit = 2)
+                val paramName = parts.first().trim()
+                val paramValue = if (parts.size > 1) parts.last().trim() else ""
+                runCatching {
+                    KernelParam.createFromName(
+                        name = paramName,
+                        value = paramValue,
+                        isFavorite = userParams.any { it.name == paramName }
+                    )
+                }.getOrNull()
+            }
+            .toList()
+
+        emit(paramsList)
+    }.flowOn(ioDispatcher)
+
+    override suspend fun getRuntimeParam(paramName: String, useBusybox: Boolean): KernelParam? {
+        val command = String.format(
+            SYSCTL_GET_PARAM_COMMAND_FORMAT,
+            if (useBusybox) BUSYBOX_PREFIX else "",
+            paramName
+        )
+
+        val paramValue = runCatching {
+            rootUtils.executeCommandAndStreamOutput(command).single()
+        }.getOrNull() ?: return null
+
+        return KernelParam.createFromName(
+            name = paramName,
+            value = paramValue
+        )
     }
 
-    override suspend fun updateUserParam(
-        param: DomainKernelParam,
-        allowBlank: Boolean
-    ) = withContext(ioContext) {
-        val storedParam = getUserParams().find {
-            it.name == param.name
-        } ?: return@withContext addUserParam(param, allowBlank)
+    override suspend fun setRuntimeParam(
+        param: KernelParam,
+        commitMode: CommitMode,
+        useBusybox: Boolean
+    ): String {
+        val command = when (commitMode) {
+            CommitMode.SYSCTL -> String.format(
+                SYSCTL_SET_PARAM_COMMAND_FORMAT,
+                if (useBusybox) BUSYBOX_PREFIX else "",
+                param.name,
+                param.value
+            )
 
-        param.id = storedParam.id
-        return@withContext roomParamDataSource.edit(param, allowBlank).also {
-            changeListener?.onChange()
+            CommitMode.ECHO -> String.format(ECHO_SET_PARAM_COMMAND_FORMAT, param.value, param.path)
         }
+
+        val output = rootUtils.executeCommandAndStreamOutput(command).toList()
+        return output.joinToString("\n")
     }
 
-    override suspend fun addUserParam(
-        param: DomainKernelParam,
-        allowBlank: Boolean
-    ) = withContext(ioContext) {
-        return@withContext roomParamDataSource.add(param, allowBlank).also {
-            changeListener?.onChange()
-        }
-    }
-
-    override suspend fun addUserParams(
-        params: List<DomainKernelParam>,
-        allowBlank: Boolean
-    ) = withContext(ioContext) {
-        return@withContext roomParamDataSource.addAll(params, allowBlank).also {
-            changeListener?.onChange()
-        }
-    }
-
-    override suspend fun removeUserParam(param: DomainKernelParam) = withContext(ioContext) {
-        return@withContext roomParamDataSource.remove(param).also {
-            changeListener?.onChange()
-        }
-    }
-
-    override suspend fun clearUserParams() = withContext(ioContext) {
-        return@withContext roomParamDataSource.clear().also {
-            jsonParamDataSource.clear()
-            changeListener?.onChange()
-        }
-    }
-
-    override suspend fun performDatabaseMigration() = withContext(ioContext) {
-        val jsonParams = getJsonParams()
-
-        return@withContext roomParamDataSource.addAll(jsonParams, true).also {
-            changeListener?.onChange()
-        }
-    }
-
-    override suspend fun importParamsFromJson(
-        stream: InputStream
-    ): List<DomainKernelParam> = withContext(ioContext) {
-        if (stream.available() == 0) throw EmptyFileException()
-
-        val rawText = buildString {
-            stream.bufferedReader().use { reader ->
-                reader.forEachLine { line ->
-                    append(line)
-                }
+    /**
+     * Reads kernel parameters from a list of files.
+     * The parameter name is derived from the file path.
+     *
+     * @param files A list of [File] objects representing the kernel parameter files.
+     * @return A [Flow] emitting a list of [KernelParam] objects.
+     *         Returns an empty list if no files are provided or if errors occur during processing.
+     *         Emits null for files that could not be processed.
+     */
+    override fun getParamsFromFiles(files: List<File>): Flow<List<KernelParam>> = flow {
+        val params = files.mapNotNull { file ->
+            try {
+                val path = file.absolutePath
+                val value = rootUtils.executeCommandAndStreamOutput(
+                    command = String.format(CAT_COMMAND_FORMAT, path)
+                ).toList().joinToString("\n")
+                KernelParam.createFromPath(path, value)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to process file: ${file.path}", e)
+                null
             }
         }
-        val type: Type = object : TypeToken<List<DomainKernelParam>>() {}.type
-        return@withContext Gson().fromJson(rawText, type)
+        emit(params)
+    }.flowOn(ioDispatcher)
+
+    override fun getParamsFromPath(path: String): Flow<List<KernelParam>> {
+        val files = File(path).listFiles()?.toList() ?: emptyList()
+        return getParamsFromFiles(files)
     }
 
-    override suspend fun importParamsFromConf(
-        stream: InputStream
-    ): List<DomainKernelParam> = withContext(ioContext) {
-        fun String.validConfLine() = !startsWith("#") && !startsWith(";") && isNotEmpty()
-        val readParams = mutableListOf<DomainKernelParam>()
-
-        if (stream.available() == 0) throw EmptyFileException()
-
-        var cont = 0
-        stream.bufferedReader().forEachLine { line ->
-            if (line.validConfLine()) runCatching {
-                readParams.add(
-                    DomainKernelParam(
-                        id = ++cont,
-                        name = line.split("=").first().trim(),
-                        value = line.split("=")[1].trim()
-                    ).apply {
-                        setPathFromName(this.name)
-                    }
-                )
-            }.onFailure {
-                throw MalformedLineException()
-            }
-        }
-        return@withContext readParams
+    private fun String.isValidSysctlOutput(): Boolean {
+        return isValidSysctlLine() &&
+                !this.contains("denied", ignoreCase = true) &&
+                !this.startsWith("sysctl")
     }
 
-    override suspend fun exportParams(
-        params: List<DomainKernelParam>,
-        fileDescriptor: FileDescriptor
-    ) = withContext(ioContext) {
-        return@withContext FileOutputStream(fileDescriptor).use { stream ->
-            stream.write(Gson().toJson(params).toByteArray())
-        }
-    }
-
-    override suspend fun backupParams(
-        params: List<DomainKernelParam>,
-        fileDescriptor: FileDescriptor
-    ) = withContext(ioContext) {
-        val rawText = buildString {
-            params.forEach { param ->
-                appendLine(param.toString())
-            }
-        }
-
-        return@withContext FileOutputStream(fileDescriptor).use { stream ->
-            stream.write(rawText.toByteArray())
-        }
-    }
-
-    private fun DomainKernelParam.updateParamWithLocalData(
-        localParams: List<DomainKernelParam>
-    ): DomainKernelParam {
-        return apply {
-            favorite = localParams.firstOrNull { roomParam ->
-                (roomParam.name == name) && roomParam.favorite
-            } != null
-            taskerParam = localParams.firstOrNull { roomParam ->
-                (roomParam.name == name) && roomParam.taskerParam
-            } != null
-        }
-    }
-
-    interface ChangeListener {
-        fun onChange()
+    companion object {
+        private const val BUSYBOX_PREFIX = "busybox "
+        private const val SYSCTL_GET_ALL_COMMAND = "sysctl -a"
+        private const val BUSYBOX_SYSCTL_GET_ALL_COMMAND = "$BUSYBOX_PREFIX$SYSCTL_GET_ALL_COMMAND"
+        private const val SYSCTL_GET_PARAM_COMMAND_FORMAT = "%ssysctl -n %s" // prefix, name
+        private const val SYSCTL_SET_PARAM_COMMAND_FORMAT =
+            "%ssysctl -w %s=%s" // prefix, name, value
+        private const val ECHO_SET_PARAM_COMMAND_FORMAT = "echo '%s' > %s" // value, path
+        private const val CAT_COMMAND_FORMAT = "cat %s" // path
+        private const val TAG = "ParamsRepositoryImpl"
     }
 }
