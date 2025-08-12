@@ -57,6 +57,10 @@ open class KernelParam(
      */
     fun hasValidName() = name.isKernelNameValid()
 
+    override fun toString(): String {
+        return "$name=$value"
+    }
+
     companion object {
 
         /**
@@ -74,7 +78,12 @@ open class KernelParam(
         ): KernelParam {
             require(name.isKernelNameValid()) { "Invalid name: $name" }
             val derivedPath = "${Consts.PROC_SYS}/${name.replace(".", "/")}"
-            return KernelParam(name, value, derivedPath, isFavorite)
+            return KernelParam(
+                name = name,
+                path = derivedPath,
+                value = value,
+                isFavorite = isFavorite
+            )
         }
 
         /**
@@ -96,7 +105,7 @@ open class KernelParam(
                 .replace("/", ".")
                 .removePrefix(".")
 
-            return KernelParam(derivedName, value, path)
+            return KernelParam(derivedName, path = path, value = value)
         }
     }
 }

@@ -25,6 +25,19 @@ data class KernelParamDTO(
     override val isTaskerParam: Boolean = false,
     @ColumnInfo(name = "tasker_list")
     override val taskerList: Int = Consts.LIST_NUMBER_PRIMARY_TASKER
-) : KernelParam(name, path, value, isFavorite, isTaskerParam, taskerList)
+) : KernelParam(name, path, value, isFavorite, isTaskerParam, taskerList) {
+    companion object {
+        fun fromKernelParam(param: KernelParam): KernelParamDTO {
+            return KernelParamDTO(
+                name = param.name,
+                path = param.path,
+                value = param.value,
+                isFavorite = param.isFavorite,
+                isTaskerParam = param.isTaskerParam,
+                taskerList = param.taskerList
+            )
+        }
+    }
+}
 
 internal const val PARAMS_TABLE_NAME = "roomKernelParam"

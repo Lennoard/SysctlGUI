@@ -4,12 +4,12 @@ import android.content.Intent
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.os.Handler
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.databinding.ActivityStartErrorBinding
-import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 
-class StartErrorActivity : BaseAppCompatActivity() {
+class StartErrorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStartErrorBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

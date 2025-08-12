@@ -10,6 +10,7 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 
@@ -48,7 +49,19 @@ class OnlineDocumentationDataSource(
             val html = response.bodyAsText()
             val document = Jsoup.parse(html)
             val htmlElementId = param.lastNameSegment.replace('_', '-')
-            val elements = document.select("section#$htmlElementId p")
+
+
+            if (File(param.path).isDirectory) {
+                // If we got something out of the request, might as well return at least the URL
+                return@withContext ParamDocumentation(
+                    title = param.name,
+                    documentationText = "",
+                    documentationHtml = "", // HTML might be huge (directory documentation)
+                    url = url
+                )
+            }
+
+            val elements = document.select("section#$htmlElementId :not(h2)")
 
             if (elements.isEmpty()) {
                 Log.w(
@@ -56,6 +69,9 @@ class OnlineDocumentationDataSource(
                     "No documentation found for ${param.name} with id $htmlElementId on $url"
                 )
                 return@withContext null
+            } else {
+                // Remove first element (usually a heading remnant)
+                elements.removeAt(0)
             }
 
             return@withContext ParamDocumentation(
@@ -71,8 +87,11 @@ class OnlineDocumentationDataSource(
     }
 
     private fun getDocumentationUrl(param: KernelParam): String {
+        if (File(param.path).isDirectory) {
+            return "${DOC_BASE_URL}${param.name}.html"
+        }
         val configName = param.groupName
-        return "${DOC_BASE_URL}$configName.html#${param.name}"
+        return "${DOC_BASE_URL}$configName.html#${param.lastNameSegment.replace('_', '-')}"
     }
 
     /**
@@ -87,6 +106,7 @@ class OnlineDocumentationDataSource(
             .replace("<pre>", "<font face=\"monospace\"><b>")
             .replace("</pre>", "</b><font>") // For "code" blocks
             .replace("<code>", "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">")
+            .replace("<code ", "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\" ")
             .replace("</code>", "</span></b></font>") // For code tags
             .replace("<li><p>", "<li>")
             .replace("</p></li>", "</li>") // For spaced bullet points

@@ -22,25 +22,7 @@
         android:theme="@style/AppTheme"
         android:enableOnBackInvokedCallback="true"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <activity
-            android:name=".ui.params.user.ManageFavoritesParamsActivity"
-            android:label="@string/tasker_list_plugin_favorites"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.params.edit.EditKernelParamActivity"
-            android:label="@string/edit_params"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.main.MainActivity"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.params.user.ManageOnStartUpParamsActivity"
-            android:launchMode="singleTask"
-            android:label="@string/manage_parameters"
-            android:theme="@style/AppTheme" />
+        <activity android:name=".ui.main.MainActivity" />
         <activity
             android:name=".ui.start.StartActivity"
             android:exported="true"

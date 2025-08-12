@@ -96,7 +96,7 @@
     <string name="restore_parameters_sum">Restaurar a sua cópia de segurança anterior</string>
     <string name="export_options">Opções de exportação</string>
     <string name="export_success_message">Parâmetros exportados com sucesso</string>
-    <string name="export_error_no_param">Para na exportação de parâmetros: nenhum parâmetro encontrado</string>
+    <string name="export_error_no_param">Falha: nenhum parâmetro encontrado</string>
     <string name="export_error_io">A exportação de parâmetros falhou devido a um erro do armazenamento</string>
     <string name="export_error">Falha ao exportar parâmetros</string>
     <string name="export_options_sum">Importar, exportar ou fazer backup dos parâmetros do kernel</string>

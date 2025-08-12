@@ -3,6 +3,7 @@ package com.androidvip.sysctlgui.data.utils
 import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
+import com.androidvip.sysctlgui.domain.exceptions.NoParameterFoundException
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.utils.isValidSysctlLine
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,10 +20,10 @@ class PresetsFileProcessor(
     ): List<KernelParam> = withContext(ioDispatcher) {
         contentResolver.openInputStream(uri)?.use { inputStream ->
             val lines = inputStream.bufferedReader().readLines()
-            lines.mapNotNull { line ->
+            val params = lines.mapNotNull { line ->
                 if (line.isValidSysctlLine()) {
                     runCatching {
-                        KernelParam.Companion.createFromName(
+                        KernelParam.createFromName(
                             name = line.substringBefore('=').trim(),
                             value = line.substringAfter('=').trim(),
                             isFavorite = true
@@ -33,6 +34,12 @@ class PresetsFileProcessor(
                     null
                 }
             }
+
+            if (params.isEmpty()) {
+                throw NoParameterFoundException()
+            }
+
+            params
         } ?: throw IOException("Failed to open input stream for URI: $uri")
     }
 

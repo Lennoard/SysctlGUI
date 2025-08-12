@@ -27,16 +27,16 @@ class UserRepositoryImpl(
     }
 
     override suspend fun upsertUserParam(param: KernelParam) = withContext(coroutineContext) {
-        paramDao.upsert(param as KernelParamDTO)
+        paramDao.upsert(KernelParamDTO.fromKernelParam(param))
     }
 
     override suspend fun upsertUserParams(params: List<KernelParam>) =
         withContext(coroutineContext) {
-            paramDao.upsertAll(params.map { it as KernelParamDTO })
+            paramDao.upsertAll(params.map { KernelParamDTO.fromKernelParam(it) })
         }
 
     override suspend fun removeUserParam(param: KernelParam) = withContext(coroutineContext) {
-        paramDao.delete(param as KernelParamDTO)
+        paramDao.delete(KernelParamDTO.fromKernelParam(param))
     }
 
     override suspend fun clearUserParams() = withContext(coroutineContext) {

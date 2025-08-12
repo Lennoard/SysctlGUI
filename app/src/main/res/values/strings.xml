@@ -98,7 +98,7 @@
     <string name="backup_parameters_sum">Backup all current runtime parameters. Please note that not all of these can be reapplied back once restored.</string>
     <string name="export_error">Failed to export parameters</string>
     <string name="export_error_io">Parameter export failed due to an IO error</string>
-    <string name="export_error_no_param">Parameter export failed: no parameter to export</string>
+    <string name="export_error_no_param">Failed: no parameter found</string>
     <string name="export_options">Export options</string>
     <string name="export_success_message">Parameters successfully exported</string>
     <string name="export_options_sum">Import, export or back up kernel parameters</string>
@@ -119,4 +119,11 @@
     <string name="dynamic_colors_sum">Use dynamic colors (Monet theme) when available</string>
     <string name="dark_theme">Force dark theme</string>
     <string name="dark_them_sum">Force dark theme when available</string>
+    <string name="favorites">Favorites</string>
+    <string name="presets">Presets</string>
+    <string name="preset_error_file_creation">File creation cancelled or failed</string>
+    <string name="preset_error_file_picking">File picking cancelled or failed</string>
+    <string name="preset_error_opening_file">There was an error while opening the file</string>
+    <string name="preset_error_processing_file">There was an error while processing the file\n</string>
+    <string name="favorite_param_deleted_format">Param deleted: %s</string>
 </resources>

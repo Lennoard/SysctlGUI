@@ -13,8 +13,10 @@
         android:layout_marginEnd="@dimen/d16"
         android:layout_marginBottom="@dimen/d16"
         android:text="@string/done"
-        app:backgroundTint="?colorSecondary"
-        app:icon="@drawable/ic_check" />
+        android:textColor="?colorOnTertiary"
+        app:backgroundTint="?colorTertiary"
+        app:icon="@drawable/ic_check"
+        app:iconTint="?colorOnPrimary" />
 
     <LinearLayout
         android:id="@+id/taskerSelectFeatureLayout"
@@ -33,10 +35,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/d16"
-            android:fontFamily="sans-serif-medium"
             android:paddingTop="@dimen/d16"
             android:text="@string/tasker_select_list"
-            android:textColor="?colorSecondary" />
+            android:textColor="?colorPrimary"
+            android:textStyle="bold" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"

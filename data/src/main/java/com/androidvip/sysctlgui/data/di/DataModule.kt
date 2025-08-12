@@ -28,6 +28,8 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.factoryOf
@@ -36,7 +38,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val utilsModule = module {
-    factoryOf(::RootUtils)
+    factory<CoroutineDispatcher> { Dispatchers.IO }
+    factory { RootUtils(Dispatchers.Default) }
     factory { PresetsFileProcessor(androidContext().contentResolver) }
     factory<StringProvider> { AndroidStringProvider(androidApplication()) }
 }
@@ -50,9 +53,16 @@ val repositoryModule = module {
     factoryOf(::AppPrefsImpl) bind AppPrefs::class
     factoryOf(::ParamsRepositoryImpl) bind ParamsRepository::class
     factoryOf(::PresetRepositoryImpl) bind PresetRepository::class
-    factoryOf(::AppSettingsRepositoryImpl) bind AppSettingsRepository::class
 
     single<UserRepository> { UserRepositoryImpl(paramDao = get<ParamDatabase>().paramDao()) }
+
+    factory<AppSettingsRepository> {
+        AppSettingsRepositoryImpl(
+            context = androidContext(),
+            sharedPreferences = get(),
+            rootUtils = get()
+        )
+    }
 
     factory<DocumentationRepository> {
         DocumentationRepositoryImpl(
