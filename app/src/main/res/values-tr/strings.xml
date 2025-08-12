@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Sysctl GUI</string>
     <string name="splash_status_checking_root">Kök erişimi denetleniyor</string>
     <string name="splash_status_checking_busybox">Busybox kontrol ediliyor</string>
     <string name="splash_status_checking_migration">Eski veritabanı şeması kontrol ediliyor</string>

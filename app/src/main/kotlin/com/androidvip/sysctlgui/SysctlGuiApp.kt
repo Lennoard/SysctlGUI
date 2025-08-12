@@ -2,7 +2,7 @@ package com.androidvip.sysctlgui
 
 import android.app.Application
 import com.androidvip.sysctlgui.data.di.dataModules
-import com.androidvip.sysctlgui.di.presentationModules
+import com.androidvip.sysctlgui.di.presentationModule
 import com.androidvip.sysctlgui.domain.di.domainModule
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.google.android.material.color.DynamicColors
@@ -17,7 +17,7 @@ class SysctlGuiApp : Application() {
 
         startKoin {
             androidContext(this@SysctlGuiApp)
-            modules(dataModules + presentationModules + domainModule)
+            modules(dataModules + presentationModule + domainModule)
         }
 
         val prefs: AppPrefs = get()

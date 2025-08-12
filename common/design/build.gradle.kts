@@ -51,11 +51,7 @@ dependencies {
     api(libs.androidx.material.icons.core)
     api(libs.androidx.window)
 
-    api(AndroidX.constraintLayout)
-    api(AndroidX.swipeRefreshLayout)
-    api(Compose.material)
-    implementation(AndroidX.splashScreen)
-    implementation(Google.material)
+    api(libs.material)
 
     androidTestApi(platform(libs.androidx.compose.bom))
     debugApi(libs.androidx.ui.tooling)

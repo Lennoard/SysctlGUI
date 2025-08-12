@@ -9,6 +9,7 @@ import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.domain.enums.SettingItemType
 import com.androidvip.sysctlgui.domain.models.AppSetting
 import com.androidvip.sysctlgui.domain.repository.AppSettingsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -16,7 +17,7 @@ class AppSettingsRepositoryImpl(
     private val context: Context,
     private val sharedPreferences: SharedPreferences,
     private val rootUtils: RootUtils,
-    private val ioContext: CoroutineContext
+    private val ioContext: CoroutineContext = Dispatchers.IO
 ) : AppSettingsRepository {
     override suspend fun getAppSettings(): List<AppSetting<*>> = withContext(ioContext) {
         val usingDynamicColors = sharedPreferences.getBoolean(Prefs.DynamicColors.key, false)

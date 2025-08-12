@@ -1,24 +1,25 @@
 package com.androidvip.sysctlgui.di
 
-import com.androidvip.sysctlgui.ui.export.ExportOptionsViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewModel
-import com.androidvip.sysctlgui.ui.params.browse.BrowseParamsViewModel
+import com.androidvip.sysctlgui.ui.params.browse.ParamBrowseViewModel
 import com.androidvip.sysctlgui.ui.params.edit.EditParamViewModel
-import com.androidvip.sysctlgui.ui.params.list.ListParamsViewModel
-import com.androidvip.sysctlgui.ui.params.user.UserParamsViewModel
+import com.androidvip.sysctlgui.ui.presets.PresetsViewModel
+import com.androidvip.sysctlgui.ui.search.SearchViewModel
+import com.androidvip.sysctlgui.ui.settings.SettingsViewModel
+import com.androidvip.sysctlgui.ui.user.UserParamsViewModel
 import com.androidvip.sysctlgui.widgets.FavoriteWidgetParamUpdater
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-internal val presentationModules = module {
-    viewModel { BrowseParamsViewModel(get(), get()) }
-    viewModelOf(::ListParamsViewModel)
-    viewModelOf(::UserParamsViewModel)
-    viewModelOf(::EditParamViewModel)
+internal val presentationModule = module {
     viewModelOf(::MainViewModel)
-    viewModel { ExportOptionsViewModel(get(), get(), get()) }
+    viewModelOf(::SettingsViewModel)
+    viewModelOf(::ParamBrowseViewModel)
+    viewModelOf(::EditParamViewModel)
+    viewModelOf(::SearchViewModel)
+    viewModelOf(::PresetsViewModel)
+    viewModelOf(::UserParamsViewModel)
 
     single { FavoriteWidgetParamUpdater(androidContext()).getListener() }
 }

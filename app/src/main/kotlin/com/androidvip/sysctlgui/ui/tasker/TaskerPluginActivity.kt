@@ -1,6 +1,5 @@
 package com.androidvip.sysctlgui.ui.tasker
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,11 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import com.androidvip.sysctlgui.databinding.ActivityTaskerPluginBinding
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
-import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
-class TaskerPluginActivity : BaseAppCompatActivity() {
+class TaskerPluginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTaskerPluginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +30,7 @@ class TaskerPluginActivity : BaseAppCompatActivity() {
                 putExtra(TaskerReceiver.EXTRA_BUNDLE, resultBundle)
             }
 
-            setResult(Activity.RESULT_OK, resultIntent)
+            setResult(RESULT_OK, resultIntent)
             finish()
         }
     }

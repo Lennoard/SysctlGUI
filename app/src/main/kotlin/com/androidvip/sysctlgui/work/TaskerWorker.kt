@@ -10,7 +10,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
-import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.ApplyParamUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import com.androidvip.sysctlgui.toast
@@ -30,8 +30,8 @@ class TaskerWorker(
     private val mainContext = Dispatchers.Main + SupervisorJob()
     private val workerContext = Dispatchers.IO
     private val appPrefs: AppPrefs by inject()
-    private val getUserParamsUseCase: GetUserParamsUseCase by inject()
-    private val applyParamsUseCase: ApplyParamsUseCase by inject()
+    private val getUserParams: GetUserParamsUseCase by inject()
+    private val applyParam: ApplyParamUseCase by inject()
 
     override suspend fun doWork(): Result {
         withContext(workerContext) {
@@ -54,16 +54,16 @@ class TaskerWorker(
     }
 
     private suspend fun applyParams(listNumber: Int) {
-        val params = getUserParamsUseCase()
+        val params = getUserParams()
         when (listNumber) {
             Consts.LIST_NUMBER_PRIMARY_TASKER,
-            Consts.LIST_NUMBER_SECONDARY_TASKER -> params.filter { it.taskerParam }
-            Consts.LIST_NUMBER_FAVORITES -> params.filter { it.favorite }
+            Consts.LIST_NUMBER_SECONDARY_TASKER -> params.filter { it.isTaskerParam }
+            Consts.LIST_NUMBER_FAVORITES -> params.filter { it.isFavorite }
             Consts.LIST_NUMBER_APPLY_ON_BOOT -> params
 
             else -> emptyList()
         }.forEach {
-            applyParamsUseCase(it)
+            applyParam(it)
         }
     }
 

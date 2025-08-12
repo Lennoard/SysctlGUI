@@ -6,8 +6,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
-import com.androidvip.sysctlgui.data.models.KernelParam
+import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EXTRA_ITEM
 import kotlinx.coroutines.runBlocking
@@ -36,9 +35,7 @@ class FavoritesRemoteViewsFactory(
     override fun onCreate() {
         runBlocking {
             params = getUserParamsUseCase().filter {
-                it.favorite
-            }.map {
-                DomainParamMapper.map(it)
+                it.isFavorite
             }.toMutableList()
         }
     }
@@ -51,11 +48,7 @@ class FavoritesRemoteViewsFactory(
 
     override fun onDataSetChanged() {
         runBlocking {
-            params = getUserParamsUseCase().filter {
-                it.favorite
-            }.map {
-                DomainParamMapper.map(it)
-            }.toMutableList()
+            params = getUserParamsUseCase().filter { it.isFavorite }.toMutableList()
         }
     }
 

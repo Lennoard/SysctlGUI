@@ -6,19 +6,19 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.net.Uri
-import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.net.toUri
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.mapper.DomainParamMapper
+import com.androidvip.sysctlgui.domain.enums.Actions
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
-import com.androidvip.sysctlgui.helpers.Actions
-import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
+import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
+import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.ui.start.StartActivity
 import com.androidvip.sysctlgui.widgets.FavoritesWidget.Companion.EDIT_PARAM_EXTRA
 import kotlinx.coroutines.runBlocking
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.collections.map
 
 class FavoritesWidget : AppWidgetProvider(), KoinComponent {
     private val getUserParamsUseCase: GetUserParamsUseCase by inject()
@@ -41,11 +41,10 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
         }
 
         runBlocking {
-            val params = getUserParamsUseCase().filter {
-                it.favorite
-            }.map {
-                DomainParamMapper.map(it)
-            }.toMutableList()
+            val params = getUserParamsUseCase()
+                .filter { it.isFavorite }
+                .map(UiKernelParamMapper::map)
+                .toMutableList()
 
             if (params.isEmpty()) return@runBlocking
 
@@ -53,8 +52,9 @@ class FavoritesWidget : AppWidgetProvider(), KoinComponent {
             Intent(context, StartActivity::class.java).apply {
                 flags = FLAG_ACTIVITY_NEW_TASK
                 action = Actions.EditParam.name
-                putExtra(EditKernelParamActivity.EXTRA_PARAM, param)
-                putExtra(EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM, true)
+                // TODO
+                /*putExtra(EditKernelParamActivity.EXTRA_PARAM, param)
+                putExtra(EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM, true)*/
                 context.startActivity(this)
             }
         }
@@ -79,7 +79,7 @@ internal fun updateAppWidget(
 ) {
     val intent = Intent(context, FavoritesWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        data = Uri.parse(this.toUri(Intent.URI_INTENT_SCHEME))
+        data = toUri(Intent.URI_INTENT_SCHEME).toUri()
     }
 
     val views = RemoteViews(
@@ -96,13 +96,9 @@ internal fun updateAppWidget(
     ).run {
         action = EDIT_PARAM_EXTRA
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+        data = toUri(Intent.URI_INTENT_SCHEME).toUri()
 
-        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
+        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
 
         PendingIntent.getBroadcast(context, 0, this, flags)
     }

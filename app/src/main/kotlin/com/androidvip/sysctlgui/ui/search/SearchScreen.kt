@@ -1,0 +1,462 @@
+package com.androidvip.sysctlgui.ui.search
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.models.SearchHint
+import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.ui.main.MainViewEvent
+import com.androidvip.sysctlgui.ui.main.MainViewModel
+import com.androidvip.sysctlgui.ui.main.MainViewState
+import com.androidvip.sysctlgui.ui.params.browse.ParamRow
+import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+fun SearchScreen(
+    viewModel: SearchViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel(),
+    onParamSelected: (UiKernelParam) -> Unit,
+    onNavigateBack: () -> Unit
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var searchQuery by remember { mutableStateOf("") }
+    var searchActive by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        mainViewModel.onEvent(
+            MainViewEvent.OnSateChangeRequested(
+                MainViewState(
+                    showTopBar = false,
+                    showNavBar = true,
+                )
+            )
+        )
+    }
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is SearchViewEffect.EditKernelParam -> onParamSelected(effect.param)
+                SearchViewEffect.NavigateBack -> onNavigateBack()
+            }
+        }
+    }
+
+    SearchScreenContent(
+        searchQuery = searchQuery,
+        onSearchQueryChange = {
+            searchQuery = it
+            viewModel.onEvent(SearchViewEvent.SearchQueryChange(it))
+        },
+        searchActive = searchActive,
+        onSearchActiveChange = { searchActive = it },
+        searchHints = state.searchHints,
+        searchResults = state.searchResults,
+        onNavigateBack = { viewModel.onEvent(SearchViewEvent.BackClicked) },
+        onHistoryItemRemoveClicked = {
+            viewModel.onEvent(SearchViewEvent.HistoryItemRemoveClicked(it))
+        },
+        onSearch = { query ->
+            searchActive = false
+            viewModel.onEvent(SearchViewEvent.SearchRequested(query))
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchScreenContent(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    searchActive: Boolean,
+    onSearchActiveChange: (Boolean) -> Unit,
+    searchHints: List<SearchHint>,
+    searchResults: List<UiKernelParam>,
+    onHistoryItemRemoveClicked: (SearchHint) -> Unit,
+    onNavigateBack: () -> Unit,
+    onSearch: (String) -> Unit
+) {
+    val focusManager = LocalFocusManager.current
+    val searchBarHorizontalPadding by animateDpAsState(
+        targetValue = if (searchActive) 0.dp else 16.dp,
+        label = "SearchBarHorizontalPadding",
+        animationSpec = tween(durationMillis = 300)
+    )
+    val searchBarTopPadding by animateDpAsState(
+        targetValue = if (searchActive) 0.dp else 8.dp,
+        label = "SearchBarTopPadding",
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    Scaffold(
+        topBar = {
+            val onActiveChange: (Boolean) -> Unit = { isActive ->
+                if (searchActive != isActive) {
+                    onSearchActiveChange(isActive)
+                }
+                if (!isActive && searchQuery.isNotEmpty()) {
+                    onSearchQueryChange("")
+                }
+            }
+            val searchBarColors = SearchBarDefaults.colors()
+            SearchBar(
+                inputField = {
+                    SearchBarDefaults.InputField(
+                        query = searchQuery,
+                        onQueryChange = onSearchQueryChange,
+                        onSearch = onSearch,
+                        expanded = searchActive,
+                        onExpandedChange = onActiveChange,
+                        placeholder = { Text("Search kernel parameters") },
+                        leadingIcon = {
+                            AnimatedVisibility(
+                                visible = searchActive,
+                                enter = expandVertically() + fadeIn(),
+                                exit = shrinkVertically() + fadeOut()
+                            ) {
+                                IconButton(onClick = {
+                                    focusManager.clearFocus()
+                                    onSearchActiveChange(false)
+                                    onSearchQueryChange("")
+                                    if (searchQuery.isEmpty()) {
+                                        onNavigateBack()
+                                    }
+                                }) {
+                                    Icon(
+                                        Icons.AutoMirrored.Rounded.ArrowBack,
+                                        contentDescription = "Back"
+                                    )
+                                }
+                            }
+
+
+                            AnimatedVisibility(
+                                visible = !searchActive,
+                                enter = expandVertically(
+                                    animationSpec = tween(delayMillis = 200)
+                                ) + fadeIn(
+                                    animationSpec = tween(delayMillis = 200)
+                                ),
+                                exit = shrinkVertically(
+                                    animationSpec = tween(durationMillis = 0)
+                                ) + fadeOut(
+                                    animationSpec = tween(durationMillis = 0)
+                                )
+                            ) {
+                                Icon(Icons.Rounded.Search, contentDescription = "Search Icon")
+                            }
+                        },
+                        trailingIcon = {
+                            AnimatedVisibility(
+                                visible = searchQuery.isNotEmpty() && searchActive,
+                                enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
+                                exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
+                            ) {
+                                IconButton(onClick = {
+                                    onSearchQueryChange("")
+                                }) {
+                                    Icon(Icons.Rounded.Clear, contentDescription = "Clear search")
+                                }
+                            }
+                        },
+                        colors = searchBarColors.inputFieldColors,
+                    )
+                },
+                expanded = searchActive,
+                onExpandedChange = onActiveChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = searchBarHorizontalPadding)
+                    .padding(top = searchBarTopPadding),
+                shape = SearchBarDefaults.inputFieldShape,
+                colors = searchBarColors,
+                tonalElevation = SearchBarDefaults.TonalElevation,
+                shadowElevation = SearchBarDefaults.ShadowElevation,
+                windowInsets = SearchBarDefaults.windowInsets,
+            ) {
+                SearchViewContent(
+                    searchHints = searchHints,
+                    onHistoryItemRemoveClicked = onHistoryItemRemoveClicked,
+                    onSearchQueryChange = onSearchQueryChange,
+                    onSearch = onSearch,
+                    onSearchActiveChange = onSearchActiveChange,
+                    searchQuery = searchQuery
+                )
+            }
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            if (!searchActive) {
+                SearchResultsContent(searchResults, searchQuery)
+            }
+
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+    }
+}
+
+@Composable
+private fun SearchViewContent(
+    searchHints: List<SearchHint>,
+    onHistoryItemRemoveClicked: (SearchHint) -> Unit,
+    onSearchQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    onSearchActiveChange: (Boolean) -> Unit,
+    searchQuery: String
+) {
+    val historyHints = searchHints.filter { it.isFromHistory }
+    val suggestionHints = searchHints.filter { !it.isFromHistory }
+
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+        if (historyHints.isNotEmpty()) {
+            item(key = "history_header") {
+                Text(
+                    text = "Recent Searches",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .animateItem()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
+            items(historyHints, key = { it.hint }) { hintItem ->
+                ListItem(
+                    colors = ListItemDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ),
+                    headlineContent = { Text(hintItem.hint) },
+                    leadingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_history),
+                            contentDescription = "History item"
+                        )
+                    },
+                    trailingContent = {
+                        IconButton(
+                            onClick = { onHistoryItemRemoveClicked(hintItem) },
+                            modifier = Modifier.offset(16.dp)
+                        ) {
+                            Icon(
+                                Icons.Rounded.Clear,
+                                contentDescription = "Clear history item"
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .clickable {
+                            onSearchQueryChange(hintItem.hint)
+                            onSearch(hintItem.hint)
+                            onSearchActiveChange(false)
+                        }
+                        .animateItem()
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
+            if (suggestionHints.isNotEmpty()) {
+                item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+            }
+        }
+
+        if (suggestionHints.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Suggestions",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
+            items(suggestionHints, key = { it.hint }) { hintItem ->
+                ListItem(
+                    colors = ListItemDefaults.colors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                    ),
+                    headlineContent = { Text(hintItem.hint) },
+                    modifier = Modifier
+                        .clickable {
+                            onSearchQueryChange(hintItem.hint)
+                            onSearch(hintItem.hint)
+                            onSearchActiveChange(false)
+                        }
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                )
+            }
+        }
+
+        if (searchHints.isEmpty() && searchQuery.isBlank()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No suggestions available.")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchResultsContent(searchResults: List<UiKernelParam>, searchQuery: String) {
+    if (searchResults.isNotEmpty()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp)
+        ) {
+            itemsIndexed(searchResults) { index, param ->
+                ParamRow(
+                    modifier = Modifier.animateItem(),
+                    param = param,
+                    showFullName = true,
+                    onParamClicked = {}
+                )
+
+                if (index < searchResults.lastIndex) {
+                    HorizontalDivider()
+                }
+            }
+        }
+    } else if (searchQuery.isNotEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No results found for \"$searchQuery\"",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Enter a query to search for kernel parameters.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun SearchScreenPreview() {
+    SysctlGuiTheme {
+        var searchQuery by remember { mutableStateOf("") }
+        var searchActive by remember { mutableStateOf(false) }
+        var searchHints by remember {
+            mutableStateOf(
+                listOf(
+                    SearchHint("vm.swappiness", isFromHistory = false),
+                    SearchHint("net.ipv4.tcp_congestion_control", isFromHistory = false),
+                    SearchHint("kernel.panic", isFromHistory = true),
+                    SearchHint("fs.file-max", isFromHistory = true)
+                )
+            )
+        }
+        var searchResults by remember {
+            mutableStateOf(
+                listOf(
+                    UiKernelParam(
+                        name = "vm.swappiness",
+                        path = "/proc/sys/vm/swappiness",
+                        isFavorite = false
+                    ),
+                    UiKernelParam(
+                        name = "vm.overcommit_memory",
+                        path = "/proc/sys/vm/overcommit_memory",
+                        value = "1",
+                        isFavorite = true
+                    ),
+                    UiKernelParam(
+                        name = "net.ipv4.tcp_congestion_control",
+                        path = "/proc/sys/net/ipv4/tcp_congestion_control",
+                        value = "cubic"
+                    )
+                )
+            )
+        }
+
+        SearchScreenContent(
+            searchQuery = searchQuery,
+            onSearchQueryChange = { searchQuery = it },
+            searchActive = searchActive,
+            onSearchActiveChange = { searchActive = it },
+            searchHints = searchHints,
+            searchResults = searchResults,
+            onNavigateBack = {},
+            onHistoryItemRemoveClicked = { searchHints = searchHints - it },
+            onSearch = {
+                searchResults = searchResults.filter {
+                    it.name.contains(searchQuery, ignoreCase = true)
+                }
+            }
+        )
+    }
+}

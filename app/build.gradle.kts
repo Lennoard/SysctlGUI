@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-    kotlin("kapt")
     id("kotlin-parcelize")
 }
 
@@ -65,7 +64,6 @@ android {
 
     buildFeatures {
         viewBinding = true
-        dataBinding = true
         compose = true
     }
 
@@ -108,12 +106,14 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
 
-    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.window)
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -124,23 +124,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     //ksp(libs.androidx.lifecycle.compiler)
 
-    implementation(AndroidX.splashScreen)
-    implementation(AndroidX.lifecycleLiveData)
-    implementation(AndroidX.navigationFragment)
-    implementation(AndroidX.navigationUi)
-    implementation(AndroidX.preference)
-    implementation(AndroidX.room)
-    implementation(AndroidX.roomRuntime)
-    implementation(AndroidX.workManager)
-    ksp(AndroidX.roomCompiler)
-
-    implementation(Google.gson)
-
     implementation(libs.koin)
     implementation(libs.koin.compose)
     implementation(libs.bundles.libsu)
-
-    implementation(Dependencies.libSuIo)
-    implementation(Dependencies.liveEvent)
-    implementation(Dependencies.tapTargetView)
 }

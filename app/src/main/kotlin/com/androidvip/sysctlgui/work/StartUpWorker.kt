@@ -17,9 +17,8 @@ import androidx.work.WorkerParameters
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
-import com.androidvip.sysctlgui.domain.usecase.ApplyParamsUseCase
+import com.androidvip.sysctlgui.domain.usecase.ApplyParamUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
-import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
@@ -36,8 +35,8 @@ class StartUpWorker(
     private val workerContext = Dispatchers.Default
     private val appPrefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
-    private val getUserParamsUseCase: GetUserParamsUseCase by inject()
-    private val applyParamsUseCase: ApplyParamsUseCase by inject()
+    private val getUserParams: GetUserParamsUseCase by inject()
+    private val applyParam: ApplyParamUseCase by inject()
 
     private val notificationManager: NotificationManagerCompat
         get() = NotificationManagerCompat.from(context)
@@ -63,16 +62,16 @@ class StartUpWorker(
     }
 
     private suspend fun applyConfig(builder: NotificationCompat.Builder) {
-        getUserParamsUseCase().forEach {
-            builder.setContentText(it.toString())
+        getUserParams().forEach { param ->
+            builder.setContentText(param.toString())
             notifyIfPossible(builder)
             delay(250L)
-            applyParamsUseCase(it)
+            applyParam(param)
         }
     }
 
-    private suspend fun checkRequirements() = withContext(workerContext) {
-        appPrefs.runOnStartUp && Shell.rootAccess()
+    private suspend fun checkRequirements(): Boolean {
+        return appPrefs.runOnStartUp && rootUtils.isRootAvailable()
     }
 
     private suspend inline fun showNotificationAndThen(

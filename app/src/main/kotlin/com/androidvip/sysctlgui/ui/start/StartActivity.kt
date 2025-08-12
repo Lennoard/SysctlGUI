@@ -4,49 +4,44 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
-import com.androidvip.sysctlgui.data.models.KernelParam
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
-import com.androidvip.sysctlgui.domain.usecase.PerformDatabaseMigrationUseCase
+import com.androidvip.sysctlgui.domain.enums.Actions
+import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.goAway
-import com.androidvip.sysctlgui.helpers.Actions
 import com.androidvip.sysctlgui.toast
-import com.androidvip.sysctlgui.ui.base.BaseAppCompatActivity
 import com.androidvip.sysctlgui.ui.main.MainActivity
-import com.androidvip.sysctlgui.ui.params.edit.EditKernelParamActivity
-import com.topjohnwu.superuser.Shell
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
-class StartActivity : BaseAppCompatActivity() {
+class StartActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val rootUtils: RootUtils by inject()
-    private val performDatabaseMigrationUseCase: PerformDatabaseMigrationUseCase by inject()
-    private val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Default }
+    private val prefs: AppPrefs by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         splashScreen.setKeepOnScreenCondition { true }
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         lifecycleScope.launch {
+            rootUtils.getRootShell()
             val isRootAccessGiven = checkRootAccess()
 
             binding.splashStatusText.setText(R.string.splash_status_checking_busybox)
             val isBusyBoxAvailable = checkBusyBox()
 
             binding.splashStatusText.setText(R.string.splash_status_checking_migration)
-            checkForDatabaseMigration()
 
             if (isRootAccessGiven) {
                 if (!isBusyBoxAvailable) {
@@ -67,23 +62,14 @@ class StartActivity : BaseAppCompatActivity() {
         }
     }
 
-    private suspend fun checkRootAccess() = withContext(dispatcher) {
+    private suspend fun checkRootAccess(): Boolean {
         delay(500)
-        Shell.rootAccess()
+        return rootUtils.isRootAvailable()
     }
 
-    private suspend fun checkBusyBox() = rootUtils.isBusyboxAvailable().also {
+    private suspend fun checkBusyBox(): Boolean {
         delay(500)
-    }
-
-    private suspend fun checkForDatabaseMigration() {
-        delay(500)
-        if (!prefs.migrationCompleted) {
-            binding.splashStatusText.setText(R.string.splash_status_performing_migration)
-
-            val result = runCatching { performDatabaseMigrationUseCase() }
-            prefs.migrationCompleted = result.isSuccess
-        }
+        return rootUtils.isBusyboxAvailable()
     }
 
     private fun navigate() {
@@ -100,7 +86,9 @@ class StartActivity : BaseAppCompatActivity() {
             }
 
             Actions.EditParam.name -> {
-                Intent(this, EditKernelParamActivity::class.java).apply {
+                Intent(this, MainActivity::class.java)
+                // TODO: handle edit param intent
+                /*Intent(this, EditKernelParamActivity::class.java).apply {
                     putExtra(
                         EditKernelParamActivity.EXTRA_PARAM,
                         intent.extras!!.getParcelable<KernelParam>(
@@ -114,7 +102,7 @@ class StartActivity : BaseAppCompatActivity() {
                             false
                         )
                     )
-                }
+                }*/
             }
 
             else -> {

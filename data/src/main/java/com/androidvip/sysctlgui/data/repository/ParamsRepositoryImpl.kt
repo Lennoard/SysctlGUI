@@ -96,10 +96,20 @@ class ParamsRepositoryImpl(
         val params = files.mapNotNull { file ->
             try {
                 val path = file.absolutePath
-                val value = rootUtils.executeCommandAndStreamOutput(
-                    command = String.format(CAT_COMMAND_FORMAT, path)
-                ).toList().joinToString("\n")
-                KernelParam.createFromPath(path, value)
+                if (file.isDirectory) {
+                    KernelParam.createFromPath(path, "")
+                } else {
+                    val fileContent = runCatching { file.readText() }.getOrNull()
+                    if (fileContent != null) {
+                        KernelParam.createFromPath(path, fileContent)
+                    } else {
+                        val command = String.format(CAT_COMMAND_FORMAT, path)
+                        val paramValue = rootUtils.executeCommandAndStreamOutput(command)
+                            .toList()
+                            .joinToString("\n")
+                        KernelParam.createFromPath(path, paramValue)
+                    }
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to process file: ${file.path}", e)
                 null
@@ -117,6 +127,10 @@ class ParamsRepositoryImpl(
         return isValidSysctlLine() &&
                 !this.contains("denied", ignoreCase = true) &&
                 !this.startsWith("sysctl")
+    }
+
+    interface ChangeListener {
+        fun onChange()
     }
 
     companion object {
