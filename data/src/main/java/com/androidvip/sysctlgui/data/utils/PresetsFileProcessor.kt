@@ -5,7 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.androidvip.sysctlgui.domain.exceptions.NoParameterFoundException
 import com.androidvip.sysctlgui.domain.models.KernelParam
-import com.androidvip.sysctlgui.utils.isValidSysctlLine
+import com.androidvip.sysctlgui.utils.isValidSysctlOutputLine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +21,7 @@ class PresetsFileProcessor(
         contentResolver.openInputStream(uri)?.use { inputStream ->
             val lines = inputStream.bufferedReader().readLines()
             val params = lines.mapNotNull { line ->
-                if (line.isValidSysctlLine()) {
+                if (line.isValidSysctlOutputLine()) {
                     runCatching {
                         KernelParam.createFromName(
                             name = line.substringBefore('=').trim(),

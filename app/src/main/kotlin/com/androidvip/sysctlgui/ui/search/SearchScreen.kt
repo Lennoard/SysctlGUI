@@ -1,16 +1,16 @@
 package com.androidvip.sysctlgui.ui.search
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -63,8 +63,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
-    onParamSelected: (UiKernelParam) -> Unit,
-    onNavigateBack: () -> Unit
+    outerScaffoldPadding: PaddingValues,
+    onParamSelected: (UiKernelParam) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
@@ -81,16 +81,16 @@ fun SearchScreen(
         )
     }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SearchViewEffect.EditKernelParam -> onParamSelected(effect.param)
-                SearchViewEffect.NavigateBack -> onNavigateBack()
             }
         }
     }
 
     SearchScreenContent(
+        outerScaffoldPadding = outerScaffoldPadding,
         searchQuery = searchQuery,
         onSearchQueryChange = {
             searchQuery = it
@@ -98,11 +98,12 @@ fun SearchScreen(
         },
         searchActive = searchActive,
         onSearchActiveChange = { searchActive = it },
-        searchHints = state.searchHints,
-        searchResults = state.searchResults,
-        onNavigateBack = { viewModel.onEvent(SearchViewEvent.BackClicked) },
+        state = state,
         onHistoryItemRemoveClicked = {
             viewModel.onEvent(SearchViewEvent.HistoryItemRemoveClicked(it))
+        },
+        onParamClicked = {
+            viewModel.onEvent(SearchViewEvent.ParamClicked(it))
         },
         onSearch = { query ->
             searchActive = false
@@ -114,17 +115,18 @@ fun SearchScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchScreenContent(
+    state: SearchViewState,
+    outerScaffoldPadding: PaddingValues = PaddingValues(),
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     searchActive: Boolean,
     onSearchActiveChange: (Boolean) -> Unit,
-    searchHints: List<SearchHint>,
-    searchResults: List<UiKernelParam>,
     onHistoryItemRemoveClicked: (SearchHint) -> Unit,
-    onNavigateBack: () -> Unit,
-    onSearch: (String) -> Unit
+    onParamClicked: (UiKernelParam) -> Unit,
+    onSearch: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
+    val navHostTopPadding = outerScaffoldPadding.calculateTopPadding()
     val searchBarHorizontalPadding by animateDpAsState(
         targetValue = if (searchActive) 0.dp else 16.dp,
         label = "SearchBarHorizontalPadding",
@@ -137,6 +139,9 @@ private fun SearchScreenContent(
     )
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .offset(y = -navHostTopPadding),
         topBar = {
             val onActiveChange: (Boolean) -> Unit = { isActive ->
                 if (searchActive != isActive) {
@@ -157,41 +162,24 @@ private fun SearchScreenContent(
                         onExpandedChange = onActiveChange,
                         placeholder = { Text("Search kernel parameters") },
                         leadingIcon = {
-                            AnimatedVisibility(
-                                visible = searchActive,
-                                enter = expandVertically() + fadeIn(),
-                                exit = shrinkVertically() + fadeOut()
-                            ) {
-                                IconButton(onClick = {
-                                    focusManager.clearFocus()
-                                    onSearchActiveChange(false)
-                                    onSearchQueryChange("")
-                                    if (searchQuery.isEmpty()) {
-                                        onNavigateBack()
+                            AnimatedContent(
+                                targetState = searchActive,
+                                label = "SearchIconsAnimation"
+                            ) { targetSearchActive ->
+                                if (targetSearchActive) {
+                                    IconButton(onClick = {
+                                        focusManager.clearFocus()
+                                        onSearchActiveChange(false)
+                                        onSearchQueryChange("")
+                                    }) {
+                                        Icon(
+                                            Icons.AutoMirrored.Rounded.ArrowBack,
+                                            contentDescription = "Back"
+                                        )
                                     }
-                                }) {
-                                    Icon(
-                                        Icons.AutoMirrored.Rounded.ArrowBack,
-                                        contentDescription = "Back"
-                                    )
+                                } else {
+                                    Icon(Icons.Rounded.Search, contentDescription = "Search Icon")
                                 }
-                            }
-
-
-                            AnimatedVisibility(
-                                visible = !searchActive,
-                                enter = expandVertically(
-                                    animationSpec = tween(delayMillis = 200)
-                                ) + fadeIn(
-                                    animationSpec = tween(delayMillis = 200)
-                                ),
-                                exit = shrinkVertically(
-                                    animationSpec = tween(durationMillis = 0)
-                                ) + fadeOut(
-                                    animationSpec = tween(durationMillis = 0)
-                                )
-                            ) {
-                                Icon(Icons.Rounded.Search, contentDescription = "Search Icon")
                             }
                         },
                         trailingIcon = {
@@ -223,7 +211,7 @@ private fun SearchScreenContent(
                 windowInsets = SearchBarDefaults.windowInsets,
             ) {
                 SearchViewContent(
-                    searchHints = searchHints,
+                    searchHints = state.searchHints,
                     onHistoryItemRemoveClicked = onHistoryItemRemoveClicked,
                     onSearchQueryChange = onSearchQueryChange,
                     onSearch = onSearch,
@@ -233,12 +221,23 @@ private fun SearchScreenContent(
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            if (!searchActive) {
-                SearchResultsContent(searchResults, searchQuery)
+        AnimatedContent(
+            targetState = state.loading,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            if (it) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            } else {
+                SearchResultsContent(
+                    searchResults = state.searchResults,
+                    searchQuery = searchQuery,
+                    onParamClicked = onParamClicked
+                )
             }
-
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 }
@@ -268,12 +267,12 @@ private fun SearchViewContent(
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
-            items(historyHints, key = { it.hint }) { hintItem ->
+            items(historyHints, key = { "history:${it.hint}" }) { historyItem ->
                 ListItem(
                     colors = ListItemDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                     ),
-                    headlineContent = { Text(hintItem.hint) },
+                    headlineContent = { Text(historyItem.hint) },
                     leadingContent = {
                         Icon(
                             painter = painterResource(R.drawable.ic_history),
@@ -282,7 +281,7 @@ private fun SearchViewContent(
                     },
                     trailingContent = {
                         IconButton(
-                            onClick = { onHistoryItemRemoveClicked(hintItem) },
+                            onClick = { onHistoryItemRemoveClicked(historyItem) },
                             modifier = Modifier.offset(16.dp)
                         ) {
                             Icon(
@@ -293,8 +292,8 @@ private fun SearchViewContent(
                     },
                     modifier = Modifier
                         .clickable {
-                            onSearchQueryChange(hintItem.hint)
-                            onSearch(hintItem.hint)
+                            onSearchQueryChange(historyItem.hint)
+                            onSearch(historyItem.hint)
                             onSearchActiveChange(false)
                         }
                         .animateItem()
@@ -317,7 +316,7 @@ private fun SearchViewContent(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
-            items(suggestionHints, key = { it.hint }) { hintItem ->
+            items(suggestionHints, key = { "hint:${it.hint}" }) { hintItem ->
                 ListItem(
                     colors = ListItemDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -351,7 +350,11 @@ private fun SearchViewContent(
 }
 
 @Composable
-private fun SearchResultsContent(searchResults: List<UiKernelParam>, searchQuery: String) {
+private fun SearchResultsContent(
+    searchResults: List<UiKernelParam>,
+    searchQuery: String,
+    onParamClicked: (UiKernelParam) -> Unit
+) {
     if (searchResults.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier
@@ -363,7 +366,7 @@ private fun SearchResultsContent(searchResults: List<UiKernelParam>, searchQuery
                     modifier = Modifier.animateItem(),
                     param = param,
                     showFullName = true,
-                    onParamClicked = {}
+                    onParamClicked = onParamClicked
                 )
 
                 if (index < searchResults.lastIndex) {
@@ -448,15 +451,17 @@ private fun SearchScreenPreview() {
             onSearchQueryChange = { searchQuery = it },
             searchActive = searchActive,
             onSearchActiveChange = { searchActive = it },
-            searchHints = searchHints,
-            searchResults = searchResults,
-            onNavigateBack = {},
+            state = SearchViewState(
+                searchHints = searchHints,
+                searchResults = searchResults
+            ),
             onHistoryItemRemoveClicked = { searchHints = searchHints - it },
+            onParamClicked = {},
             onSearch = {
                 searchResults = searchResults.filter {
                     it.name.contains(searchQuery, ignoreCase = true)
                 }
-            }
+            },
         )
     }
 }

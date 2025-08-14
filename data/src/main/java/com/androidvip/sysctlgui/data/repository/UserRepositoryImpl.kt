@@ -19,8 +19,12 @@ class UserRepositoryImpl(
     private val paramDao: ParamDao,
     private val coroutineContext: CoroutineContext = Dispatchers.IO
 ) : UserRepository {
-    override val userParams: Flow<List<KernelParam>>
+    override val userParamsFlow: Flow<List<KernelParam>>
         get() = paramDao.getAllAsFlow()
+
+    override suspend fun getUserParams(): List<KernelParam> = withContext(coroutineContext) {
+        paramDao.getAll()
+    }
 
     override suspend fun getParamByName(name: String) = withContext(coroutineContext) {
         paramDao.getParamByName(name)

@@ -5,7 +5,7 @@ import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.repository.ParamsRepository
-import com.androidvip.sysctlgui.utils.isValidSysctlLine
+import com.androidvip.sysctlgui.utils.isValidSysctlOutputLine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -124,7 +124,7 @@ class ParamsRepositoryImpl(
     }
 
     private fun String.isValidSysctlOutput(): Boolean {
-        return isValidSysctlLine() &&
+        return isValidSysctlOutputLine() &&
                 !this.contains("denied", ignoreCase = true) &&
                 !this.startsWith("sysctl")
     }

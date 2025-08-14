@@ -11,7 +11,9 @@ interface UserRepository {
      * Retrieves a [Flow] that emits a list of user-configurable kernel parameters.
      * The [Flow] will emit a new list whenever the underlying data changes.
      */
-    val userParams: Flow<List<KernelParam>>
+    val userParamsFlow: Flow<List<KernelParam>>
+
+    suspend fun getUserParams(): List<KernelParam>
 
     suspend fun getParamByName(name: String): KernelParam?
 
