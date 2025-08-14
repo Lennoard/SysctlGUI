@@ -20,6 +20,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +35,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -57,13 +62,16 @@ import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.ui.params.DocumentationBottomSheet
 import com.androidvip.sysctlgui.utils.browse
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
+import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ParamBrowseScreen(
     mainViewModel: MainViewModel = koinViewModel(),
@@ -115,7 +123,9 @@ fun ParamBrowseScreen(
         backEnabled = state.backEnabled,
         onBackPressed = {
             viewModel.onEvent(ParamBrowseViewEvent.BackRequested)
-        }
+        },
+        isRefreshing = state.loading,
+        onRefresh = { viewModel.onEvent(ParamBrowseViewEvent.RefreshRequested) }
     )
 
     documentation?.let {
@@ -126,6 +136,8 @@ fun ParamBrowseScreen(
     }
 }
 
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ParamBrowseScreenContent(
     params: List<UiKernelParam>,
@@ -135,8 +147,11 @@ private fun ParamBrowseScreenContent(
     onDocumentationClicked: (ParamDocumentation) -> Unit,
     backEnabled: Boolean = false,
     onBackPressed: () -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit
 ) {
     val listState = rememberLazyListState()
+    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     var headerVisible by remember { mutableStateOf(backEnabled) }
 
     BackHandler(enabled = backEnabled, onBack = onBackPressed)
@@ -173,7 +188,11 @@ private fun ParamBrowseScreenContent(
 
     val finalHeaderVisible = (headerVisible || isAtTop) && backEnabled
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState),
+    ) {
         val spacerHeight by animateDpAsState(if (finalHeaderVisible) 56.dp else 0.dp)
         LazyColumn(
             state = listState,
@@ -226,6 +245,14 @@ private fun ParamBrowseScreenContent(
                 onClicked = { onDocumentationClicked(documentation!!) }
             )
         }
+
+        PullRefreshIndicator(
+            refreshing = isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.tertiary
+        )
     }
 }
 
@@ -287,6 +314,8 @@ internal fun ParamBrowseScreenContentPreview() {
     var params by remember(currentPath) {
         mutableStateOf(mapFilesToParams(File(currentPath).listFiles()))
     }
+    var isRefreshingPreview by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     SysctlGuiTheme(dynamicColor = true) {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
@@ -307,6 +336,14 @@ internal fun ParamBrowseScreenContentPreview() {
                 onDocumentationClicked = {},
                 backEnabled = currentPath != root.path,
                 onBackPressed = { currentPath = File(currentPath).parent ?: root.path },
+                isRefreshing = isRefreshingPreview,
+                onRefresh = {
+                    scope.launch {
+                        isRefreshingPreview = true
+                        delay(2.seconds)
+                        isRefreshingPreview = false
+                    }
+                }
             )
         }
     }

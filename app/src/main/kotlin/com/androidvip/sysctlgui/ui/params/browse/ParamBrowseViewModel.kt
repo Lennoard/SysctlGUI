@@ -27,13 +27,15 @@ class ParamBrowseViewModel(
 
     init {
         viewModelScope.launch {
+            setState { copy(loading = true) }
             val startingDirectory = File(Consts.PROC_SYS)
             val params = getParams(startingDirectory)
 
             setState {
                 copy(
                     params = params,
-                    currentPath = startingDirectory.absolutePath
+                    currentPath = startingDirectory.absolutePath,
+                    loading = false
                 )
             }
         }
@@ -47,11 +49,20 @@ class ParamBrowseViewModel(
 
             ParamBrowseViewEvent.BackRequested -> onBackRequested()
             is ParamBrowseViewEvent.ParamClicked -> onParamClicked(event.param)
+            ParamBrowseViewEvent.RefreshRequested -> handleRefreshRequested()
         }
+    }
+
+    private fun handleRefreshRequested() {
+        val currentPath = currentState.currentPath
+        if (currentPath == Consts.PROC_SYS) return
+
+        fetchChildParams(currentPath)
     }
 
     private fun fetchChildParams(parentParam: UiKernelParam) {
         viewModelScope.launch {
+            setState { copy(loading = true) }
             runCatching {
                 val newParamsDeferred = async { getParams(File(parentParam.path)) }
                 val directoryDocumentationDeferred = async { getParamDocumentation(parentParam) }
@@ -64,11 +75,13 @@ class ParamBrowseViewModel(
                         params = newParams,
                         currentPath = parentParam.path,
                         backEnabled = parentParam.path != Consts.PROC_SYS,
-                        documentation = directoryDocumentation
+                        documentation = directoryDocumentation,
+                        loading = false
                     )
                 }
             }.onFailure {
                 setEffect { ParamBrowseViewEffect.ShowError(it.message ?: "Unknown error") }
+                setState { copy(loading = false) }
             }
         }
     }
