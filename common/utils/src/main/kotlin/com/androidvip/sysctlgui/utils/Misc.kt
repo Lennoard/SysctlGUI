@@ -4,22 +4,23 @@ import android.view.View
 import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.core.view.ViewCompat
 
+
 /**
  * Checks if a string is a valid sysctl line.
  * A valid sysctl line must:
- * - Contain exactly one "=" character.
- * - Not have blank parts before or after the "=".
- * - Have a key that matches the pattern: `^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)+$`
+ * - Contain an "=" character.
+ * - Have a key that matches the pattern: `^[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*$`
  *   (e.g., "vm.swappiness", "net.ipv4.tcp_congestion_control").
+ * - Have a non-blank value after the "=".
  *
  * @return `true` if the string is a valid sysctl line, `false` otherwise.
  */
-fun String.isValidSysctlLine(): Boolean {
-    val parts = this.split("=", limit = 2)
-    if (parts.size != 2 || parts.any { it.isBlank() }) return false
+fun String.isValidSysctlOutputLine(): Boolean {
+    val trimmedLine = this.trim()
+    val linePattern = """^([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)*)\s*=\s*(.+)$""".toRegex()
+    val matchResult = linePattern.matchEntire(trimmedLine)
 
-    val keyPattern = "^[a-zA-Z0-9_]+(\\.[a-zA-Z0-9_]+)+$".toRegex()
-    return keyPattern.matches(parts.first())
+    return matchResult != null
 }
 
 fun performHapticFeedbackForToggle(newState: Boolean, view: View) {

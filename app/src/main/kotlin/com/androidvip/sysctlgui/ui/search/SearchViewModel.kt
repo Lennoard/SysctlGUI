@@ -22,19 +22,19 @@ class SearchViewModel(
 ) : BaseViewModel<SearchViewEvent, SearchViewState, SearchViewEffect>() {
     private var preSearchJob: Job? = null
     private val searchableParams = mutableListOf<KernelParam>()
-    private val searchHistory = mutableSetOf<String>()
+    private val searchHistory = mutableListOf<String>()
 
     init {
         viewModelScope.launch {
-            setState { copy(loading = true) }
-
             val fetchedHistory = appPrefs.searchHistory
             val fetchedParams = fetchParams()
 
             searchHistory.addAll(fetchedHistory)
             searchableParams.addAll(fetchedParams)
 
-            val uiSearchHints = fetchedHistory.map { SearchHint(hint = it, isFromHistory = true) }
+            val uiSearchHints = fetchedHistory
+                .map { SearchHint(hint = it, isFromHistory = true) }
+                .takeLast(MAX_SEARCH_HINTS)
 
             setState {
                 copy(
@@ -54,7 +54,6 @@ class SearchViewModel(
 
     override fun onEvent(event: SearchViewEvent) {
         when (event) {
-            SearchViewEvent.BackClicked -> setEffect { SearchViewEffect.NavigateBack }
             is SearchViewEvent.HistoryItemRemoveClicked -> handleRemoveFromHistory(event.hint)
             is SearchViewEvent.SearchRequested -> handleSearch(event.query)
             is SearchViewEvent.SearchQueryChange -> handleSearchQueryChange(event.query)
@@ -82,8 +81,23 @@ class SearchViewModel(
             searchHistory.add(query)
             appPrefs.addSearchToHistory(query)
 
+            val searchResults = withContext(Dispatchers.IO) {
+                searchableParams
+                    .filter { it.name.contains(query, ignoreCase = true) }
+                    .map(UiKernelParamMapper::map)
+            }
+
+            setState {
+                copy(loading = false, searchResults = searchResults)
+            }
+        }
+    }
+
+    private fun handlePreSearch(query: String) {
+        viewModelScope.launch {
             val hints = withContext(Dispatchers.IO) {
                 val historyHints = searchHistory
+                    .toList()
                     .take(MAX_SEARCH_HISTORY)
                     .map { SearchHint(hint = it, isFromHistory = true) }
 
@@ -97,20 +111,6 @@ class SearchViewModel(
 
             setState {
                 copy(loading = false, searchHints = hints)
-            }
-        }
-    }
-
-    private fun handlePreSearch(query: String) {
-        viewModelScope.launch {
-            val hints = withContext(Dispatchers.IO) {
-                searchableParams
-                    .filter { it.name.contains(query, ignoreCase = true) }
-                    .map(UiKernelParamMapper::map)
-            }
-
-            setState {
-                copy(loading = false, searchResults = hints)
             }
         }
     }
