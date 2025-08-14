@@ -4,6 +4,7 @@ import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
 
 data class ParamBrowseState(
+    val loading: Boolean = false,
     val params: List<UiKernelParam> = emptyList(),
     val currentPath: String = "",
     val backEnabled: Boolean = false,
@@ -20,4 +21,5 @@ sealed interface ParamBrowseViewEvent {
     data class ParamClicked(val param: UiKernelParam) : ParamBrowseViewEvent
     data class DocumentationClicked(val docs: ParamDocumentation) : ParamBrowseViewEvent
     object BackRequested : ParamBrowseViewEvent
+    object RefreshRequested : ParamBrowseViewEvent
 }

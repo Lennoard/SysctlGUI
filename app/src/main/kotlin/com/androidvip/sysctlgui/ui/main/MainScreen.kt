@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.ui.main
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -52,6 +53,8 @@ private fun MainScreenContent(
     navController: NavHostController,
     snackbarHostState: SnackbarHostState
 ) {
+    val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+
     Scaffold(
         topBar = {
             AnimatedVisibility(
@@ -65,7 +68,9 @@ private fun MainScreenContent(
                     showSearch = state.showSearchAction,
                     showBack = state.showBackButton,
                     onSearchPressed = { navController.navigate(UiRoute.Search) },
-                    onBackPressed = { navController.popBackStack() }
+                    onBackPressed = {
+                        onBackPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed()
+                    }
                 )
             }
         },
