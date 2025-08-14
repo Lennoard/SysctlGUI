@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.os.Handler
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.androidvip.sysctlgui.R
@@ -14,6 +15,8 @@ class StartErrorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         binding = ActivityStartErrorBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

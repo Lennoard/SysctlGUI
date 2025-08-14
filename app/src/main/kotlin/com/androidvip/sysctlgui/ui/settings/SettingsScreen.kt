@@ -77,6 +77,7 @@ internal fun SettingsScreen(
                 MainViewState(
                     showTopBar = true,
                     showNavBar = true,
+                    showSearchAction = false
                 )
             )
         )
