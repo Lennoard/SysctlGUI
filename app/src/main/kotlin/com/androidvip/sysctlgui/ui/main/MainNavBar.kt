@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -81,7 +82,13 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
                         contentDescription = route.name,
                     )
                 },
-                label = { Text(route.name) },
+                label = {
+                    Text(
+                        text = route.name,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 selected = selected,
                 onClick = {
                     navController.navigate(route.route) {

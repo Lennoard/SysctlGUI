@@ -9,11 +9,12 @@ import com.androidvip.sysctlgui.ui.settings.SettingsViewModel
 import com.androidvip.sysctlgui.ui.user.UserParamsViewModel
 import com.androidvip.sysctlgui.widgets.FavoriteWidgetParamUpdater
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 internal val presentationModule = module {
-    viewModelOf(::MainViewModel)
+    singleOf(::MainViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::ParamBrowseViewModel)
     viewModelOf(::EditParamViewModel)
