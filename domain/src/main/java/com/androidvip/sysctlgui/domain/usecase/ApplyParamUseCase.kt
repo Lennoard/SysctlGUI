@@ -71,6 +71,6 @@ class ApplyParamUseCase(
             CommitMode.SYSCTL -> "Failed to execute sysctl command for '${param.name}'"
             CommitMode.ECHO -> "Failed to write value '${param.value}' to '${param.path}'"
         }
-        throw ApplyValueException(errorMessage)
+        throw ApplyValueException(errorMessage + message)
     }
 }
