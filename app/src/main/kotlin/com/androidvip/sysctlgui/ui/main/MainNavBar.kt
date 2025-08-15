@@ -1,13 +1,14 @@
 package com.androidvip.sysctlgui.ui.main
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -42,7 +43,7 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
             TopLevelRoute(
                 name = browseParamsTitle,
                 route = UiRoute.BrowseParams,
-                selectedIcon = Icons.Filled.Home,
+                selectedIcon = Icons.Rounded.Home,
                 unselectedIcon = Icons.Outlined.Home
             ),
             TopLevelRoute(
@@ -54,7 +55,7 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
             TopLevelRoute(
                 name = favoritesTitle,
                 route = UiRoute.Favorites,
-                selectedIcon = Icons.Filled.Favorite,
+                selectedIcon = Icons.Rounded.Favorite,
                 unselectedIcon = Icons.Outlined.FavoriteBorder
             ),
             TopLevelRoute(
@@ -77,10 +78,16 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
 
             NavigationBarItem(
                 icon = {
-                    Icon(
-                        imageVector = if (selected) route.selectedIcon else route.unselectedIcon,
-                        contentDescription = route.name,
-                    )
+                    AnimatedContent(targetState = selected) { selectedState ->
+                        Icon(
+                            imageVector = if (selectedState) {
+                                route.selectedIcon
+                            } else {
+                                route.unselectedIcon
+                            },
+                            contentDescription = route.name,
+                        )
+                    }
                 },
                 label = {
                     Text(

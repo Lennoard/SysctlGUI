@@ -19,7 +19,7 @@ internal val presentationModule = module {
     viewModelOf(::ParamBrowseViewModel)
     viewModelOf(::EditParamViewModel)
     viewModelOf(::SearchViewModel)
-    viewModelOf(::PresetsViewModel)
+    singleOf(::PresetsViewModel)
     viewModelOf(::UserParamsViewModel)
 
     single { FavoriteWidgetParamUpdater(androidContext()).getListener() }

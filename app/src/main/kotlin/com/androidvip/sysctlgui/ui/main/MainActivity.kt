@@ -37,6 +37,10 @@ class MainActivity : ComponentActivity() {
         )
 
         setContent {
+            // TODO: Make the switch dynamic with the view model
+            // TODO: Test presets
+            // TODO: Translations
+            // TODO: Handle shortcuts / widgets
             SysctlGuiTheme(
                 darkTheme = prefs.forceDark || isSystemInDarkTheme(),
                 contrastLevel = prefs.contrastLevel,
