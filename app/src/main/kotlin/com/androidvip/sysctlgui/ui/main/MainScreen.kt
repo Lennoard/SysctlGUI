@@ -10,6 +10,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -37,7 +38,8 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
             if (effect is MainViewEffect.ShowSnackbar) {
                 val result = snackbarHostState.showSnackbar(
                     message = effect.message,
-                    actionLabel = effect.actionLabel
+                    actionLabel = effect.actionLabel,
+                    duration = SnackbarDuration.Long
                 )
                 viewModel.onEvent(MainViewEvent.OnSnackbarResult(result))
             }
