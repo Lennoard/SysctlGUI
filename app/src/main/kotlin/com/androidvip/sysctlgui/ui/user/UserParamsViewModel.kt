@@ -36,10 +36,11 @@ class UserParamsViewModel(
 
     private fun loadParams(predicate: (UiKernelParam) -> Boolean) {
         viewModelScope.launch {
+            setState { copy(loading = true) }
             val params = getUserParams()
                 .map(UiKernelParamMapper::map)
                 .filter(predicate)
-            setState { copy(userParams = params) }
+            setState { copy(userParams = params, loading = false) }
         }
     }
 
