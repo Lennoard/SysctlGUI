@@ -75,7 +75,7 @@ fun SearchScreen(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
                     showTopBar = false,
-                    showNavBar = true,
+                    showNavBar = false,
                 )
             )
         )
