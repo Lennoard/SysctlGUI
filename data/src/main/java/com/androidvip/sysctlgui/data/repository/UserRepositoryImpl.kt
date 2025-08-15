@@ -31,7 +31,11 @@ class UserRepositoryImpl(
     }
 
     override suspend fun upsertUserParam(param: KernelParam) = withContext(coroutineContext) {
-        paramDao.upsert(KernelParamDTO.fromKernelParam(param))
+        val currentDatabaseParam = getParamByName(param.name)
+        val newParam = KernelParamDTO.fromKernelParam(param).copy(
+            id = currentDatabaseParam?.id ?: 0
+        )
+        paramDao.upsert(newParam)
     }
 
     override suspend fun upsertUserParams(params: List<KernelParam>) =

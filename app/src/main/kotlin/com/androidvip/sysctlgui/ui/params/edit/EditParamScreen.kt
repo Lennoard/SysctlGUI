@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.ui.params.edit
 
 import android.content.ClipData
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.SizeTransform
@@ -12,6 +13,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -97,7 +99,7 @@ fun EditParamScreen(
     val context = LocalContext.current
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val taskerListOptions = listOf("Primary", "Secondary")
-    var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(true) }
+    var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(false) }
     var selectedOptionIndex by rememberSaveable {
         mutableIntStateOf(Consts.LIST_NUMBER_PRIMARY_TASKER)
     }
@@ -156,6 +158,7 @@ fun EditParamScreen(
             viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
         },
         onTaskerClicked = {
+            showSelectTaskerListDialog = it
             viewModel.onEvent(EditParamViewEvent.TaskerTogglePressed(it, selectedOptionIndex))
         },
         onDocsReadMorePressed = {
@@ -229,6 +232,8 @@ private fun EditParamContent(
                 modifier = Modifier
                     .combinedClickable(
                         enabled = true,
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
                         onClick = {
                             Toast.makeText(context, "Long press to copy", Toast.LENGTH_SHORT).show()
                         },
@@ -287,7 +292,7 @@ private fun EditParamContent(
                 )
             }
 
-            if (param.isTaskerParam && state.taskerAvailable) {
+            AnimatedVisibility(visible = param.isTaskerParam && state.taskerAvailable) {
                 val listName = taskerListNameResolver(param.taskerList)
                 AssistChip(
                     onClick = { onTaskerClicked(true) },
@@ -336,6 +341,11 @@ private fun ParamValueContent(
     var isEditing by remember { mutableStateOf(false) }
     var editedValue by remember(param.value) { mutableStateOf(param.value) }
     val view = LocalView.current
+
+    BackHandler(
+        enabled = isEditing,
+        onBack = { isEditing = false }
+    )
 
     HorizontalDivider()
 
@@ -454,75 +464,90 @@ private fun ParamDocs(
             color = MaterialTheme.colorScheme.onBackground
         )
 
-        if (documentation != null) {
-            val documentationText = if (!documentation.documentationHtml.isNullOrEmpty()) {
-                AnnotatedString.fromHtml(
-                    htmlString = documentation.documentationHtml.orEmpty(),
-                    linkStyles = TextLinkStyles(
-                        style = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        pressedStyle = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
-                            color = MaterialTheme.colorScheme.tertiary,
-                            textDecoration = TextDecoration.Underline,
-                            fontWeight = FontWeight.Medium
-                        )
-                    )
+        AnimatedContent(targetState = documentation != null) { documentationAvailable ->
+            if (documentationAvailable && documentation != null) {
+                DocumentationContent(
+                    documentation = documentation,
+                    onReadMorePressed = onReadMorePressed
                 )
             } else {
-                AnnotatedString(documentation.documentationText)
-            }
-
-            SelectionContainer {
-                Text(
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    text = documentationText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            TextButton(
-                onClick = onReadMorePressed,
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .align(Alignment.End)
-            ) {
-                Text(text = "Read more")
-            }
-        } else {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Row(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        16.dp,
-                        Alignment.CenterHorizontally
+                        .padding(24.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
                     )
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Warning,
-                        contentDescription = stringResource(android.R.string.dialog_alert_title),
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                    Text(
-                        text = "No documentation available",
-                        style = MaterialTheme.typography.bodyLarge.copy(),
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onErrorContainer
-                    )
+                    Row(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            16.dp,
+                            Alignment.CenterHorizontally
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Warning,
+                            contentDescription = stringResource(android.R.string.dialog_alert_title),
+                            tint = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Text(
+                            text = "No documentation available",
+                            style = MaterialTheme.typography.bodyLarge.copy(),
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DocumentationContent(
+    documentation: ParamDocumentation,
+    onReadMorePressed: () -> Unit
+) {
+    Column {
+        val documentationText = if (!documentation.documentationHtml.isNullOrEmpty()) {
+            AnnotatedString.fromHtml(
+                htmlString = documentation.documentationHtml.orEmpty(),
+                linkStyles = TextLinkStyles(
+                    style = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    pressedStyle = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            )
+        } else {
+            AnnotatedString(documentation.documentationText)
+        }
+
+        SelectionContainer {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                text = documentationText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        TextButton(
+            onClick = onReadMorePressed,
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .align(Alignment.End)
+        ) {
+            Text(text = "Read more")
         }
     }
 }

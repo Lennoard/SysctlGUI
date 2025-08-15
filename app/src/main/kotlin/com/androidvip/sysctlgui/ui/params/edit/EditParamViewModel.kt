@@ -12,7 +12,6 @@ import com.androidvip.sysctlgui.domain.usecase.GetUserParamByNameUseCase
 import com.androidvip.sysctlgui.domain.usecase.IsTaskerInstalledUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
-import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -37,15 +36,17 @@ class EditParamViewModel(
                 ?: getRuntimeParam(paramName)
                 ?: return@launch setEffect { EditParamViewEffect.GoBack }
 
-            val documentation = getDocumentation(param)
-
             setState {
                 copy(
                     kernelParam = UiKernelParamMapper.map(param),
                     taskerAvailable = isTaskerInstalled(),
-                    keyboardType = guessKeyboardType(param.value),
-                    documentation = documentation,
+                    keyboardType = guessKeyboardType(param.value)
                 )
+            }
+
+            val documentation = runCatching { getDocumentation(param) }.getOrNull()
+            setState {
+                copy(documentation = documentation)
             }
         }
     }
@@ -56,7 +57,7 @@ class EditParamViewModel(
         when (event) {
             is EditParamViewEvent.ApplyPressed -> applyKernelParam(event.newValue)
             is EditParamViewEvent.UndoRequested -> {
-                previousKernelParamValue?.let { applyKernelParam(it) }
+                previousKernelParamValue?.let { applyKernelParam(it, true) }
             }
             is EditParamViewEvent.DocumentationReadMoreClicked -> onDocumentationReadMoreClicked()
             is EditParamViewEvent.FavoriteTogglePressed -> onFavoriteTogglePressed(event.newState)
@@ -64,7 +65,7 @@ class EditParamViewModel(
         }
     }
 
-    private fun applyKernelParam(newValue: String) {
+    private fun applyKernelParam(newValue: String, isUndo: Boolean = false) {
         val oldParam = currentState.kernelParam
         viewModelScope.launch {
             val newParam = oldParam.copy(value = newValue)
@@ -73,7 +74,11 @@ class EditParamViewModel(
                 upsertUserParam(newParam)
             }.onSuccess {
                 setState { copy(kernelParam = newParam) }
-                setEffect { EditParamViewEffect.ShowApplySuccess(oldParam.value) }
+                if (!isUndo) {
+                    setEffect {
+                        EditParamViewEffect.ShowApplySuccess(previousValue = oldParam.value)
+                    }
+                }
                 previousKernelParamValue = oldParam.value
             }.onFailure {
                 Log.e("EditParamViewModel", "Failed to apply param", it)

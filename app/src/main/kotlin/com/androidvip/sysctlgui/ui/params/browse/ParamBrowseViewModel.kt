@@ -65,7 +65,9 @@ class ParamBrowseViewModel(
             setState { copy(loading = true) }
             runCatching {
                 val newParamsDeferred = async { getParams(File(parentParam.path)) }
-                val directoryDocumentationDeferred = async { getParamDocumentation(parentParam) }
+                val directoryDocumentationDeferred = async {
+                    runCatching { getParamDocumentation(parentParam) }.getOrNull()
+                }
 
                 val newParams = newParamsDeferred.await()
                 val directoryDocumentation = directoryDocumentationDeferred.await()
