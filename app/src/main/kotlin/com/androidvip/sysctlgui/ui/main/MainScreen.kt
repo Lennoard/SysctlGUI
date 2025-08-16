@@ -28,7 +28,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
+fun MainScreen(
+    viewModel: MainViewModel = koinViewModel(),
+    startDestination: UiRoute = UiRoute.BrowseParams
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -46,14 +49,15 @@ fun MainScreen(viewModel: MainViewModel = koinViewModel()) {
         }
     }
 
-    MainScreenContent(state, navController, snackbarHostState)
+    MainScreenContent(state, navController, snackbarHostState, startDestination)
 }
 
 @Composable
 private fun MainScreenContent(
     state: MainViewState,
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    startDestination: UiRoute = UiRoute.BrowseParams
 ) {
     val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
 
@@ -92,7 +96,8 @@ private fun MainScreenContent(
         content = { innerPadding ->
             AppNavHost(
                 innerPadding = innerPadding,
-                navController = navController
+                navController = navController,
+                startDestination = startDestination
             )
         }
     )

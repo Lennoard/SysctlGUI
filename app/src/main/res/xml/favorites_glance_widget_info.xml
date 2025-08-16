@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:initialKeyguardLayout="@layout/favorites_widget"
-    android:initialLayout="@layout/favorites_widget"
+    xmlns:tools="http://schemas.android.com/tools"
     android:minWidth="180dp"
-    android:minHeight="@dimen/d40"
+    android:minHeight="64dp"
+    android:description="@string/favorites"
     android:previewImage="@drawable/favorites_appwidget_preview"
+    android:previewLayout="@layout/favorites_widget"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen"
+    tools:ignore="UnusedAttribute" />

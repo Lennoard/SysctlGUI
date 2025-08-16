@@ -13,6 +13,7 @@ import com.androidvip.sysctlgui.domain.usecase.IsTaskerInstalledUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
 import com.androidvip.sysctlgui.utils.BaseViewModel
+import com.androidvip.sysctlgui.widgets.UpdateFavoriteWidgetUseCase
 import kotlinx.coroutines.launch
 
 class EditParamViewModel(
@@ -23,6 +24,7 @@ class EditParamViewModel(
     private val getRuntimeParam: GetRuntimeParamUseCase,
     private val getUserParam: GetUserParamByNameUseCase,
     private val isTaskerInstalled: IsTaskerInstalledUseCase,
+    private val updateFavoriteWidget: UpdateFavoriteWidgetUseCase,
     private val appPrefs: AppPrefs
 ) : BaseViewModel<EditParamViewEvent, EditParamViewState, EditParamViewEffect>() {
     private val paramName: String? = savedStateHandle.get<String>(PARAM_NAME_KEY)
@@ -80,6 +82,7 @@ class EditParamViewModel(
                     }
                 }
                 previousKernelParamValue = oldParam.value
+                updateFavoriteWidget()
             }.onFailure {
                 Log.e("EditParamViewModel", "Failed to apply param", it)
                 setEffect {
