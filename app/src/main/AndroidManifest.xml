@@ -58,15 +58,14 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".widgets.FavoritesWidget"
+            android:name=".widgets.FavoritesGlanceWidgetReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/favorites_widget_info" />
+                android:resource="@xml/favorites_glance_widget_info" />
         </receiver>
         <receiver
             android:name=".receivers.TaskerReceiver"
@@ -76,9 +75,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name=".widgets.FavoritesWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
             android:name=".services.tiles.StartUpTileService"
             android:exported="true"

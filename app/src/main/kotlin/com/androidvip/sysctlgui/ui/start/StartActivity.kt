@@ -73,40 +73,11 @@ class StartActivity : AppCompatActivity() {
     }
 
     private fun navigate() {
-        val shortcutNames = arrayOf(
-            Actions.BrowseParams.name,
-            Actions.ExportParams.name,
-            Actions.OpenSettings.name
-        )
-        val nextIntent = when (intent.action) {
-            in shortcutNames -> {
-                Intent(this, MainActivity::class.java).apply {
-                    putExtra(MainActivity.EXTRA_DESTINATION, intent.action)
-                }
-            }
-
-            Actions.EditParam.name -> {
-                Intent(this, MainActivity::class.java)
-                // TODO: handle edit param intent
-                /*Intent(this, EditKernelParamActivity::class.java).apply {
-                    putExtra(
-                        EditKernelParamActivity.EXTRA_PARAM,
-                        intent.extras!!.getParcelable<KernelParam>(
-                            EditKernelParamActivity.EXTRA_PARAM
-                        )
-                    )
-                    putExtra(
-                        EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM,
-                        intent.getBooleanExtra(
-                            EditKernelParamActivity.EXTRA_EDIT_SAVED_PARAM,
-                            false
-                        )
-                    )
-                }*/
-            }
-
-            else -> {
-                Intent(this, MainActivity::class.java)
+        val shortcutNames = Actions.entries.map { it.name }
+        val nextIntent = Intent(this, MainActivity::class.java).apply {
+            if (intent.action in shortcutNames) {
+                putExtra(MainActivity.EXTRA_DESTINATION, intent.action)
+                putExtras(intent.extras ?: Bundle())
             }
         }
 

@@ -7,7 +7,7 @@ import com.androidvip.sysctlgui.ui.presets.PresetsViewModel
 import com.androidvip.sysctlgui.ui.search.SearchViewModel
 import com.androidvip.sysctlgui.ui.settings.SettingsViewModel
 import com.androidvip.sysctlgui.ui.user.UserParamsViewModel
-import com.androidvip.sysctlgui.widgets.FavoriteWidgetParamUpdater
+import com.androidvip.sysctlgui.widgets.UpdateFavoriteWidgetUseCase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -22,5 +22,5 @@ internal val presentationModule = module {
     singleOf(::PresetsViewModel)
     viewModelOf(::UserParamsViewModel)
 
-    single { FavoriteWidgetParamUpdater(androidContext()).getListener() }
+    factory { UpdateFavoriteWidgetUseCase(androidContext()) }
 }

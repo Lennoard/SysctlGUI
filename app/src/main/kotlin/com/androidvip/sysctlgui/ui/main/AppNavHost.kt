@@ -23,11 +23,15 @@ import com.androidvip.sysctlgui.ui.settings.SettingsScreen
 import com.androidvip.sysctlgui.ui.user.UserParamsScreen
 
 @Composable
-internal fun AppNavHost(innerPadding: PaddingValues, navController: NavHostController) {
+internal fun AppNavHost(
+    innerPadding: PaddingValues,
+    navController: NavHostController,
+    startDestination: UiRoute = UiRoute.BrowseParams
+) {
     NavHost(
         modifier = Modifier.padding(innerPadding),
         navController = navController,
-        startDestination = UiRoute.BrowseParams,
+        startDestination = startDestination,
         enterTransition = { scaleIn(initialScale = 0.9f) + fadeIn() },
         exitTransition = { scaleOut(targetScale = 0.9f) + fadeOut() },
         popEnterTransition = { scaleIn(initialScale = 1.1f) + fadeIn() },

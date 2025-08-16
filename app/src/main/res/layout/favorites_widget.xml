@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorBackgroundAlt">
+    android:background="@color/neutral_800">
 
     <ListView
         android:id="@+id/favorites_list"
@@ -19,5 +19,6 @@
         android:layout_height="match_parent"
         android:textAlignment="center"
         android:text="@string/empty_favorites_widget"
+        android:padding="@dimen/d32"
         android:textColor="@color/white" />
 </FrameLayout>

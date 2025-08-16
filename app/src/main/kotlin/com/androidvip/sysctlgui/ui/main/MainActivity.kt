@@ -12,7 +12,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.core.os.postDelayed
+import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.domain.enums.Actions
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import org.koin.android.ext.android.inject
 
@@ -38,37 +40,34 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             // TODO: Make the switch dynamic with the view model
-            // TODO: Test presets
             // TODO: Translations
-            // TODO: Handle shortcuts / widgets
             SysctlGuiTheme(
                 darkTheme = prefs.forceDark || isSystemInDarkTheme(),
                 contrastLevel = prefs.contrastLevel,
                 dynamicColor = prefs.dynamicColors
             ) {
-                MainScreen()
+                MainScreen(startDestination = getRouteFromIntent())
             }
         }
 
         Handler(mainLooper).postDelayed(1000) {
             checkNotificationPermission()
         }
-
-        navigateFromIntent()
     }
 
-    private fun navigateFromIntent() {
-        // TODO: handle intent
-        /*val fragmentName = intent.getStringExtra(EXTRA_DESTINATION) ?: return
-        when (fragmentName) {
-            Actions.BrowseParams.name -> R.id.navigationBrowse
-            Actions.ListParams.name -> R.id.navigationList
-            Actions.ExportParams.name -> R.id.navigationExport
-            Actions.OpenSettings.name -> R.id.navigationSettings
-            else -> null
-        }?.let { id ->
-            navHost.navController.navigate(id)
-        }*/
+    private fun getRouteFromIntent(): UiRoute {
+        val extraDestination = intent.getStringExtra(EXTRA_DESTINATION)
+            ?: return UiRoute.BrowseParams
+
+        val extraParamName = intent.getStringExtra(EXTRA_PARAM_NAME)
+
+        return when (extraDestination) {
+            Actions.BrowseParams.name -> UiRoute.BrowseParams
+            Actions.ExportParams.name -> UiRoute.Presets
+            Actions.OpenSettings.name -> UiRoute.Settings
+            Actions.EditParam.name -> UiRoute.EditParam(extraParamName.orEmpty())
+            else -> UiRoute.BrowseParams
+        }
     }
 
     private fun checkNotificationPermission() {
@@ -83,5 +82,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         internal const val EXTRA_DESTINATION = "destination"
+        internal const val EXTRA_PARAM_NAME = "paramName"
     }
 }

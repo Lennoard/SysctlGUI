@@ -111,6 +111,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material)
+    implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.window)
     implementation(libs.androidx.work.runtime.ktx)
