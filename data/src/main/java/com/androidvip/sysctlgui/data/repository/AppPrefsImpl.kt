@@ -4,11 +4,26 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.androidvip.sysctlgui.data.Prefs
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 /**
  * Implementation of [AppPrefs] that uses [SharedPreferences] to store and retrieve app preferences.
  */
 class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> observeKey(key: String, default: T): Flow<T> = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, updatedKey ->
+            if (updatedKey == key) {
+                trySend(prefs.all[key] as T ?: default)
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        trySend(prefs.all[key] as T ?: default)
+        awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+
     override var listFoldersFirst: Boolean
         get() = prefs.getBoolean(Prefs.ListFoldersFirst.key, true)
         set(value) {
@@ -88,4 +103,6 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
         currentHistory.remove(query)
         prefs.edit { putStringSet(Prefs.SearchHistory.key, currentHistory) }
     }
+
+
 }

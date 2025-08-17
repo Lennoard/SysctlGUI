@@ -70,7 +70,6 @@ internal fun SettingsScreen(
         }
     )
 
-
     LaunchedEffect(Unit) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(

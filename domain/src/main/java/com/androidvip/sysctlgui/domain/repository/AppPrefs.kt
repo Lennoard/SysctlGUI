@@ -1,5 +1,7 @@
 package com.androidvip.sysctlgui.domain.repository
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * Interface for accessing and modifying application preferences.
  *
@@ -7,6 +9,7 @@ package com.androidvip.sysctlgui.domain.repository
  * allowing various parts of the app to read and write preference values.
  */
 interface AppPrefs {
+    fun <T> observeKey(key: String, default: T): Flow<T>
     var listFoldersFirst: Boolean
     var guessInputType: Boolean
     var commitMode: String

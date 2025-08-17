@@ -19,8 +19,7 @@ class SettingsViewModel(
 
     init {
         viewModelScope.launch {
-            val settings = getSettings()
-            setState { copy(settings = settings) }
+            loadSettings()
         }
     }
 
@@ -62,7 +61,16 @@ class SettingsViewModel(
                 if (event.appSetting.key == Prefs.RunOnStartup.key) {
                     setEffect { SettingsViewEffect.RequestNotificationPermission }
                 }
+
+                viewModelScope.launch {
+                    loadSettings()
+                }
             }
         }
+    }
+
+    private suspend fun loadSettings() {
+        val settings = getSettings()
+        setState { copy(settings = settings) }
     }
 }
