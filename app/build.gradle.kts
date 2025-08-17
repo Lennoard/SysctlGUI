@@ -20,7 +20,9 @@ android {
         versionCode = 16
         versionName = "2.2.2"
         vectorDrawables.useSupportLibrary = true
-        resourceConfigurations.addAll(listOf("en", "de", "pt-rBR"))
+        androidResources {
+            localeFilters += listOf("en", "de", "pt-rBR", "tr")
+        }
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf(

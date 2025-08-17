@@ -2,92 +2,12 @@
 <resources>
     <color name="colorPrimary">@color/md_theme_light_primary</color>
     <color name="colorPrimaryDark">@color/md_theme_light_onPrimaryContainer</color>
-    <color name="colorPrimaryLight">@color/gray_700</color>
-    <color name="colorPrimaryLighter">@color/gray_500</color>
     <color name="colorAccent">@color/md_theme_light_tertiary</color>
     <color name="colorAccentLight">@color/md_theme_light_tertiaryContainer</color>
-    <color name="colorBackgroundAlt">@color/neutral_300</color>
-    <color name="iconColor">@color/gray_300</color>
 
-    <color name="gray_30">#f6f7f8</color>
-    <color name="gray_50">#e1f0fa</color>
-    <color name="gray_100">#c2d9e4</color>
-    <color name="gray_200">#a2becc</color>
-    <color name="gray_300">#81a3b4</color>
-    <color name="gray_400">#688fa2</color>
-    <color name="gray_500">#4e7c90</color>
-    <color name="gray_600">#426d7f</color>
-    <color name="gray_700">#345969</color>
-    <color name="gray_800">#274654</color>
-    <color name="gray_900">#16313d</color>
-
-    <color name="violet_50">#e6e6ef</color>
-    <color name="violet_100">#c1c0d9</color>
-    <color name="violet_200">#9997be</color>
-    <color name="violet_300">#736fa5</color>
-    <color name="violet_400">#595293</color>
-    <color name="violet_500">#413581</color>
-    <color name="violet_600">#3b2e79</color>
-    <color name="violet_700">#33256e</color>
-    <color name="violet_800">#2c1c62</color>
-    <color name="violet_900">#1f0b4d</color>
-
-    <color name="eden_50">#e0f2f1</color>
-    <color name="eden_100">#b3dfda</color>
-    <color name="eden_200">#82cbc3</color>
-    <color name="eden_300">#51b6ab</color>
-    <color name="eden_400">#2fa699</color>
-    <color name="eden_500">#179687</color>
-    <color name="eden_600">#15897a</color>
-    <color name="eden_700">#15897a</color>
-    <color name="eden_800">#12796a</color>
-    <color name="eden_900">#0b4d3f</color>
-
-    <color name="green_200">#80E4A9</color>
-    <color name="green_500">#00C853</color>
-    <color name="green_800">#00B439</color>
-
-    <color name="orange_200">#FFCB80</color>
-    <color name="orange_500">#FF9600</color>
-    <color name="orange_800">#FF7900</color>
-
-    <color name="red_50">#feebee</color>
-    <color name="red_100">#feced2</color>
-    <color name="red_200">#ed9b9a</color>
-    <color name="red_300">#e27573</color>
-    <color name="red_400">#ec5751</color>
-    <color name="red_500">#f04837</color>
-    <color name="red_600">#e13f36</color>
-    <color name="red_700">#cf3630</color>
-    <color name="red_800">#c22f29</color>
-    <color name="red_900">#b3251e</color>
-
-    <color name="black">#000000</color>
     <color name="black_87">#DE000000</color>
-    <color name="black_70">#B3000000</color>
-    <color name="black_54">#8A000000</color>
-    <color name="black_50">#80000000</color>
-    <color name="black_38">#61000000</color>
-    <color name="black_12">#12000000</color>
-
-    <color name="white">#FFFFFF</color>
-    <color name="white_87">#DEFFFFFF</color>
-    <color name="white_70">#B3FFFFFF</color>
-    <color name="white_54">#8AFFFFFF</color>
-    <color name="white_50">#80FFFFFF</color>
-    <color name="white_38">#61FFFFFF</color>
-    <color name="white_12">#12FFFFFF</color>
-
-    <color name="neutral_50">#e3eaf5</color>
-    <color name="neutral_100">#bfccda</color>
-    <color name="neutral_200">#9aaabb</color>
-    <color name="neutral_300">#75899e</color>
-    <color name="neutral_400">#5b7289</color>
-    <color name="neutral_500">#415b74</color>
-    <color name="neutral_600">#354e65</color>
-    <color name="neutral_700">#273c50</color>
     <color name="neutral_800">#192b3b</color>
-    <color name="neutral_900">#021219</color>
+    <color name="white">#FFFFFF</color>
 
     <color name="md_theme_light_primary">#4B5C92</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>

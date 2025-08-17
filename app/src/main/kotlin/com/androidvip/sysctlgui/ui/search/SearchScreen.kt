@@ -318,7 +318,7 @@ private fun SearchViewContent(
         if (suggestionHints.isNotEmpty()) {
             item {
                 Text(
-                    text = "Suggestions",
+                    text = stringResource(R.string.suggestions),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,

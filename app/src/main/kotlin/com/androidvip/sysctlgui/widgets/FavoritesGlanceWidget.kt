@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.widgets
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -25,6 +26,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.onPrimaryContainerLight
 import com.androidvip.sysctlgui.design.theme.primaryContainerLight
 import com.androidvip.sysctlgui.design.theme.primaryLight
@@ -54,7 +56,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
             horizontalAlignment = Alignment.Horizontal.Start
         ) {
             Text(
-                text = "Favorite Kernel Params",
+                text = stringResource(R.string.favorite_widget_title),
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
@@ -65,7 +67,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
             Spacer(GlanceModifier.height(8.dp))
 
             if (params.isEmpty()) {
-                Text("No favorite parameters yet.")
+                Text(stringResource(R.string.empty_favorites_widget))
             } else {
                 LazyColumn {
                     items(params) { param ->

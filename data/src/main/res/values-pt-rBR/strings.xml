@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="prefs_category_general">General</string>
+    <string name="prefs_category_general">Geral</string>
     <string name="prefs_list_folders_first_title">Listar pastas primeiro</string>
     <string name="prefs_list_folders_first_description">Listar as pastas primeiro ao usar a opção do navegador de parâmetros do kernel</string>
-    <string name="prefs_guess_input_type_title">Tipo de entrada de palpite</string>
+    <string name="prefs_guess_input_type_title">Adivinhar tipo de entrada</string>
     <string name="prefs_guess_input_type_description">Tentar definir o melhor tipo de entrada para o teclado virtual com base no valor do parâmetro</string>
     <string name="prefs_online_docs_title">Usar documentação online</string>
-    <string name="prefs_online_docs_description">Tente usar documentação online ao exibir a descrições dos parâmetros</string>
+    <string name="prefs_online_docs_description">Tentar a usar documentação online ao exibir a descrições dos parâmetros</string>
     <string name="prefs_category_theme">Tema</string>
     <string name="prefs_force_dark_title">Forçar Modo Escuro</string>
     <string name="prefs_force_dark_description">Forçar tema escuro quando disponível</string>
