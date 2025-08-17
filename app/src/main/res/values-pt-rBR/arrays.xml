@@ -1,6 +1,0 @@
-<resources>
-    <string-array name="commit_modes">
-        <item>Usar sysctl -w</item>
-        <item>Usar echo \'valor\' > /proc/sys/…</item>
-    </string-array>
-</resources>

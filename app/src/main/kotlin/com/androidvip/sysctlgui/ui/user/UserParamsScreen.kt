@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -144,9 +145,8 @@ private fun FavoritesScreenContent(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(128.dp)
             )
-            // TODO: Empty state image
             Text(
-                text = "No favorites added",
+                text = stringResource(R.string.empty_favorites_widget),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,

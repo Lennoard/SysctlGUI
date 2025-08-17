@@ -1,4 +1,0 @@
-<resources>
-    <dimen name="app_bar_height">120dp</dimen>
-    <dimen name="default_margin">@dimen/d32</dimen>
-</resources>

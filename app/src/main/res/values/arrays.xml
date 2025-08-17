@@ -1,14 +1,4 @@
 <resources>
-    <string-array name="commit_modes">
-        <item>Use sysctl -w</item>
-        <item>Use echo \'value\' > /proc/sys/…</item>
-    </string-array>
-
-    <string-array name="commit_modes_values" translatable="false">
-        <item>sysctl</item>
-        <item>echo</item>
-    </string-array>
-
     <string-array name="tasker_lists" translatable="false">
         <item>@string/tasker_list_primary</item>
         <item>@string/tasker_list_secondary</item>

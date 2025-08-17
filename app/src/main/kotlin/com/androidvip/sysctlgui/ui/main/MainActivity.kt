@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 updateEdgeToEdgeConfiguration(forceDark)
             }
 
+            // TODO: Landscape Support
             SysctlGuiTheme(
                 darkTheme = forceDark || isSystemInDarkTheme(),
                 contrastLevel = themeState.contrastLevel,
