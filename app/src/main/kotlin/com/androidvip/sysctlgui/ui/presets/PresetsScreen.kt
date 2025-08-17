@@ -36,12 +36,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.PreviewDynamicColors
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.ui.components.ErrorContainer
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
@@ -136,18 +137,22 @@ private fun PresetsScreenContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        ImportCards(
-            onClick = onImportPressed,
-            title = stringResource(R.string.import_text),
-            description = stringResource(R.string.import_presets_description),
-            iconRes = R.drawable.ic_import
-        )
-        ImportCards(
-            onClick = onExportPressed,
-            title = stringResource(R.string.export),
-            description = stringResource(R.string.export_presets_description),
-            iconRes = R.drawable.ic_export
-        )
+        if (isLandscape()) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                ImportCards(
+                    onImportPressed = onImportPressed,
+                    onExportPressed = onExportPressed,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        } else {
+            ImportCards(
+                onImportPressed = onImportPressed,
+                onExportPressed = onExportPressed,
+                modifier = Modifier.fillMaxWidth(1f)
+            )
+        }
+
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -163,8 +168,34 @@ private fun PresetsScreenContent(
 }
 
 @Composable
-private fun ImportCards(onClick: () -> Unit, title: String, description: String, iconRes: Int) {
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+private fun ImportCards(
+    onImportPressed: () -> Unit,
+    onExportPressed: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ImportCard(
+        onClick = onImportPressed,
+        modifier = modifier,
+        title = stringResource(R.string.import_text),
+        description = stringResource(R.string.import_presets_description),
+        iconRes = R.drawable.ic_import
+    )
+    ImportCard(
+        modifier = modifier,
+        onClick = onExportPressed,
+        title = stringResource(R.string.export),
+        description = stringResource(R.string.export_presets_description),
+        iconRes = R.drawable.ic_export
+    )
+}
+
+@Composable
+private fun ImportCard(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit, title: String,
+    description: String, iconRes: Int
+) {
+    Card(onClick = onClick, modifier = modifier) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -200,7 +231,7 @@ private fun ImportCards(onClick: () -> Unit, title: String, description: String,
 
 @Composable
 @PreviewLightDark
-@PreviewDynamicColors
+@Preview(device = "spec:parent=pixel_5,orientation=landscape")
 private fun PresetsScreenPreview() {
     SysctlGuiTheme(dynamicColor = true) {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {

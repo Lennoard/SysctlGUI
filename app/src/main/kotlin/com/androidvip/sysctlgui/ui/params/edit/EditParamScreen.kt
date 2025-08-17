@@ -75,6 +75,7 @@ import androidx.core.view.ViewCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
@@ -154,26 +155,51 @@ fun EditParamScreen(
         }
     }
 
-    EditParamContent(
-        state = state.value,
-        showError = showError,
-        errorMessage = errorMessage,
-        onValueApply = {
-            viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
-        },
-        onTaskerClicked = {
-            showSelectTaskerListDialog = it
-            viewModel.onEvent(EditParamViewEvent.TaskerTogglePressed(it, selectedOptionIndex))
-        },
-        onDocsReadMorePressed = {
-            viewModel.onEvent(EditParamViewEvent.DocumentationReadMoreClicked)
-        },
-        onFavoriteToggle = {
-            viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
-        },
-        onErrorAnimationEnd = { showError = false },
-        taskerListNameResolver = { listId -> taskerListOptions.getOrNull(listId).orEmpty() }
-    )
+    if (isLandscape()) {
+        EditParamLandscapeContent(
+            state = state.value,
+            showError = showError,
+            errorMessage = errorMessage,
+            onValueApply = {
+                viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
+            },
+            onTaskerClicked = {
+                showSelectTaskerListDialog = it
+                viewModel.onEvent(EditParamViewEvent.TaskerTogglePressed(it, selectedOptionIndex))
+            },
+            onDocsReadMorePressed = {
+                viewModel.onEvent(EditParamViewEvent.DocumentationReadMoreClicked)
+            },
+            onFavoriteToggle = {
+                viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
+            },
+            onErrorAnimationEnd = { showError = false },
+            taskerListNameResolver = { listId ->
+                taskerListOptions.getOrNull(listId).orEmpty()
+            }
+        )
+    } else {
+        EditParamContent(
+            state = state.value,
+            showError = showError,
+            errorMessage = errorMessage,
+            onValueApply = {
+                viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
+            },
+            onTaskerClicked = {
+                showSelectTaskerListDialog = it
+                viewModel.onEvent(EditParamViewEvent.TaskerTogglePressed(it, selectedOptionIndex))
+            },
+            onDocsReadMorePressed = {
+                viewModel.onEvent(EditParamViewEvent.DocumentationReadMoreClicked)
+            },
+            onFavoriteToggle = {
+                viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
+            },
+            onErrorAnimationEnd = { showError = false },
+            taskerListNameResolver = { listId -> taskerListOptions.getOrNull(listId).orEmpty() }
+        )
+    }
 
     SingleChoiceDialog(
         showDialog = showSelectTaskerListDialog,
@@ -344,7 +370,7 @@ private fun EditParamContent(
 }
 
 @Composable
-private fun ParamValueContent(
+fun ParamValueContent(
     modifier: Modifier = Modifier,
     param: UiKernelParam,
     keyboardType: KeyboardType,
@@ -416,7 +442,7 @@ private fun ParamValueContent(
 }
 
 @Composable
-fun EditableParamValue(
+internal fun EditableParamValue(
     isEditing: Boolean,
     paramValue: String,
     editedValue: String,
@@ -462,7 +488,7 @@ fun EditableParamValue(
 }
 
 @Composable
-private fun ParamDocs(
+internal fun ParamDocs(
     modifier: Modifier = Modifier,
     documentation: ParamDocumentation?,
     onReadMorePressed: () -> Unit,
@@ -517,7 +543,7 @@ private fun ParamDocs(
 }
 
 @Composable
-private fun DocumentationContent(
+internal fun DocumentationContent(
     documentation: ParamDocumentation,
     onReadMorePressed: () -> Unit
 ) {

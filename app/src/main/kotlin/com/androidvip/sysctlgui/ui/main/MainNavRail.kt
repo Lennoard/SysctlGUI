@@ -2,15 +2,14 @@ package com.androidvip.sysctlgui.ui.main
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -21,11 +20,11 @@ import androidx.navigation.compose.rememberNavController
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 
 @Composable
-internal fun MainNavBar(navController: NavHostController = rememberNavController()) {
+internal fun MainNavRail(navController: NavHostController = rememberNavController()) {
     val context = LocalContext.current
     val topLevelRoutes = remember { TopLevelRouteProvider(context) }
 
-    NavigationBar {
+    NavigationRail {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
@@ -34,7 +33,7 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
                 ?.hierarchy
                 ?.any { it.hasRoute(route.route::class) } == true
 
-            NavigationBarItem(
+            NavigationRailItem(
                 icon = {
                     AnimatedContent(targetState = selected) { selectedState ->
                         Icon(
@@ -71,9 +70,8 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
 
 @Composable
 @PreviewLightDark
-@PreviewDynamicColors
 private fun MainNavbarPreview() {
     SysctlGuiTheme(dynamicColor = true) {
-        MainNavBar()
+        MainNavRail()
     }
 }

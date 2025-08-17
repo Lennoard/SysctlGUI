@@ -5,6 +5,7 @@ import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.GetParamDocumentationUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetParamsFromFilesUseCase
+import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.utils.BaseViewModel
@@ -20,9 +21,12 @@ import java.io.File
 class ParamBrowseViewModel(
     private val getParamsFromFiles: GetParamsFromFilesUseCase,
     private val getParamDocumentation: GetParamDocumentationUseCase,
+    private val getUserParams: GetUserParamsUseCase,
     private val appPrefs: AppPrefs,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<ParamBrowseViewEvent, ParamBrowseState, ParamBrowseViewEffect>() {
+    private val userParams = mutableListOf<KernelParam>()
+
     override fun createInitialState() = ParamBrowseState()
 
     init {
@@ -30,6 +34,11 @@ class ParamBrowseViewModel(
             setState { copy(loading = true) }
             val startingDirectory = File(Consts.PROC_SYS)
             val params = getParams(startingDirectory)
+
+            runCatching {
+                userParams.clear()
+                userParams.addAll(getUserParams())
+            }
 
             setState {
                 copy(
@@ -64,7 +73,9 @@ class ParamBrowseViewModel(
         viewModelScope.launch {
             setState { copy(loading = true) }
             runCatching {
-                val newParamsDeferred = async { getParams(File(parentParam.path)) }
+                val newParamsDeferred = async {
+                    getParams(File(parentParam.path))
+                }
                 val directoryDocumentationDeferred = async {
                     runCatching { getParamDocumentation(parentParam) }.getOrNull()
                 }
@@ -119,7 +130,13 @@ class ParamBrowseViewModel(
             rootAwareFile.listFiles()?.toList() ?: emptyList()
         }
 
-        val params = getParamsFromFiles(fileList).map(UiKernelParamMapper::map)
+        val params = getParamsFromFiles(fileList).map { fileParam ->
+            UiKernelParamMapper.map(fileParam).copy(
+                isFavorite = userParams
+                    .filter { it.isFavorite }
+                    .any { it.name == fileParam.name }
+            )
+        }
 
         if (appPrefs.listFoldersFirst) {
             params.sortedByDescending { it.isDirectory }

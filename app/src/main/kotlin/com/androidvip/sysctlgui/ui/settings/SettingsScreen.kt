@@ -9,7 +9,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,12 +23,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.data.Prefs
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.domain.enums.SettingItemType
 import com.androidvip.sysctlgui.domain.models.AppSetting
@@ -112,34 +117,52 @@ private fun SettingsScreenContent(
     onValueChanged: (AppSetting<*>, Any) -> Unit
 ) {
     val groupedSettings = settings.groupBy { it.category }
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        groupedSettings.forEach { (category, settings) ->
-            item {
+    val columns = if (isLandscape()) 2 else 1
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columns),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        groupedSettings.forEach { (category, categorySettings) ->
+            item(span = { GridItemSpan(columns) }) {
                 Text(
                     text = category,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(
-                        top = 8.dp,
-                        bottom = 8.dp,
-                        start = 56.dp,
-                        end = 16.dp,
-                    )
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 8.dp,
+                            bottom = 8.dp,
+                            start = if (columns > 1) 16.dp else 56.dp,
+                            end = 16.dp,
+                        )
                 )
             }
-            items(settings.size) {
-                val appSetting = settings[it]
+
+            items(
+                items = categorySettings,
+                key = { setting -> setting.key }
+            ) { appSetting ->
+                val itemModifier = if (columns > 1) {
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                } else {
+                    Modifier.fillMaxWidth()
+                }
+
                 when (appSetting.type) {
                     SettingItemType.Text -> {
                         HeaderComponent(
-                            modifier =  Modifier.fillMaxWidth(),
+                            modifier = itemModifier,
                             appSetting = appSetting,
                             onClick = onNavigateToUserParams
                         )
                     }
                     SettingItemType.List -> {
                         TextSettingComponent(
-                            modifier =  Modifier.fillMaxWidth(),
+                            modifier = itemModifier,
                             appSetting = appSetting,
                             onValueChange = { newValue ->
                                 onValueChanged(appSetting, newValue)
@@ -148,7 +171,7 @@ private fun SettingsScreenContent(
                     }
                     SettingItemType.Switch -> {
                         SwitchSettingComponent(
-                            modifier =  Modifier.fillMaxWidth(),
+                            modifier = itemModifier,
                             appSetting = appSetting,
                             onValueChange = { newValue ->
                                 onValueChanged(appSetting, newValue)
@@ -157,7 +180,7 @@ private fun SettingsScreenContent(
                     }
                     SettingItemType.Slider -> {
                         SliderSettingComponent(
-                            modifier =  Modifier.fillMaxWidth(),
+                            modifier = itemModifier,
                             appSetting = appSetting,
                             onValueChange = { newValue ->
                                 onValueChanged(appSetting, newValue)
@@ -172,6 +195,7 @@ private fun SettingsScreenContent(
 
 @Composable
 @PreviewLightDark
+@Preview(device = "spec:parent=pixel_5,orientation=landscape")
 internal fun SettingsScreenPreview() {
     SysctlGuiTheme {
         val settings = listOf(
@@ -182,6 +206,14 @@ internal fun SettingsScreenPreview() {
                 category = "General",
                 title = "List folders first",
                 description = "List folders first when using the kernel parameter browser option",
+                type = SettingItemType.Switch,
+            ),
+            AppSetting(
+                key = Prefs.GuessInputType.key,
+                value = true,
+                category = "General",
+                title = "Guess input type",
+                description = "Description",
                 type = SettingItemType.Switch,
             ),
 

@@ -2,12 +2,18 @@ package com.androidvip.sysctlgui.ui.main
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -17,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +31,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +68,7 @@ private fun MainScreenContent(
     startDestination: UiRoute = UiRoute.BrowseParams
 ) {
     val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+    val isLandscape = isLandscape()
 
     Scaffold(
         topBar = {
@@ -82,7 +91,7 @@ private fun MainScreenContent(
         },
         bottomBar = {
             AnimatedVisibility(
-                visible = state.showNavBar,
+                visible = state.showNavBar && !isLandscape,
                 enter = expandVertically() + slideInVertically { it / 2 } + fadeIn(),
                 exit = shrinkVertically() + slideOutVertically { it / 2 } + fadeOut(),
                 label = "BottomBar"
@@ -94,11 +103,25 @@ private fun MainScreenContent(
             SnackbarHost(snackbarHostState)
         },
         content = { innerPadding ->
-            AppNavHost(
-                innerPadding = innerPadding,
-                navController = navController,
-                startDestination = startDestination
-            )
+            Row(Modifier.padding(innerPadding)) {
+                if (isLandscape) {
+                    AnimatedVisibility(
+                        visible = state.showNavBar,
+                        enter = expandHorizontally() + slideInHorizontally { it / 2 } + fadeIn(),
+                        exit = shrinkHorizontally() + slideOutHorizontally { it / 2 } + fadeOut(),
+                        label = "NavRail"
+                    ) {
+                        MainNavRail(navController = navController)
+                    }
+                }
+
+                AppNavHost(
+                    modifier = Modifier.weight(1f),
+                    innerPadding = innerPadding,
+                    navController = navController,
+                    startDestination = startDestination
+                )
+            }
         }
     )
 }

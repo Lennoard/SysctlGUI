@@ -18,8 +18,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -50,11 +53,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
@@ -151,7 +156,7 @@ private fun ParamBrowseScreenContent(
     isRefreshing: Boolean,
     onRefresh: () -> Unit
 ) {
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
     val pullRefreshState =
         rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     var headerVisible by remember { mutableStateOf(backEnabled) }
@@ -196,25 +201,32 @@ private fun ParamBrowseScreenContent(
             .pullRefresh(pullRefreshState),
     ) {
         val spacerHeight by animateDpAsState(if (finalHeaderVisible) 56.dp else 0.dp)
-        LazyColumn(
+        val columns = if (isLandscape()) 2 else 1
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
             state = listState,
             modifier = Modifier.fillMaxSize()
         ) {
-            item { Spacer(modifier = Modifier.height(spacerHeight)) }
+            item(span = { GridItemSpan(columns) }) {
+                Spacer(modifier = Modifier.height(spacerHeight))
+            }
 
             items(
-                count = params.size,
-                key = { index -> params[index].name }
-            ) { index ->
+                items = params,
+                key = { param -> param.name }
+            ) { param ->
                 ParamFileRow(
                     modifier = Modifier.animateItem(),
-                    param = params[index],
+                    param = param,
+                    showFavoriteIcon = true,
                     onParamClicked = onParamClicked,
                 )
             }
 
             if (documentation != null) {
-                item { Spacer(modifier = Modifier.height(56.dp)) }
+                item(span = { GridItemSpan(columns) }) {
+                    Spacer(modifier = Modifier.height(56.dp))
+                }
             }
         }
 
@@ -302,6 +314,7 @@ private fun InfoItem(
 
 @Composable
 @PreviewLightDark
+@Preview(device = "spec:parent=pixel_5,orientation=landscape")
 internal fun ParamBrowseScreenContentPreview() {
     fun mapFilesToParams(files: Array<File>?): List<UiKernelParam> {
         return files?.map { file ->
