@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -151,7 +152,8 @@ private fun ParamBrowseScreenContent(
     onRefresh: () -> Unit
 ) {
     val listState = rememberLazyListState()
-    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     var headerVisible by remember { mutableStateOf(backEnabled) }
 
     BackHandler(enabled = backEnabled, onBack = onBackPressed)
@@ -236,7 +238,10 @@ private fun ParamBrowseScreenContent(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             InfoItem(
-                text = "Read documentation for \"${documentation?.title}\"",
+                text = stringResource(
+                    R.string.read_documentation_format,
+                    documentation?.title.orEmpty()
+                ),
                 textStyle = MaterialTheme.typography.titleSmall.copy(
                     textDecoration = TextDecoration.Underline,
                     color = MaterialTheme.colorScheme.primary

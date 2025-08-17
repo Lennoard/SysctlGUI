@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_category_general">General</string>
+    <string name="prefs_list_folders_first_title">Listar pastas primeiro</string>
+    <string name="prefs_list_folders_first_description">Listar as pastas primeiro ao usar a opção do navegador de parâmetros do kernel</string>
+    <string name="prefs_guess_input_type_title">Tipo de entrada de palpite</string>
+    <string name="prefs_guess_input_type_description">Tentar definir o melhor tipo de entrada para o teclado virtual com base no valor do parâmetro</string>
+    <string name="prefs_online_docs_title">Usar documentação online</string>
+    <string name="prefs_online_docs_description">Tente usar documentação online ao exibir a descrições dos parâmetros</string>
+    <string name="prefs_category_theme">Tema</string>
+    <string name="prefs_force_dark_title">Forçar Modo Escuro</string>
+    <string name="prefs_force_dark_description">Forçar tema escuro quando disponível</string>
+    <string name="prefs_dynamic_colors_title">Cores Dinâmicas</string>
+    <string name="prefs_dynamic_colors_description">Usar cores dinâmicas quando disponíveis</string>
+    <string name="prefs_contrast_level_title">Nível de contraste</string>
+    <string name="prefs_contrast_level_description">Nível de contraste para as cores do tema</string>
+    <string name="prefs_category_operations">Operações</string>
+    <string name="prefs_commit_mode_title_format">Modo de aplicação (%s)</string>
+    <string name="prefs_commit_mode_description">Comando usado ao aplicar o valor do parâmetro</string>
+    <string name="prefs_use_busybox_title">Usar busybox</string>
+    <string name="prefs_use_busybox_description">Use o busybox para executar comandos, se disponível</string>
+    <string name="prefs_allow_blank_values_title">Permitir valores em branco</string>
+    <string name="prefs_category_startup">Inicialização</string>
+    <string name="prefs_run_on_startup_title">Executar na inicialização</string>
+    <string name="prefs_run_on_startup_description">Permitir que o aplicativo aplique parâmetros na inicialização</string>
+    <string name="prefs_startup_delay_title">Atraso na inicialização</string>
+    <string name="prefs_startup_delay_description">Atraso em segundos antes de reaplicar os parâmetros na inicialização</string>
+    <string name="prefs_manage_parameters_title">Gerenciar parâmetros</string>
+    <string name="prefs_manage_parameters_description">Gerenciar os parâmetros que serão aplicados na inicialização</string>
+</resources>

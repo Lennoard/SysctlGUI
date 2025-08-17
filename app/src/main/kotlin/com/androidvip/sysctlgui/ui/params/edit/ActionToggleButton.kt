@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -95,7 +96,10 @@ internal fun ActionToggleButton(
 
             Icon(
                 painter = if (isCurrentlyActive) iconOnActive else iconOnInactive,
-                contentDescription = "Toggle $contentDescription",
+                contentDescription = stringResource(
+                    R.string.toggle_format,
+                    contentDescription.orEmpty()
+                ),
                 tint = iconTint
             )
         }
@@ -113,10 +117,11 @@ internal fun FavoriteButton(
         isActive = isFavorite,
         iconOnActive = painterResource(R.drawable.ic_favorite),
         iconOnInactive = painterResource(R.drawable.ic_favorite_outlined),
-        contentDescription = "favorite",
+        contentDescription = stringResource(R.string.mark_as_favorite),
         onToggle = onFavoriteClick
     )
 }
+
 @Composable
 internal fun TaskerButton(
     modifier: Modifier = Modifier,
@@ -128,7 +133,7 @@ internal fun TaskerButton(
         isActive = isTaskerParam,
         iconOnActive = painterResource(R.drawable.ic_tasker),
         iconOnInactive = painterResource(R.drawable.ic_tasker_outlined),
-        contentDescription = "tasker param",
+        contentDescription = stringResource(R.string.toggle_tasker_param),
         onToggle = onToggle
     )
 }
@@ -142,22 +147,10 @@ private fun FavoriteButtonStatesPreview() {
                 modifier = Modifier.padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                FavoriteButton(
-                    isFavorite = false,
-                    onFavoriteClick = {}
-                )
-                FavoriteButton(
-                    isFavorite = true,
-                    onFavoriteClick = {}
-                )
-                TaskerButton(
-                    isTaskerParam = false,
-                    onToggle = {}
-                )
-                TaskerButton(
-                    isTaskerParam = true,
-                    onToggle = {}
-                )
+                FavoriteButton(isFavorite = false, onFavoriteClick = {})
+                FavoriteButton(isFavorite = true, onFavoriteClick = {})
+                TaskerButton(isTaskerParam = false, onToggle = {})
+                TaskerButton(isTaskerParam = true, onToggle = {})
             }
         }
     }

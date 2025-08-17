@@ -45,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -55,6 +56,7 @@ import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
@@ -78,7 +80,7 @@ fun ImportPresetScreen(
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
-                    topBarTitle = "Applying preset",
+                    topBarTitle = context.getString(R.string.applying_preset),
                     showTopBar = true,
                     showNavBar = false,
                     showBackButton = true,
@@ -155,7 +157,7 @@ private fun IncomingPresetsContent(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "${paramsToImport.size} parameters found",
+            text = stringResource(R.string.parameters_found_format, paramsToImport.size),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
@@ -246,7 +248,7 @@ private fun IncomingPresetsContent(
                 modifier = Modifier.weight(1f),
                 onClick = onCancelPressed
             ) {
-                Text(text = "Cancel")
+                Text(text = stringResource(android.R.string.cancel))
             }
 
             OutlinedButton(
@@ -258,7 +260,7 @@ private fun IncomingPresetsContent(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text(text = "Import")
+                Text(text = stringResource(R.string.import_text))
             }
         }
     }
@@ -275,7 +277,7 @@ private fun LoadingIndicator() {
     ) {
         CircularProgressIndicator()
         Text(
-            text = "Loading preset...",
+            text = stringResource(R.string.loading_preset),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onBackground,
@@ -310,13 +312,13 @@ private fun SuccessIndicator(onAnimationEnd: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Rounded.CheckCircle,
-            contentDescription = "Success",
+            contentDescription = stringResource(R.string.success),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(128.dp)
         )
 
         Text(
-            text = "Presets successfully imported",
+            text = stringResource(R.string.presets_import_success_message),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center

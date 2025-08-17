@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.models.UiKernelParam
 
@@ -34,8 +36,11 @@ fun ParamRow(
     onParamClicked: (UiKernelParam) -> Unit,
     showFullName: Boolean = false
 ) {
-    val rowDescription = "Parameter: ${param.name}"
-    val rowState = if (param.isFavorite) "Marked as favorite" else ""
+    val rowDescription = stringResource(
+        R.string.acessibility_param_description_format,
+        param.name
+    )
+    val rowState = if (param.isFavorite) stringResource(R.string.marked_as_favorite) else ""
 
     Row(
         modifier = modifier
@@ -100,7 +105,7 @@ private fun ParamRowPreview() {
     SysctlGuiTheme(contrastLevel = 1) {
         Column(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             ParamRow(param = param, onParamClicked = {}, showFullName = true)
-            ParamRow(param = param.copy(isFavorite = true), onParamClicked = {},)
+            ParamRow(param = param.copy(isFavorite = true), onParamClicked = {})
         }
     }
 }

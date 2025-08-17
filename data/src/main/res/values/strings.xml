@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_category_general">General</string>
+    <string name="prefs_list_folders_first_title">List folders first</string>
+    <string name="prefs_list_folders_first_description">List folders first when using the kernel parameter browser option</string>
+    <string name="prefs_guess_input_type_title">Guess input type</string>
+    <string name="prefs_guess_input_type_description">Try to set the best input type for the soft keyboard based on the value of the parameter</string>
+    <string name="prefs_online_docs_title">Use online documentation</string>
+    <string name="prefs_online_docs_description">Try to use online documentation when displaying parameter descriptions</string>
+    <string name="prefs_category_theme">Theme</string>
+    <string name="prefs_force_dark_title">Force Dark</string>
+    <string name="prefs_force_dark_description">Force dark theme when available</string>
+    <string name="prefs_dynamic_colors_title">Dynamic Colors</string>
+    <string name="prefs_dynamic_colors_description">Use dynamic colors when available</string>
+    <string name="prefs_contrast_level_title">Contrast level</string>
+    <string name="prefs_contrast_level_description">Contrast level for the theme colors</string>
+    <string name="prefs_category_operations">Operations</string>
+    <string name="prefs_commit_mode_title_format">Commit mode (%s)</string>
+    <string name="prefs_commit_mode_description">Command used when applying the parameter value</string>
+    <string name="prefs_use_busybox_title">Use busybox</string>
+    <string name="prefs_use_busybox_description">Use busybox to execute commands, if available</string>
+    <string name="prefs_allow_blank_values_title">Allow blank values</string>
+    <string name="prefs_category_startup">Startup</string>
+    <string name="prefs_run_on_startup_title">Run on startup</string>
+    <string name="prefs_run_on_startup_description">Allow the application to apply parameters on startup</string>
+    <string name="prefs_startup_delay_title">Startup delay</string>
+    <string name="prefs_startup_delay_description">Delay in seconds before applying parameters on startup</string>
+    <string name="prefs_manage_parameters_title">Manage parameters</string>
+    <string name="prefs_manage_parameters_description">Manage the parameters that will be applied at startup</string>
+</resources>

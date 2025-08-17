@@ -3,8 +3,12 @@ package com.androidvip.sysctlgui.ui.tasker
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.androidvip.sysctlgui.databinding.ActivityTaskerPluginBinding
 import com.androidvip.sysctlgui.receivers.TaskerReceiver
 import kotlin.contracts.ExperimentalContracts
@@ -15,8 +19,22 @@ class TaskerPluginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityTaskerPluginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            view.updatePadding(
+                left = insets.left,
+                top = insets.top,
+                right = insets.right,
+                bottom = insets.bottom
+            )
+
+            WindowInsetsCompat.CONSUMED
+        }
 
         binding.taskerDoneButton.setOnClickListener {
             val selectedListNumber = binding.taskerListSpinner.selectedItemPosition // 0-based index

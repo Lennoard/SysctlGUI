@@ -26,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.androidvip.sysctlgui.R
 
 private const val ERROR_CONTAINER_ANIMATION_DURATION = 4000
 
@@ -80,7 +82,7 @@ internal fun ErrorContainer(message: String, onAnimationEnd: () -> Unit) {
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
-                        text = "Error",
+                        text = stringResource(R.string.error),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onErrorContainer
                     )

@@ -4,6 +4,11 @@ import android.util.Log
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.domain.StringProvider
+import com.androidvip.sysctlgui.domain.exceptions.ApplyValueException
+import com.androidvip.sysctlgui.domain.exceptions.BlankValueNotAllowedException
+import com.androidvip.sysctlgui.domain.exceptions.CommitModeException
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.usecase.ApplyParamUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetParamDocumentationUseCase
@@ -25,6 +30,7 @@ class EditParamViewModel(
     private val getUserParam: GetUserParamByNameUseCase,
     private val isTaskerInstalled: IsTaskerInstalledUseCase,
     private val updateFavoriteWidget: UpdateFavoriteWidgetUseCase,
+    private val stringProvider: StringProvider,
     private val appPrefs: AppPrefs
 ) : BaseViewModel<EditParamViewEvent, EditParamViewState, EditParamViewEffect>() {
     private val paramName: String? = savedStateHandle.get<String>(PARAM_NAME_KEY)
@@ -85,8 +91,21 @@ class EditParamViewModel(
                 updateFavoriteWidget()
             }.onFailure {
                 Log.e("EditParamViewModel", "Failed to apply param", it)
+                val message = when (it) {
+                    is BlankValueNotAllowedException -> stringProvider.getString(
+                        R.string.apply_error_blank_values
+                    )
+                    is CommitModeException -> stringProvider.getString(
+                        R.string.apply_error_commit_mode
+                    )
+
+                    is ApplyValueException -> stringProvider.getString(
+                        R.string.apply_error_command_execution_failed
+                    )
+                    else -> it.message.orEmpty()
+                }
                 setEffect {
-                    EditParamViewEffect.ShowError(it.message.orEmpty())
+                    EditParamViewEffect.ShowError(message)
                 }
             }
         }

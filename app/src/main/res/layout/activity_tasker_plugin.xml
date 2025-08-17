@@ -12,6 +12,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/d16"
         android:layout_marginBottom="@dimen/d16"
+        android:fontFamily="@font/sansation_bold"
         android:text="@string/done"
         android:textColor="?colorOnTertiary"
         app:backgroundTint="?colorTertiary"
@@ -38,7 +39,8 @@
             android:paddingTop="@dimen/d16"
             android:text="@string/tasker_select_list"
             android:textColor="?colorPrimary"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:fontFamily="@font/sansation_bold" />
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"

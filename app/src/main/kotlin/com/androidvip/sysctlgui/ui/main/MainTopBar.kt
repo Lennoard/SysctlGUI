@@ -35,7 +35,7 @@ fun MainTopBar(
                 IconButton(onClick = onBackPressed) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = stringResource(R.string.go_back)
                     )
                 }
             }

@@ -6,6 +6,7 @@ import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.repository.DocumentationRepository
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Repository for fetching documentation for kernel parameters.
@@ -26,9 +27,9 @@ class DocumentationRepositoryImpl(
         online: Boolean
     ): ParamDocumentation? {
         return if (online) {
-            withTimeout(REQUEST_TIMEOUT_MS) {
+            withTimeoutOrNull(REQUEST_TIMEOUT_MS) {
                 onlineDataSource.getDocumentation(param)
-            }
+            } ?: offlineDataSource.getDocumentation(param)
         } else {
             offlineDataSource.getDocumentation(param)
         }
