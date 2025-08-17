@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
@@ -122,15 +123,27 @@ fun ImportPresetScreen(
         ) { targetState ->
             when (targetState) {
                 IncomingPresetsScreenState.Idle -> {
-                    IncomingPresetsContent(
-                        paramsToImport = state.paramsToImport,
-                        onImportPressed = {
-                            viewModel.onEvent(PresetsViewEvent.ConfirmImportPressed)
-                        },
-                        onCancelPressed = {
-                            viewModel.onEvent(PresetsViewEvent.CancelImportPressed)
-                        }
-                    )
+                    if (isLandscape()) {
+                        IncomingPresetsLandscapeContent(
+                            paramsToImport = state.paramsToImport,
+                            onImportPressed = {
+                                viewModel.onEvent(PresetsViewEvent.ConfirmImportPressed)
+                            },
+                            onCancelPressed = {
+                                viewModel.onEvent(PresetsViewEvent.CancelImportPressed)
+                            }
+                        )
+                    } else {
+                        IncomingPresetsContent(
+                            paramsToImport = state.paramsToImport,
+                            onImportPressed = {
+                                viewModel.onEvent(PresetsViewEvent.ConfirmImportPressed)
+                            },
+                            onCancelPressed = {
+                                viewModel.onEvent(PresetsViewEvent.CancelImportPressed)
+                            }
+                        )
+                    }
                 }
 
                 IncomingPresetsScreenState.Loading -> {
@@ -261,6 +274,127 @@ private fun IncomingPresetsContent(
                 )
             ) {
                 Text(text = stringResource(R.string.import_text))
+            }
+        }
+    }
+}
+
+@Composable
+private fun IncomingPresetsLandscapeContent(
+    paramsToImport: List<KernelParam>,
+    onImportPressed: () -> Unit,
+    onCancelPressed: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            itemsIndexed(
+                items = paramsToImport,
+                key = { index, item -> item.name }
+            ) { index, item ->
+                Row(
+                    modifier = Modifier
+                        .height(IntrinsicSize.Min)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(36.dp)
+                            .fillMaxHeight()
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    ) {
+                        Text(
+                            text = "${index + 1}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp)
+                        )
+                    }
+
+                    val text = buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            append(item.name)
+                        }
+                        append("=")
+                        withStyle(
+                            SpanStyle(
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
+                            append(item.value)
+                        }
+                    }
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(4.dp)
+                    )
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.parameters_found_format, paramsToImport.size),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+            )
+
+            Row(
+                modifier = Modifier.padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+            ) {
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = onCancelPressed
+                ) {
+                    Text(text = stringResource(android.R.string.cancel))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = onImportPressed,
+                    enabled = paramsToImport.isNotEmpty(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Text(text = stringResource(R.string.import_text))
+                }
             }
         }
     }

@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
@@ -52,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.models.SearchHint
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
@@ -262,10 +265,18 @@ private fun SearchViewContent(
 ) {
     val historyHints = searchHints.filter { it.isFromHistory }
     val suggestionHints = searchHints.filter { !it.isFromHistory }
+    val columnsCount = if (isLandscape()) 2 else 1
+    val hintItemColumns = GridCells.Fixed(columnsCount)
 
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    LazyVerticalGrid(
+        columns = hintItemColumns,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         if (historyHints.isNotEmpty()) {
-            item(key = "history_header") {
+            item(
+                key = "history_header",
+                span = { GridItemSpan(maxLineSpan) }
+            ) {
                 Text(
                     text = stringResource(R.string.recent_searches),
                     style = MaterialTheme.typography.titleSmall,
@@ -273,6 +284,7 @@ private fun SearchViewContent(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .animateItem()
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
@@ -307,22 +319,37 @@ private fun SearchViewContent(
                         }
                         .animateItem()
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
+
             if (suggestionHints.isNotEmpty()) {
-                item { HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) }
+                item(
+                    key = "history_suggestion_divider",
+                    span = { GridItemSpan(maxLineSpan) }
+                ) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .padding(horizontal = 16.dp)
+                    )
+                }
             }
         }
 
         if (suggestionHints.isNotEmpty()) {
-            item {
+            item(
+                key = "suggestions_header",
+                span = { GridItemSpan(maxLineSpan) }
+            ) {
                 Text(
                     text = stringResource(R.string.suggestions),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
             items(suggestionHints, key = { "hint:${it.hint}" }) { hintItem ->
@@ -338,13 +365,16 @@ private fun SearchViewContent(
                             onSearchActiveChange(false)
                         }
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 8.dp, vertical = 4.dp) // Padding for grid spacing
                 )
             }
         }
 
         if (searchHints.isEmpty() && searchQuery.isBlank()) {
-            item {
+            item(
+                key = "empty_search_suggestions",
+                span = { GridItemSpan(maxLineSpan) }
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -364,21 +394,25 @@ private fun SearchResultsContent(
     searchQuery: String,
     onParamClicked: (UiKernelParam) -> Unit
 ) {
+    val columns = if (isLandscape()) 2 else 1
     if (searchResults.isNotEmpty()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 8.dp)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 8.dp)
         ) {
             itemsIndexed(searchResults) { index, param ->
                 ParamRow(
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier
+                        .animateItem()
+                        .fillMaxWidth()
+                        .padding(4.dp),
                     param = param,
                     showFullName = true,
                     onParamClicked = onParamClicked
                 )
 
-                if (index < searchResults.lastIndex) {
+                if (columns == 1 && index < searchResults.lastIndex) {
                     HorizontalDivider()
                 }
             }

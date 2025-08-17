@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
@@ -36,11 +37,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.ui.main.MainViewEffect
@@ -95,7 +97,10 @@ fun UserParamsScreen(
                 is UserParamsViewEffect.ShowUndoSnackBar -> {
                     mainViewModel.onEvent(
                         MainViewEvent.ShowSnackbarRequested(
-                            message = context.getString(R.string.favorite_param_deleted_format, effect.param.name),
+                            message = context.getString(
+                                R.string.favorite_param_deleted_format,
+                                effect.param.name
+                            ),
                             actionLabel = context.getString(R.string.undo)
                         )
                     )
@@ -123,7 +128,9 @@ private fun FavoritesScreenContent(
     onParamClicked: (UiKernelParam) -> Unit,
     onParamDeleteRequested: (UiKernelParam) -> Unit
 ) {
-    val listState = rememberLazyListState()
+    val isLandscape = isLandscape()
+    val gridState = rememberLazyGridState()
+    val columns = if (isLandscape) 2 else 1
 
     AnimatedVisibility(visible = loading, enter = fadeIn(), exit = fadeOut()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -156,15 +163,15 @@ private fun FavoritesScreenContent(
         return
     }
 
-    LazyColumn(
-        state = listState,
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columns),
+        state = gridState,
         modifier = Modifier.fillMaxSize()
     ) {
-        items(
-            count = favoriteParams.size,
-            key = { index -> favoriteParams[index].name }
-        ) { index ->
-            val param = favoriteParams[index]
+        itemsIndexed(
+            items = favoriteParams,
+            key = { _, param -> param.name }
+        ) { index, param ->
             var showParam by remember { mutableStateOf(true) }
             val dismissState = rememberSwipeToDismissBoxState()
 
@@ -211,23 +218,21 @@ private fun FavoritesScreenContent(
                     }
                 ) {
                     ParamFileRow(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .fillMaxWidth(),
                         param = param,
-                        showFavoriteIcon = false,
+                        showFavoriteIcon = true,
                         onParamClicked = onParamClicked
                     )
                 }
-            }
-
-            if (index < favoriteParams.lastIndex && showParam) {
-                HorizontalDivider()
             }
         }
     }
 }
 
 @Composable
-@Preview
+@PreviewScreenSizes
 private fun FavoriteScreenContentPreview() {
     val params = listOf(
         UiKernelParam(

@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -24,12 +23,13 @@ import com.androidvip.sysctlgui.ui.user.UserParamsScreen
 
 @Composable
 internal fun AppNavHost(
-    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues, // Handled in the outer scope, this is for inner scaffolds
     navController: NavHostController,
     startDestination: UiRoute = UiRoute.BrowseParams
 ) {
     NavHost(
-        modifier = Modifier.padding(innerPadding),
+        modifier = modifier,
         navController = navController,
         startDestination = startDestination,
         enterTransition = { scaleIn(initialScale = 0.9f) + fadeIn() },
