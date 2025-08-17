@@ -1,6 +1,7 @@
 package com.androidvip.sysctlgui.ui.main
 
 import androidx.compose.material3.SnackbarResult
+import com.androidvip.sysctlgui.data.repository.CONTRAST_LEVEL_NORMAL
 
 data class MainViewState(
     val topBarTitle: String = "SysctlGUI",
@@ -8,6 +9,12 @@ data class MainViewState(
     val showNavBar: Boolean = true,
     val showBackButton: Boolean = false,
     val showSearchAction: Boolean = true
+)
+
+data class ThemeSettings(
+    val forceDark: Boolean = false,
+    val dynamicColors: Boolean = false,
+    val contrastLevel: Int = CONTRAST_LEVEL_NORMAL
 )
 
 sealed interface MainViewEffect {

@@ -1,6 +1,7 @@
 package com.androidvip.sysctlgui.ui.main
 
 import android.app.NotificationManager
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,7 +12,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.core.os.postDelayed
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.domain.enums.Actions
@@ -20,31 +24,26 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
     private val prefs: AppPrefs by inject()
+    private val mainViewModel: MainViewModel by inject()
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.auto(
-                lightScrim = Color.TRANSPARENT,
-                darkScrim = Color.TRANSPARENT,
-                detectDarkMode = { resources ->
-                    prefs.forceDark ||
-                        resources.configuration.uiMode and
-                            android.content.res.Configuration.UI_MODE_NIGHT_MASK ==
-                            android.content.res.Configuration.UI_MODE_NIGHT_YES
-                }
-            )
-        )
+        updateEdgeToEdgeConfiguration(prefs.forceDark)
 
         setContent {
-            // TODO: Make the switch dynamic with the view model
-            // TODO: Translations
+            val themeState by mainViewModel.themeState.collectAsStateWithLifecycle()
+            val forceDark = themeState.forceDark
+
+            LaunchedEffect(forceDark) {
+                updateEdgeToEdgeConfiguration(forceDark)
+            }
+
             SysctlGuiTheme(
-                darkTheme = prefs.forceDark || isSystemInDarkTheme(),
-                contrastLevel = prefs.contrastLevel,
-                dynamicColor = prefs.dynamicColors
+                darkTheme = forceDark || isSystemInDarkTheme(),
+                contrastLevel = themeState.contrastLevel,
+                dynamicColor = themeState.dynamicColors
             ) {
                 MainScreen(startDestination = getRouteFromIntent())
             }
@@ -53,6 +52,20 @@ class MainActivity : ComponentActivity() {
         Handler(mainLooper).postDelayed(1000) {
             checkNotificationPermission()
         }
+    }
+
+    private fun updateEdgeToEdgeConfiguration(forceDark: Boolean) {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(
+                lightScrim = Color.TRANSPARENT,
+                darkScrim = Color.TRANSPARENT,
+                detectDarkMode = { resources ->
+                    val isSystemDark = resources.configuration.uiMode and
+                            Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                    forceDark || isSystemDark
+                }
+            )
+        )
     }
 
     private fun getRouteFromIntent(): UiRoute {

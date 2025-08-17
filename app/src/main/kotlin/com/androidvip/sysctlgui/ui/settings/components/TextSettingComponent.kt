@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.domain.enums.SettingItemType
@@ -46,7 +47,6 @@ fun TextSettingComponent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(space = 16.dp)
         ) {
-
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -62,27 +62,27 @@ fun TextSettingComponent(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-    }
 
-
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        appSetting.values?.forEach { item ->
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = item as String,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                onClick = {
-                    onValueChange(item as String)
-                    expanded = false
-                }
-            )
+        DropdownMenu(
+            expanded = expanded,
+            offset = DpOffset(16.dp, (-32).dp),
+            onDismissRequest = { expanded = false }
+        ) {
+            appSetting.values?.forEach { item ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = item as String,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    onClick = {
+                        onValueChange(item as String)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
