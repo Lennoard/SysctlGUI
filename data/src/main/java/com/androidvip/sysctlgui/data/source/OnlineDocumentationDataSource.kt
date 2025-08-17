@@ -104,14 +104,17 @@ class OnlineDocumentationDataSource(
     private fun String.optimizedDocumentationHtml(): String {
         return this.trimIndent()
             .replace("<pre>", "<font face=\"monospace\"><b>")
-            .replace("</pre>", "</b><font>") // For "code" blocks
-            .replace("<code>", "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">")
-            .replace("<code ", "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\" ")
-            .replace("</code>", "</span></b></font>") // For code tags
-            .replace("<li><p>", "<li>")
-            .replace("</p></li>", "</li>") // For spaced bullet points
-            .replace("<p>", "<br /><p>") // For line breaks in paragraphs
-            .removeSuffix("<br />") // Remove the last line break
+            .replace("</pre>", "</b></font>")  // For "code" blocks
+            .replace(
+                "<code ", // Handles <code ATTRIBUTES...>
+                "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\" "
+            )
+            .replace(
+                "<code>", // Handles <code NO ATTRIBUTES>
+                "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">"
+            )
+            .replace("</code>", "</span></b></font>") // Universal closer for the above
+            .removeSuffix("<br />")
     }
 
     companion object {

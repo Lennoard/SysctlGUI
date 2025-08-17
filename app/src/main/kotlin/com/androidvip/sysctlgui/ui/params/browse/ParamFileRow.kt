@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -43,9 +44,9 @@ fun ParamFileRow(
 ) {
     Box(modifier = Modifier.clickable { onParamClicked(param) }) {
         val rowDescription = if (param.isDirectory) {
-            "Directory: ${param.name}"
+            stringResource(R.string.acessibility_directory_description_format, param.name)
         } else {
-            "Parameter: ${param.name}"
+            stringResource(R.string.acessibility_param_description_format, param.name)
         }
         Row(
             modifier = modifier
@@ -101,7 +102,7 @@ private fun ParamIcon(param: UiKernelParam) {
         }
     }
 
-    val iconId = if (param.isDirectory) R.drawable.ic_folder  else R.drawable.ic_file
+    val iconId = if (param.isDirectory) R.drawable.ic_folder else R.drawable.ic_file
 
     Box(
         modifier = Modifier
@@ -112,7 +113,7 @@ private fun ParamIcon(param: UiKernelParam) {
     ) {
         Icon(
             painter = painterResource(iconId),
-            contentDescription = "Parameter icon",
+            contentDescription = stringResource(R.string.acessibility_param_icon_description),
             modifier = Modifier.size(24.dp),
             tint = iconColor
         )
@@ -124,14 +125,14 @@ private fun TrailingIcon(param: UiKernelParam, showFavoriteIcon: Boolean) {
     if (param.isDirectory) {
         Icon(
             imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-            contentDescription = "Navigate do directory",
+            contentDescription = stringResource(R.string.acessibility_davegate_to_directory_description),
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else if (param.isFavorite && showFavoriteIcon) {
         Icon(
             imageVector = Icons.Rounded.Favorite,
-            contentDescription = "Favorite",
+            contentDescription = stringResource(R.string.favorites),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)
         )

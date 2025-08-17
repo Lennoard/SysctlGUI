@@ -85,7 +85,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
                 .fillMaxWidth()
                 .clickable(
                     onClick = actionRunCallback<ViewKernelParamDetailsAction>(
-                        parameters = actionParametersOf(kernelParamNameKey to param.path)
+                        parameters = actionParametersOf(kernelParamNameKey to param.name)
                     )
                 )
         ) {

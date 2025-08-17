@@ -58,6 +58,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLinkStyles
@@ -98,19 +99,20 @@ fun EditParamScreen(
 ) {
     val context = LocalContext.current
     val state = viewModel.uiState.collectAsStateWithLifecycle()
-    val taskerListOptions = listOf("Primary", "Secondary")
+    val taskerListOptions = stringArrayResource(R.array.tasker_lists).toList()
     var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(false) }
     var selectedOptionIndex by rememberSaveable {
         mutableIntStateOf(Consts.LIST_NUMBER_PRIMARY_TASKER)
     }
     var errorMessage by rememberSaveable { mutableStateOf("") }
     var showError by rememberSaveable { mutableStateOf(false) }
+    val appBarTitle = stringResource(R.string.edit_params)
 
     LaunchedEffect(Unit) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
-                    topBarTitle = "Edit kernel parameter",
+                    topBarTitle = appBarTitle,
                     showTopBar = true,
                     showNavBar = false,
                     showBackButton = true,
@@ -126,6 +128,8 @@ fun EditParamScreen(
         }
     }
 
+    val successMessage = stringResource(R.string.value_applied_successfully)
+    val undoText = stringResource(R.string.undo)
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -141,8 +145,8 @@ fun EditParamScreen(
                 is EditParamViewEffect.ShowApplySuccess -> {
                     mainViewModel.onEvent(
                         MainViewEvent.ShowSnackbarRequested(
-                            message = "Value applied successfully",
-                            actionLabel = "Undo"
+                            message = successMessage,
+                            actionLabel = undoText
                         )
                     )
                 }
@@ -173,7 +177,7 @@ fun EditParamScreen(
 
     SingleChoiceDialog(
         showDialog = showSelectTaskerListDialog,
-        title = "Choose a Tasker list",
+        title = stringResource(R.string.select_tasker_list),
         options = taskerListOptions,
         initialSelectedOptionIndex = selectedOptionIndex,
         onDismissRequest = { showSelectTaskerListDialog = false },
@@ -205,14 +209,18 @@ private fun EditParamContent(
 
     val copyParamContentToClipboard = {
         val clipData = ClipData.newPlainText(
-            "Kernel Parameter",
+            context.getString(R.string.kernel_params),
             "${param.lastNameSegment}=${param.value} (${param.path})"
         )
         val clipEntry = ClipEntry(clipData)
         coroutineScope.launch {
             clipboardManager.setClipEntry(clipEntry)
         }
-        Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            context,
+            context.getString(R.string.copied_to_clipboard),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     Column(
@@ -235,7 +243,11 @@ private fun EditParamContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            Toast.makeText(context, "Long press to copy", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.long_press_to_copy),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
                         onLongClick = copyParamContentToClipboard
                     )
@@ -297,11 +309,11 @@ private fun EditParamContent(
                 AssistChip(
                     onClick = { onTaskerClicked(true) },
                     modifier = Modifier.padding(16.dp),
-                    label = { Text(text = "Tasker list: $listName") },
+                    label = { Text(text = stringResource(R.string.tasker_list_format, listName)) },
                     leadingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_tasker),
-                            contentDescription = "Tasker list",
+                            contentDescription = stringResource(R.string.tasker_list),
                             tint = MaterialTheme.colorScheme.tertiary
                         )
                     }
@@ -355,7 +367,7 @@ private fun ParamValueContent(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Parameter value",
+                text = stringResource(R.string.parameter_value),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -388,13 +400,13 @@ private fun ParamValueContent(
                 if (editingActive) {
                     Icon(
                         imageVector = Icons.Rounded.Done,
-                        contentDescription = "Apply",
+                        contentDescription = stringResource(R.string.apply_param),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
-                        contentDescription = "Edit",
+                        contentDescription = stringResource(R.string.edit),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -432,7 +444,7 @@ fun EditableParamValue(
                 OutlinedTextField(
                     value = editedValue,
                     onValueChange = onEditorValueChange,
-                    label = { Text("New value") },
+                    label = { Text(stringResource(R.string.new_value)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
                     modifier = Modifier.fillMaxWidth()
@@ -459,7 +471,7 @@ private fun ParamDocs(
 
     Column(modifier = modifier) {
         Text(
-            text = "Documentation",
+            text = stringResource(R.string.documentation),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -492,7 +504,7 @@ private fun ParamDocs(
                             tint = MaterialTheme.colorScheme.onErrorContainer
                         )
                         Text(
-                            text = "No documentation available",
+                            text = stringResource(R.string.no_info_available),
                             style = MaterialTheme.typography.bodyLarge.copy(),
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onErrorContainer
@@ -547,7 +559,7 @@ private fun DocumentationContent(
                 .padding(vertical = 8.dp)
                 .align(Alignment.End)
         ) {
-            Text(text = "Read more")
+            Text(text = stringResource(R.string.read_more))
         }
     }
 }

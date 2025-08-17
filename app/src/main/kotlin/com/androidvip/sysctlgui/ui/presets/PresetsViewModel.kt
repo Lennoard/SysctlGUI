@@ -47,7 +47,7 @@ class PresetsViewModel(
                 }
             }.onFailure {
                 setState { copy(incomingPresetsScreenState = IncomingPresetsScreenState.Idle) }
-                setEffect { PresetsViewEffect.ShowError("Failed to import params") }
+                setEffect { PresetsViewEffect.ShowError(stringProvider.getString(R.string.import_failure)) }
             }
         }
     }
@@ -96,7 +96,7 @@ class PresetsViewModel(
                 runCatching {
                     presetsFileProcessor.backupParamsToUri(uri, userParams)
                 }.onSuccess {
-                    setEffect { PresetsViewEffect.ShowToast("Export complete") }
+                    setEffect { PresetsViewEffect.ShowToast(stringProvider.getString(R.string.export_complete)) }
                 }.onFailure {
                     setEffect { PresetsViewEffect.ShowError(stringProvider.getString(R.string.preset_error_processing_file)) }
                 }

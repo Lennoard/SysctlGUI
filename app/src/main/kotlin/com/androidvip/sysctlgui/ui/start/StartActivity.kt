@@ -7,13 +7,13 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.utils.RootUtils
 import com.androidvip.sysctlgui.databinding.ActivitySplashBinding
 import com.androidvip.sysctlgui.domain.enums.Actions
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
-import com.androidvip.sysctlgui.goAway
 import com.androidvip.sysctlgui.toast
 import com.androidvip.sysctlgui.ui.main.MainActivity
 import kotlinx.coroutines.delay
@@ -41,8 +41,6 @@ class StartActivity : AppCompatActivity() {
             binding.splashStatusText.setText(R.string.splash_status_checking_busybox)
             val isBusyBoxAvailable = checkBusyBox()
 
-            binding.splashStatusText.setText(R.string.splash_status_checking_migration)
-
             if (isRootAccessGiven) {
                 if (!isBusyBoxAvailable) {
                     prefs.useBusybox = false
@@ -50,7 +48,7 @@ class StartActivity : AppCompatActivity() {
                 navigate()
                 finish()
             } else {
-                binding.splashProgress.goAway()
+                binding.splashProgress.isVisible = false
                 toast(R.string.root_not_found_sum, Toast.LENGTH_LONG)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     startActivity(

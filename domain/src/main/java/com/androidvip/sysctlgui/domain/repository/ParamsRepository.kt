@@ -1,7 +1,7 @@
 package com.androidvip.sysctlgui.domain.repository
 
-import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.enums.CommitMode
+import com.androidvip.sysctlgui.domain.models.KernelParam
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 
@@ -62,8 +62,4 @@ interface ParamsRepository {
      * @return A list of [KernelParam] objects found in the given path.
      */
     fun getParamsFromPath(path: String): Flow<List<KernelParam>>
-
-    companion object {
-        const val DEFAULT_ERROR_MESSAGE = "error"
-    }
 }

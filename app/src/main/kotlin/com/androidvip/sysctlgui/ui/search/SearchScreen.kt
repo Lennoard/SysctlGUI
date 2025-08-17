@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -160,7 +161,7 @@ private fun SearchScreenContent(
                         onSearch = onSearch,
                         expanded = searchActive,
                         onExpandedChange = onActiveChange,
-                        placeholder = { Text("Search kernel parameters") },
+                        placeholder = { Text(stringResource(R.string.search_title)) },
                         leadingIcon = {
                             AnimatedContent(
                                 targetState = searchActive,
@@ -174,11 +175,16 @@ private fun SearchScreenContent(
                                     }) {
                                         Icon(
                                             Icons.AutoMirrored.Rounded.ArrowBack,
-                                            contentDescription = "Back"
+                                            contentDescription = stringResource(R.string.go_back)
                                         )
                                     }
                                 } else {
-                                    Icon(Icons.Rounded.Search, contentDescription = "Search Icon")
+                                    Icon(
+                                        imageVector = Icons.Rounded.Search,
+                                        contentDescription = stringResource(
+                                            R.string.acessibility_search_icon
+                                        )
+                                    )
                                 }
                             }
                         },
@@ -191,7 +197,10 @@ private fun SearchScreenContent(
                                 IconButton(onClick = {
                                     onSearchQueryChange("")
                                 }) {
-                                    Icon(Icons.Rounded.Clear, contentDescription = "Clear search")
+                                    Icon(
+                                        imageVector = Icons.Rounded.Clear,
+                                        contentDescription = stringResource(R.string.clear_search)
+                                    )
                                 }
                             }
                         },
@@ -258,7 +267,7 @@ private fun SearchViewContent(
         if (historyHints.isNotEmpty()) {
             item(key = "history_header") {
                 Text(
-                    text = "Recent Searches",
+                    text = stringResource(R.string.recent_searches),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -276,7 +285,7 @@ private fun SearchViewContent(
                     leadingContent = {
                         Icon(
                             painter = painterResource(R.drawable.ic_history),
-                            contentDescription = "History item"
+                            contentDescription = stringResource(R.string.history_item)
                         )
                     },
                     trailingContent = {
@@ -286,7 +295,7 @@ private fun SearchViewContent(
                         ) {
                             Icon(
                                 Icons.Rounded.Clear,
-                                contentDescription = "Clear history item"
+                                contentDescription = stringResource(R.string.clear_history_item)
                             )
                         }
                     },
@@ -342,7 +351,7 @@ private fun SearchViewContent(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No suggestions available.")
+                    Text(stringResource(R.string.search_no_suggestions))
                 }
             }
         }
@@ -382,7 +391,7 @@ private fun SearchResultsContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "No results found for \"$searchQuery\"",
+                text = stringResource(R.string.search_no_results_format, searchQuery),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
@@ -397,7 +406,7 @@ private fun SearchResultsContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Enter a query to search for kernel parameters.",
+                text = stringResource(R.string.search_message),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,

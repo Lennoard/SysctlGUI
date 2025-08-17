@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
@@ -137,14 +138,14 @@ private fun PresetsScreenContent(
     ) {
         ImportCards(
             onClick = onImportPressed,
-            title = "Import",
-            description = "Import presets from a file",
+            title = stringResource(R.string.import_text),
+            description = stringResource(R.string.import_presets_description),
             iconRes = R.drawable.ic_import
         )
         ImportCards(
             onClick = onExportPressed,
-            title = "Export",
-            description = "Export presets to a file",
+            title = stringResource(R.string.export),
+            description = stringResource(R.string.export_presets_description),
             iconRes = R.drawable.ic_export
         )
 

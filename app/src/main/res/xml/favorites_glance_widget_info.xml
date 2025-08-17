@@ -2,7 +2,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:minWidth="180dp"
-    android:minHeight="64dp"
+    android:minHeight="72dp"
     android:description="@string/favorites"
     android:previewImage="@drawable/favorites_appwidget_preview"
     android:previewLayout="@layout/favorites_widget"
