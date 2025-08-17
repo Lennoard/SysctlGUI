@@ -6,5 +6,12 @@
         android:width="108dp"
         android:height="108dp" />
 
-    <solid android:color="@color/md_theme_light_secondaryContainer" />
+    <gradient
+        android:centerX="50%"
+        android:centerY="120%"
+        android:gradientRadius="100%p"
+        android:startColor="@color/colorPrimary"
+        android:centerColor="@color/md_theme_light_primaryContainer"
+        android:endColor="@color/white"
+        android:type="radial" />
 </shape>
