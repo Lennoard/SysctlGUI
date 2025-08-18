@@ -65,7 +65,7 @@ fun MainTopBar(
 private fun MainTopBarPreview() {
     SysctlGuiTheme {
         MainTopBar(
-            title = "SysctlGUI",
+            title = "Sysctl GUI",
             showBack = false,
             showSearch = true,
             onSearchPressed = {},

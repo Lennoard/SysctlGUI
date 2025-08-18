@@ -40,9 +40,9 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
             prefs.edit { putString(Prefs.CommitMode.key, value) }
         }
     override var allowBlankValues: Boolean
-        get() = prefs.getBoolean(Prefs.ALLOW_BLANK.key, false)
+        get() = prefs.getBoolean(Prefs.AllowBlankValues.key, false)
         set(value) {
-            prefs.edit { putBoolean(Prefs.ALLOW_BLANK.key, value) }
+            prefs.edit { putBoolean(Prefs.AllowBlankValues.key, value) }
         }
     override var useBusybox: Boolean
         get() = prefs.getBoolean(Prefs.UseBusybox.key, false)

@@ -102,4 +102,7 @@
     <string name="apply_error_command_execution_failed">Falha na execução do comando</string>
     <string name="suggestions">Sugestões</string>
     <string name="favorite_widget_title">Parâmetros favoritos</string>
+    <string name="history_deleted">Histórico deletado</string>
+    <string name="startup_params">Parâmetros da inicialização</string>
+    <string name="sysctl_help">Sysctl é usado para modificar parâmetros do kernel em tempo de execução. Os parâmetros disponíveis são aqueles listados em /proc/sys e o objetivo principal deste aplicativo é fornecer uma maneira gráfica de editá-los.</string>
 </resources>

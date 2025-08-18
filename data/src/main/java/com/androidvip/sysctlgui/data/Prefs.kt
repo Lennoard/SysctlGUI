@@ -4,7 +4,7 @@ enum class Prefs(val key: String) {
     ListFoldersFirst("list_folders_first"),
     GuessInputType("guess_input_type"),
     CommitMode("commit_mode"),
-    ALLOW_BLANK("allow_blank_values"),
+    AllowBlankValues("allow_blank_values"),
     UseBusybox("use_busybox"),
     RunOnStartup("run_on_start_up"),
     StartupDelay("startup_delay"),

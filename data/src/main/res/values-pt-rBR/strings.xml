@@ -27,4 +27,14 @@
     <string name="prefs_startup_delay_description">Atraso em segundos antes de reaplicar os parâmetros na inicialização</string>
     <string name="prefs_manage_parameters_title">Gerenciar parâmetros</string>
     <string name="prefs_manage_parameters_description">Gerenciar os parâmetros que serão aplicados na inicialização</string>
+    <string name="prefs_show_tasker_toast_title">Mostrar toast do Tasker</string>
+    <string name="prefs_show_toast_description">Mostrar uma mensagem quando um parâmetro do Tasker for aplicado</string>
+    <string name="pref_search_history_title">Histórico de pesquisa</string>
+    <string name="pref_search_history_description">Toque para limpar o histórico de pesquisa</string>
+    <string name="prefs_category_others">Outros</string>
+    <string name="pref_source_code_title">Código fonte</string>
+    <string name="pref_source_code_description">Confira o código fonte no GitHub!</string>
+    <string name="pref_contributors_title">Contribuidores</string>
+    <string name="pref_translations_title">Traduções</string>
+    <string name="pref_translations_description">Ajude a traduzir este aplicativo</string>
 </resources>

@@ -3,16 +3,23 @@ package com.androidvip.sysctlgui.ui.settings
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +28,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.data.Prefs
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
@@ -38,11 +50,13 @@ import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.ui.settings.components.HeaderComponent
+import com.androidvip.sysctlgui.ui.settings.components.SettingsComponentColumn
 import com.androidvip.sysctlgui.ui.settings.components.SliderSettingComponent
 import com.androidvip.sysctlgui.ui.settings.components.SwitchSettingComponent
 import com.androidvip.sysctlgui.ui.settings.components.TextSettingComponent
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEffect
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEvent
+import com.androidvip.sysctlgui.utils.browse
 import org.koin.androidx.compose.koinViewModel
 
 internal const val DISABLED_ALPHA = 0.38f
@@ -51,7 +65,7 @@ internal const val DISABLED_ALPHA = 0.38f
 internal fun SettingsScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     viewModel: SettingsViewModel = koinViewModel(),
-    onNavigateToUserParams: () -> Unit
+    onNavigate: (UiRoute) -> Unit
 ) {
     val state = viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -97,13 +111,27 @@ internal fun SettingsScreen(
                         }
                     }
                 }
+
+                is SettingsViewEffect.OpenBrowser -> {
+                    context.browse(effect.url)
+                }
+
+                is SettingsViewEffect.Navigate -> {
+                    onNavigate(effect.route)
+                }
+
+                is SettingsViewEffect.ShowToast -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
     SettingsScreenContent(
         settings = state.value.settings,
-        onNavigateToUserParams = onNavigateToUserParams,
+        onSettingHeaderClicked = { appSetting ->
+            viewModel.onEvent(SettingsViewEvent.SettingHeaderClicked(appSetting))
+        },
         onValueChanged = { appSetting, newValue ->
             viewModel.onEvent(SettingsViewEvent.SettingValueChanged(appSetting, newValue))
         }
@@ -113,7 +141,7 @@ internal fun SettingsScreen(
 @Composable
 private fun SettingsScreenContent(
     settings: List<AppSetting<*>> = emptyList(),
-    onNavigateToUserParams: () -> Unit,
+    onSettingHeaderClicked: (AppSetting<*>) -> Unit,
     onValueChanged: (AppSetting<*>, Any) -> Unit
 ) {
     val groupedSettings = settings.groupBy { it.category }
@@ -157,7 +185,7 @@ private fun SettingsScreenContent(
                         HeaderComponent(
                             modifier = itemModifier,
                             appSetting = appSetting,
-                            onClick = onNavigateToUserParams
+                            onClick = { onSettingHeaderClicked(appSetting) }
                         )
                     }
                     SettingItemType.List -> {
@@ -189,6 +217,47 @@ private fun SettingsScreenContent(
                     }
                 }
             }
+        }
+
+        item(span = { GridItemSpan(columns) }) {
+            Box(contentAlignment = Alignment.Center) {
+                Row(
+                    modifier = Modifier.padding(all = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(space = 16.dp)
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Rounded.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                    SettingsComponentColumn(
+                        title = stringResource(R.string.about),
+                        description = stringResource(R.string.sysctl_help),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+
+        item(span = { GridItemSpan(columns) }) {
+            Text(
+                text = "Developed with ❤️ by Lennoard Silva\nAndroid enthusiast 🤖",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top  = 64.dp,
+                        bottom = 32.dp,
+                        start = 24.dp,
+                        end = 24.dp,
+                    )
+            )
         }
     }
 }
@@ -257,7 +326,7 @@ internal fun SettingsScreenPreview() {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
             SettingsScreenContent(
                 settings = settings,
-                onNavigateToUserParams = {},
+                onSettingHeaderClicked = {},
                 onValueChanged = { _, _ -> }
             )
         }
