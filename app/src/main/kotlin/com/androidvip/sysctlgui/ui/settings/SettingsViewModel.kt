@@ -3,8 +3,16 @@ package com.androidvip.sysctlgui.ui.settings
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import androidx.lifecycle.viewModelScope
+import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.data.Prefs
+import com.androidvip.sysctlgui.domain.StringProvider
 import com.androidvip.sysctlgui.domain.enums.SettingItemType
+import com.androidvip.sysctlgui.domain.models.KEY_CONTRIBUTORS
+import com.androidvip.sysctlgui.domain.models.KEY_DELETE_HISTORY
+import com.androidvip.sysctlgui.domain.models.KEY_MANAGE_PARAMS
+import com.androidvip.sysctlgui.domain.models.KEY_SOURCE_CODE
+import com.androidvip.sysctlgui.domain.models.KEY_TRANSLATIONS
 import com.androidvip.sysctlgui.domain.usecase.GetAppSettingsUseCase
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEffect
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEvent
@@ -14,7 +22,8 @@ import kotlinx.coroutines.launch
 
 class SettingsViewModel(
     private val sharedPreferences: SharedPreferences,
-    private val getSettings: GetAppSettingsUseCase
+    private val getSettings: GetAppSettingsUseCase,
+    private val stringProvider: StringProvider
 ) : BaseViewModel<SettingsViewEvent, SettingsViewState, SettingsViewEffect>() {
 
     init {
@@ -64,6 +73,27 @@ class SettingsViewModel(
 
                 viewModelScope.launch {
                     loadSettings()
+                }
+            }
+
+            is SettingsViewEvent.SettingHeaderClicked<*> -> {
+                when (event.appSetting.key) {
+                    KEY_MANAGE_PARAMS -> {
+                        setEffect { SettingsViewEffect.Navigate(UiRoute.UserParams) }
+                    }
+
+                    KEY_DELETE_HISTORY -> {
+                        sharedPreferences.edit { remove(Prefs.SearchHistory.key) }
+                        setEffect {
+                            SettingsViewEffect.ShowToast(stringProvider.getString(R.string.history_deleted))
+                        }
+                    }
+
+                    KEY_SOURCE_CODE, KEY_CONTRIBUTORS, KEY_TRANSLATIONS -> {
+                        setEffect {
+                            SettingsViewEffect.OpenBrowser(event.appSetting.value as String)
+                        }
+                    }
                 }
             }
         }

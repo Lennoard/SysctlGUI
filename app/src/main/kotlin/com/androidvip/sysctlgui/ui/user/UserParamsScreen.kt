@@ -65,6 +65,11 @@ fun UserParamsScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val appBarTitle = if (state.userParams.all { it.isFavorite }) {
+        stringResource(R.string.app_name)
+    } else {
+        stringResource(R.string.startup_params)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(UserParamsViewEvent.ScreenLoaded(filterPredicate))
@@ -72,6 +77,7 @@ fun UserParamsScreen(
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
+                    topBarTitle = appBarTitle,
                     showTopBar = true,
                     showNavBar = true,
                     showBackButton = false,

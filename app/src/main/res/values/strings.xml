@@ -102,4 +102,7 @@
     <string name="apply_error_command_execution_failed">Command execution failed</string>
     <string name="suggestions">Suggestions</string>
     <string name="favorite_widget_title">Favorite Kernel Params</string>
+    <string name="history_deleted">History deleted</string>
+    <string name="startup_params">Startup params</string>
+    <string name="sysctl_help">Sysctl is used to modify kernel parameters at runtime. The parameters available are those listed under /proc/sys and this app\'s main purpose is to provide a graphical way to edit them.</string>
 </resources>

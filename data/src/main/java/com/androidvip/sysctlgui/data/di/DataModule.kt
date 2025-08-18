@@ -60,6 +60,7 @@ val repositoryModule = module {
         AppSettingsRepositoryImpl(
             context = androidContext(),
             sharedPreferences = get(),
+            isTaskerInstalled = get(),
             rootUtils = get()
         )
     }

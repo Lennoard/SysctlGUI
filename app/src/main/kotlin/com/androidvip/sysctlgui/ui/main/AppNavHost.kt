@@ -84,8 +84,8 @@ internal fun AppNavHost(
 
         composable<UiRoute.Settings> {
             SettingsScreen(
-                onNavigateToUserParams = {
-                    navController.navigate(UiRoute.UserParams)
+                onNavigate = { route ->
+                    navController.navigate(route)
                 }
             )
         }

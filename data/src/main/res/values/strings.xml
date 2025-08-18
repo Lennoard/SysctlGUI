@@ -27,4 +27,14 @@
     <string name="prefs_startup_delay_description">Delay in seconds before applying parameters on startup</string>
     <string name="prefs_manage_parameters_title">Manage parameters</string>
     <string name="prefs_manage_parameters_description">Manage the parameters that will be applied at startup</string>
+    <string name="prefs_show_tasker_toast_title">Show Tasker toast</string>
+    <string name="prefs_show_toast_description">Show toast when a Tasker parameter is applied</string>
+    <string name="pref_search_history_title">Search history</string>
+    <string name="pref_search_history_description">Tap to clear search history</string>
+    <string name="prefs_category_others">Others</string>
+    <string name="pref_source_code_title">Source code</string>
+    <string name="pref_source_code_description">Check the sauce code on GitHub!</string>
+    <string name="pref_contributors_title">Contributors</string>
+    <string name="pref_translations_title">Translations</string>
+    <string name="pref_translations_description">Help translate this application</string>
 </resources>
