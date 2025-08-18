@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.androidvip.sysctlgui.design.theme.ColorKt { *; }
+-keep class com.androidvip.sysctlgui.design.theme.ThemeKt { *; }
+-keep class com.androidvip.sysctlgui.design.theme.TypeKt { *; }
+-keep class com.androidvip.sysctlgui.design.utils.UiUtilsKt { *; }

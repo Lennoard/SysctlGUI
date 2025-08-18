@@ -1,6 +1,5 @@
 package com.androidvip.sysctlgui.data.di
 
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.data.db.ParamDatabase
 import com.androidvip.sysctlgui.data.db.ParamDatabaseManager
@@ -25,9 +24,6 @@ import com.androidvip.sysctlgui.domain.repository.PresetRepository
 import com.androidvip.sysctlgui.domain.repository.UserRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
@@ -91,14 +87,14 @@ val networkModule = module {
                 socketTimeout = 5000
             }
 
-            install(Logging) {
+            /*install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
                         Log.v("KtorHttpClient", message)
                     }
                 }
                 level = LogLevel.BODY
-            }
+            }*/
         }
     }
 }

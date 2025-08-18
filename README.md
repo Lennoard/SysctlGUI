@@ -23,20 +23,43 @@ A GUI application for Android <code>sysctl</code> to edit kernel variables
 ## Features
 -  Browse filesystem for specific kernel parameters
 -  Select parameters from a searchable list
--  Information about known parameters
+-  Show documentation for known parameters
 -  Load parameters from a configuration file
 -  Reapply parameters at startup
 -  Mark parameters as favorite for easy access
 
 ## Technologies
 
--  MVI / MVVM for user params
--  [Jetpack Compose](https://developer.android.com/jetpack/compose)  Material 3 UI
--  [Jetpack Data Binding](https://developer.android.com/topic/libraries/data-binding)
--  [Jetpack View Binding](https://developer.android.com/topic/libraries/view-binding)
--  Lifecycle-aware Kotlin Coroutines
--  Kotlin Flows
--  Dependency injection with [Koin](https://insert-koin.io/)
+This project utilizes a modern Android development stack, leveraging a comprehensive suite of libraries and tools:
+
+-   **Core & Architecture:**
+    -   Architectural Patterns: MVI, reactive and maintainable.
+    -   [Kotlin](https://kotlinlang.org/): For modern, concise, and safe programming.
+    -   Android Jetpack:
+        -   [Lifecycle](https://developer.android.com/jetpack/androidx/releases/lifecycle)
+        -   [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
+        -   [Navigation Component](https://developer.android.com/guide/navigation)
+        -   [Room](https://developer.android.com/training/data-storage/room): For local data persistence.
+        -   [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager): For deferrable, asynchronous tasks.
+-   **UI Development:**
+    -   [Jetpack Compose](https://developer.android.com/jetpack/compose): For building native UIs with a declarative approach.
+        -   Compose Material 3 & Material Components
+    -   [Jetpack Glance](https://developer.android.com/develop/ui/compose/glance): For creating App Widgets with Jetpack Compose.
+-   **Asynchronous Programming:**
+    -   [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) & [Flows](https://kotlinlang.org/docs/flow.html): For efficient and structured background tasks and reactive data streams.
+-   **Utilities:**
+    -   [Koin](https://insert-koin.io/): Dependency injection framework for Kotlin.
+    -   [Ktor Client](https://ktor.io/docs/client-reference.html): For making HTTP requests (used for parameter documentation).
+    -   [Libsu](https://github.com/topjohnwu/libsu): For interacting with root services.
+    -   [Jsoup](https://jsoup.org/): For parsing HTML (used for parameter documentation).
+    -   [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization): For JSON serialization/deserialization.
+
+## Contributing
+
+We welcome contributions to SysctlGUI!
+
+### Translations
+If you'd like to help translate the app into other languages, please see the [translation guide](TRANSLATING.md) for instructions on how to get started. Your contributions will help make SysctlGUI accessible to a wider audience.
 
 ## Download
 
@@ -47,7 +70,7 @@ A GUI application for Android <code>sysctl</code> to edit kernel variables
 
 This project is licensed under the terms of the MIT license.
 
-> Copyright (c) 2019-2024 Lennoard.
+> Copyright (c) 2019-2025 Lennoard.
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
