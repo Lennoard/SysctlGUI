@@ -1,0 +1,1 @@
+-keep class com.androidvip.sysctlgui.data.models.KernelParamDTO { *; }

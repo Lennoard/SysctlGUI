@@ -20,21 +20,20 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class android.support.v7.widget.SearchView { *; }
--keep class androidx.appcompat.widget.SearchView { *; }
--keep class android.widget.SearchView { *; }
+-keepnames class androidx.lifecycle.ViewModel
+-keepclassmembers class * extends androidx.lifecycle.ViewModel { <init>(...); }
+-keepclassmembers class * implements androidx.lifecycle.LifecycleObserver { <init>(...); }
+-keepclassmembers class * implements androidx.lifecycle.LifecycleOwner { <init>(...); }
+-keepclassmembers class androidx.lifecycle.Lifecycle$State { *; }
+-keepclassmembers class androidx.lifecycle.Lifecycle$Event { *; }
+-keep class * implements androidx.lifecycle.LifecycleOwner { public <init>(...); }
+-keep class * implements androidx.lifecycle.LifecycleObserver { public <init>(...); }
 
--keepclassmembers enum * { *; }
+-keepclassmembers class com.androidvip.sysctlgui.ui.main.MainViewModel {
+    static void <clinit>();
+}
 
-# GSON config
--keep public class com.google.gson.**
--keep public class com.google.gson.** {public private protected *;}
--keepattributes *Annotation*,Signature
-
-# Gson specific classes
--keep class sun.misc.Unsafe { *; }
-
-# Application classes that will be serialized/deserialized over Gson
--keep class com.androidvip.sysctlgui.data.models.KernelParam { *; }
--keep class com.androidvip.sysctlgui.data.models.RoomKernelParam { *; }
--keep class com.androidvip.sysctlgui.domain.models.DomainKernelParam { *; }
+-keep class org.koin.core.instance.InstanceFactory { *; }
+-keep class * extends org.koin.core.module.Module
+-keep class org.koin.core.registry.ScopeRegistry { *; }
+-keep class org.koin.android.scope.AndroidScopeComponent

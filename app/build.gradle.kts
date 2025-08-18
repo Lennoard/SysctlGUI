@@ -17,8 +17,8 @@ android {
         applicationId = AppConfig.appId
         minSdk = AppConfig.minSdkVersion
         targetSdk = AppConfig.targetSdkVersion
-        versionCode = 16
-        versionName = "2.2.2"
+        versionCode = 17
+        versionName = "3.0.0"
         vectorDrawables.useSupportLibrary = true
         androidResources {
             localeFilters += listOf("en", "de", "pt-rBR", "tr")
@@ -31,6 +31,7 @@ android {
                 )
             }
         }
+        multiDexEnabled = true
     }
 
     signingConfigs {
@@ -58,8 +59,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-                "proguard-kt.pro"
+                "proguard-rules.pro"
             )
         }
     }
@@ -117,6 +117,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.window)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.multidex)
 
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -15,7 +15,7 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = !AppConfig.devCycle
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
