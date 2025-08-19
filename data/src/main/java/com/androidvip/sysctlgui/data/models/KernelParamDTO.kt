@@ -40,4 +40,4 @@ data class KernelParamDTO(
     }
 }
 
-internal const val PARAMS_TABLE_NAME = "roomKernelParam"
+internal const val PARAMS_TABLE_NAME = "RoomKernelParam" // For compatibility with older versions
