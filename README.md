@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="160" height="160" src="https://i.imgur.com/TPKCbg6.png"/>
+  <img width="192" height="192" src="img/icon.png"/>
 </p>
 
 # SysctlGUI
