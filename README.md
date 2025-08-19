@@ -25,6 +25,7 @@ making advanced kernel tweaking accessible and manageable.
 -  **Persistent Tweaks:** Automatically reapply your chosen settings on every boot.
 -  **Configuration Profiles:** Save and load sets of parameters from configuration files, making it simple to switch between different performance profiles or share your setup.
 -  **Favorites System:** Mark frequently used parameters for quick and easy access.
+-  **Tasker Integration:** Automate the application of kernel parameters in response to specific events using [Tasker](https://tasker.joaoapps.com/). SysctlGUI provides a Tasker plugin, allowing you to trigger parameter application based on a wide range of conditions/states.
 
 ## Technologies
 
@@ -59,14 +60,16 @@ Contributions are always welcomed. Please see the [contributing guide](CONTRIBUT
 ### Translations
 If you'd like to help translate the app into other languages, please see the [translation guide](TRANSLATING.md) for instructions on how to get started. Your contributions will help make SysctlGUI accessible to a wider audience.
 
-## Screenshots
 
-<p align="center">
-  <img height="360" src="https://lh3.googleusercontent.com/vmi_rXs0nfqfAh3woDLDRxDW0tx_UM1nx8zCda7nY4FoO6ebmvSQJaHT-GENzEOp34o"/>  
-  <img height="360" src="https://lh3.googleusercontent.com/DXaSIdkmBzUsQzPOkkIbY5YdKVsohcTb4IeSq9q70PPdG07yovHCD7X6XPebtesM0L0"/>  
-  <img height="360" src="https://lh3.googleusercontent.com/zrIdQ1jGiaDb_kfnxAPqd8bJwejjJzvq7whU-kGXvT0G86l3RHzuseAnZZpP7r3RaV0"/>  
-  <img height="360" src="https://lh3.googleusercontent.com/fpWBqB-qTRp1zfw6r7aBm6auQD7cdw-3vQbKsqwVVo5lcPHvQq96XKVdO1gRTydF8qU"/>  
-</p>
+## Screenshots
+<div align="center">
+
+|                                                        |                                                        |                                                        |                                                         |
+|:------------------------------------------------------:|:------------------------------------------------------:|:------------------------------------------------------:|:-------------------------------------------------------:|
+|<img src="img/ss01.png" alt="Screenshot 1" width="200"> |<img src="img/ss02.png" alt="Screenshot 2" width="200"> |<img src="img/ss03.png" alt="Screenshot 3" width="200"> | <img src="img/ss04.png" alt="Screenshot 4" width="200"> |
+
+</div>
+
 
 ## Download
 
