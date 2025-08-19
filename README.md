@@ -1,32 +1,30 @@
 <p align="center">
-  <img width="108" height="108" src="https://i.imgur.com/TPKCbg6.png"/>
-</p>
-
-<p align="center">
-  <img height="360" src="https://lh3.googleusercontent.com/vmi_rXs0nfqfAh3woDLDRxDW0tx_UM1nx8zCda7nY4FoO6ebmvSQJaHT-GENzEOp34o"/>  
-  <img height="360" src="https://lh3.googleusercontent.com/DXaSIdkmBzUsQzPOkkIbY5YdKVsohcTb4IeSq9q70PPdG07yovHCD7X6XPebtesM0L0"/>  
-  <img height="360" src="https://lh3.googleusercontent.com/zrIdQ1jGiaDb_kfnxAPqd8bJwejjJzvq7whU-kGXvT0G86l3RHzuseAnZZpP7r3RaV0"/>  
-  <img height="360" src="https://lh3.googleusercontent.com/fpWBqB-qTRp1zfw6r7aBm6auQD7cdw-3vQbKsqwVVo5lcPHvQq96XKVdO1gRTydF8qU"/>  
+  <img width="160" height="160" src="https://i.imgur.com/TPKCbg6.png"/>
 </p>
 
 # SysctlGUI
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d91bf38325aa4bb6b6cb67136f72f1f1)](https://www.codacy.com/gh/Lennoard/SysctlGUI/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Lennoard/SysctlGUI&amp;utm_campaign=Badge_Grade)
-![](https://img.shields.io/github/languages/top/Lennoard/SysctlGUI)  
-![](https://img.shields.io/github/contributors/Lennoard/SysctlGUI)  
-![](https://img.shields.io/github/downloads/Lennoard/SysctlGUI/total)  
-![](https://img.shields.io/github/v/release/Lennoard/SysctlGUI)  
-![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Lennoard/SysctlGUI/latest/master)
+SysctlGUI is a Android application designed for power users, developers, and enthusiasts who want to
+fine-tune their device's performance by directly editing kernel parameters.
+It provides a user interface for the <code>sysctl</code> command-line utility,
+making advanced kernel tweaking accessible and manageable.
 
-A GUI application for Android <code>sysctl</code> to edit kernel variables
+***Important: This app requires root access to work.***
+
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d91bf38325aa4bb6b6cb67136f72f1f1)](https://www.codacy.com/gh/Lennoard/SysctlGUI/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Lennoard/SysctlGUI&amp;utm_campaign=Badge_Grade)
+[![CodeQL Advanced](https://github.com/Lennoard/SysctlGUI/actions/workflows/codeql.yml/badge.svg)](https://github.com/Lennoard/SysctlGUI/actions/workflows/codeql.yml)
+[![Build Status](https://app.bitrise.io/app/03e8fa82-8168-4a7f-9005-b8e5d056417f/status.svg?token=3qlQfgAkEgxvr0JnvyzT_Q&branch=develop)](https://app.bitrise.io/app/03e8fa82-8168-4a7f-9005-b8e5d056417f)
+
+![](https://img.shields.io/github/contributors/Lennoard/SysctlGUI)
+![](https://img.shields.io/github/downloads/Lennoard/SysctlGUI/total)
+![](https://img.shields.io/github/v/release/Lennoard/SysctlGUI)
+![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Lennoard/SysctlGUI/latest/develop)
 
 ## Features
--  Browse filesystem for specific kernel parameters
--  Select parameters from a searchable list
--  Show documentation for known parameters
--  Load parameters from a configuration file
--  Reapply parameters at startup
--  Mark parameters as favorite for easy access
+-  **Parameter Management:** Easily browse the filesystem or search a comprehensive list to find kernel parameters, with in-app documentation to help you understand their impact.
+-  **Persistent Tweaks:** Automatically reapply your chosen settings on every boot.
+-  **Configuration Profiles:** Save and load sets of parameters from configuration files, making it simple to switch between different performance profiles or share your setup.
+-  **Favorites System:** Mark frequently used parameters for quick and easy access.
 
 ## Technologies
 
@@ -56,10 +54,19 @@ This project utilizes a modern Android development stack, leveraging a comprehen
 
 ## Contributing
 
-We welcome contributions to SysctlGUI!
+Contributions are always welcomed. Please see the [contributing guide](CONTRIBUTING.md) for more details on how to contribute with this project.
 
 ### Translations
 If you'd like to help translate the app into other languages, please see the [translation guide](TRANSLATING.md) for instructions on how to get started. Your contributions will help make SysctlGUI accessible to a wider audience.
+
+## Screenshots
+
+<p align="center">
+  <img height="360" src="https://lh3.googleusercontent.com/vmi_rXs0nfqfAh3woDLDRxDW0tx_UM1nx8zCda7nY4FoO6ebmvSQJaHT-GENzEOp34o"/>  
+  <img height="360" src="https://lh3.googleusercontent.com/DXaSIdkmBzUsQzPOkkIbY5YdKVsohcTb4IeSq9q70PPdG07yovHCD7X6XPebtesM0L0"/>  
+  <img height="360" src="https://lh3.googleusercontent.com/zrIdQ1jGiaDb_kfnxAPqd8bJwejjJzvq7whU-kGXvT0G86l3RHzuseAnZZpP7r3RaV0"/>  
+  <img height="360" src="https://lh3.googleusercontent.com/fpWBqB-qTRp1zfw6r7aBm6auQD7cdw-3vQbKsqwVVo5lcPHvQq96XKVdO1gRTydF8qU"/>  
+</p>
 
 ## Download
 
