@@ -42,6 +42,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
 
     api(platform(libs.androidx.compose.bom))
     api(libs.androidx.ui)
