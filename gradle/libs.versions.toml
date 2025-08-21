@@ -17,6 +17,7 @@ composeBom = "2025.07.00"
 appcompat = "1.7.1"
 materialIconsCoreCompose = "1.7.8"
 material = "1.12.0"
+mockkAndroid = "1.14.5"
 multidex = "2.0.1"
 navigationCompose = "2.9.3"
 preference = "1.2.1"
@@ -39,6 +40,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preference" }
 androidx-window = { module = "androidx.window:window", version.ref = "window" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesAndroid" }
 libsu-core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsu" }
 libsu-nio = { module = "com.github.topjohnwu.libsu:nio", version.ref = "libsu" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
@@ -73,6 +75,7 @@ ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "k
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 
 [bundles]
 ktor-clients = ["ktor-client-core", "ktor-client-android", "ktor-client-logging"]
