@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.time.Duration.Companion.seconds
@@ -31,7 +32,7 @@ class StartUpWorker(
     private val context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams), KoinComponent {
-    private val mainContext = Dispatchers.Main + SupervisorJob()
+    private val mainContext = Dispatchers.Main.immediate + SupervisorJob()
     private val workerContext = Dispatchers.Default
     private val appPrefs: AppPrefs by inject()
     private val rootUtils: RootUtils by inject()
@@ -57,7 +58,6 @@ class StartUpWorker(
             }
         }
 
-
         return Result.success()
     }
 
@@ -71,7 +71,10 @@ class StartUpWorker(
     }
 
     private suspend fun checkRequirements(): Boolean {
-        return appPrefs.runOnStartUp && rootUtils.isRootAvailable()
+        return withTimeoutOrNull(5.seconds) {
+            rootUtils.getRootShell()
+            appPrefs.runOnStartUp && rootUtils.isRootAvailable()
+        } ?: false
     }
 
     private suspend inline fun showNotificationAndThen(
@@ -137,7 +140,6 @@ class StartUpWorker(
                     delayCount++
                 }
             }
-
         } else {
             builder.setContentText(context.getString(R.string.notification_start_up_description))
             notifyIfPossible(builder)
@@ -152,7 +154,7 @@ class StartUpWorker(
             ) == PackageManager.PERMISSION_GRANTED ||
             Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU
         ) {
-            runCatching { notificationManager.notify(SERVICE_ID, builder.build()) }.onFailure { it.printStackTrace() }
+            runCatching { notificationManager.notify(SERVICE_ID, builder.build()) }
         }
     }
 
