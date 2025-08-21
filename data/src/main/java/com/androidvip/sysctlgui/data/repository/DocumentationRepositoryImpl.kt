@@ -5,7 +5,6 @@ import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.repository.DocumentationRepository
-import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
@@ -36,6 +35,6 @@ class DocumentationRepositoryImpl(
     }
 
     companion object {
-        private const val REQUEST_TIMEOUT_MS = 3000L
+        internal const val REQUEST_TIMEOUT_MS = 3000L
     }
 }
