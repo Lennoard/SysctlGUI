@@ -1,5 +1,5 @@
 object AppConfig {
-    val devCycle = true
+    val devCycle = false
 
     const val appId = "com.androidvip.sysctlgui"
     const val compileSdkVersion = 36
