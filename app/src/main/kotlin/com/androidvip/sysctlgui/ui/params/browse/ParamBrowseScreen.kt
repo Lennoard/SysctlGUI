@@ -157,6 +157,7 @@ private fun ParamBrowseScreenContent(
     onRefresh: () -> Unit
 ) {
     val listState = rememberLazyGridState()
+    // TODO: Use Material3 PullToRefresh instead
     val pullRefreshState =
         rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     var headerVisible by remember { mutableStateOf(backEnabled) }
