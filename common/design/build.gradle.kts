@@ -45,17 +45,22 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     api(platform(libs.androidx.compose.bom))
-    api(libs.androidx.ui)
-    api(libs.androidx.ui.graphics)
-    api(libs.androidx.ui.tooling.preview)
-    api(libs.androidx.material3)
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.ui.graphics)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.compose.material3)
     api(libs.androidx.material.icons.core)
     api(libs.androidx.window)
 
     api(libs.material)
 
     androidTestApi(platform(libs.androidx.compose.bom))
-    debugApi(libs.androidx.ui.tooling)
-    debugApi(libs.androidx.ui.test.manifest)
-}
 
+    if (AppConfig.devCycle) {
+        api(libs.androidx.compose.ui.tooling)
+        api(libs.androidx.ui.test.manifest)
+    } else {
+        debugApi(libs.androidx.compose.ui.tooling)
+        debugApi(libs.androidx.ui.test.manifest)
+    }
+}

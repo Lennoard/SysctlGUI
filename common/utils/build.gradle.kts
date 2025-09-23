@@ -40,5 +40,4 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
 }
