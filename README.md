@@ -19,6 +19,7 @@ making advanced kernel tweaking accessible and manageable.
 ![](https://img.shields.io/github/downloads/Lennoard/SysctlGUI/total)
 ![](https://img.shields.io/github/v/release/Lennoard/SysctlGUI)
 ![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Lennoard/SysctlGUI/latest/develop)
+[![RB Status](https://shields.rbtlog.dev/simple/com.androidvip.sysctlgui)](https://shields.rbtlog.dev/com.androidvip.sysctlgui)
 
 ## Features
 -  **Parameter Management:** Easily browse the filesystem or search a comprehensive list to find kernel parameters, with in-app documentation to help you understand their impact.
