@@ -1,0 +1,1 @@
+GUI application to edit Android kernel variables
