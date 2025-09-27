@@ -1,0 +1,1 @@
+<p><i>Sysctl GUI</i> is a GUI application to edit Android kernel variables.</p><p><b>Features:</b></p><ul><li>Browse filesystem for specifc kernel parameters</li><li>Select parameters from a searchable list</li><li>Information about known parameters</li><li>Load parameters from a configuration file</li><li>Reapply parameters at startup</li></ul>
