@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="192" height="192" src="img/icon.png"/>
+  <img alt="SysctlGUI icon" width="192" height="192" src="fastlane/metadata/android/en-US/images/icon.png"/>
 </p>
 
 # SysctlGUI
@@ -65,9 +65,9 @@ If you'd like to help translate the app into other languages, please see the [tr
 ## Screenshots
 <div align="center">
 
-|                                                        |                                                        |                                                        |                                                         |
-|:------------------------------------------------------:|:------------------------------------------------------:|:------------------------------------------------------:|:-------------------------------------------------------:|
-|<img src="img/ss01.png" alt="Screenshot 1" width="200"> |<img src="img/ss02.png" alt="Screenshot 2" width="200"> |<img src="img/ss03.png" alt="Screenshot 3" width="200"> | <img src="img/ss04.png" alt="Screenshot 4" width="200"> |
+|                                                                                                          |                                                                                                           |                                                                                                           |                                                                                                           |
+|:--------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
+|<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/01.png" alt="Screenshot 1" width="200"> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/02.png" alt="Screenshot 2" width="200"> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/03.png" alt="Screenshot 3" width="200"> | <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/04.png" alt="Screenshot 4" width="200"> |
 
 </div>
 

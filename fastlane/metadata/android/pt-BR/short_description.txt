@@ -1,0 +1,1 @@
+Interface gráfica para o sysctl do Android projetado para usuários avançados.

@@ -1,1 +1,1 @@
-GUI application to edit Android kernel variables
+A GUI for Android sysctl. Fine-tune kernel parameters for power users.

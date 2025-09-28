@@ -1,0 +1,2 @@
+* Added per-app language support (Android 13+)
+* Improved StartUpWorker reliability (fixes reapply on boot)

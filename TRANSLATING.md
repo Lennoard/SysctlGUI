@@ -41,6 +41,13 @@ Thank you for your interest in translating SysctlGUI! Your contributions help ma
         *   Translate the text content, but leave any special characters, newlines, or formatting intact.
         *   Place the translated `.txt` files in a new `raw-xx` directory within `data/src/main/res/` (e.g., `data/src/main/res/raw-es/` for Spanish).
 
+    *   **Fastlane Metadata:** For store listing localization.
+        *   `fastlane/metadata/android/en-US/short_description.txt`
+        *   `fastlane/metadata/android/en-US/full_description.txt`
+        *   `fastlane/metadata/android/en-US/title.txt`
+
+        To translate these files, create a new directory for your language/region in `fastlane/metadata/android/` (e.g., `fastlane/metadata/android/es-ES/` for Spanish - Spain). Then, copy the original `.txt` files from the `en-US` directory into your new language directory and translate their content.
+
 5.  **Commit Your Changes:** Commit your translated files with a clear commit message.
     ```bash
     git add .
@@ -56,7 +63,7 @@ Thank you for your interest in translating SysctlGUI! Your contributions help ma
 
 *   Ensure your translations are accurate and natural-sounding in the target language.
 *   Do not translate resource names (e.g., `app_name` in `<string name="app_name">`). Only translate the text content between the XML tags.
-*   For `.txt` files, preserving the exact original formatting is critical for the app to function correctly with the translated content.
+*   For `.txt` files (both raw resources and Fastlane metadata), preserving the exact original formatting is critical for the app to function correctly with the translated content.
 *   If you are unsure about any part of the translation process, feel free to open an issue on the main repository to ask for clarification.
 
 Thank you for your contribution!
