@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.widgets
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -30,16 +31,20 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.onPrimaryContainerLight
 import com.androidvip.sysctlgui.design.theme.primaryContainerLight
 import com.androidvip.sysctlgui.design.theme.primaryLight
-import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
+import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.toUiKernelParam
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@SuppressLint("RestrictedApi")
 class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
     private val getUserParamsUseCase: GetUserParamsUseCase by inject()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val favoriteParams = getUserParamsUseCase().filter { it.isFavorite }
+        val favoriteParams = getUserParamsUseCase()
+            .filter { it.isFavorite }
+            .map { it.toUiKernelParam() }
 
         provideContent {
             FavoritesWidgetContent(params = favoriteParams)
@@ -47,7 +52,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
     }
 
     @Composable
-    fun FavoritesWidgetContent(params: List<KernelParam>) {
+    fun FavoritesWidgetContent(params: List<UiKernelParam>) {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -80,7 +85,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
     }
 
     @Composable
-    fun FavoriteItem(param: KernelParam) {
+    fun FavoriteItem(param: UiKernelParam) {
         Column(
             modifier = GlanceModifier
                 .padding(vertical = 8.dp)

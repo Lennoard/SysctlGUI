@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -124,14 +121,14 @@ private fun ParamIcon(param: UiKernelParam) {
 private fun TrailingIcon(param: UiKernelParam, showFavoriteIcon: Boolean) {
     if (param.isDirectory) {
         Icon(
-            imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+            painter = painterResource(R.drawable.ic_keyboard_arrow_right),
             contentDescription = stringResource(R.string.acessibility_davegate_to_directory_description),
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else if (param.isFavorite && showFavoriteIcon) {
         Icon(
-            imageVector = Icons.Rounded.Favorite,
+            painter = painterResource(R.drawable.ic_favorite),
             contentDescription = stringResource(R.string.favorites),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)

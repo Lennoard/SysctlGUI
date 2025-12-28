@@ -11,6 +11,7 @@ import com.androidvip.sysctlgui.domain.exceptions.MalformedLineException
 import com.androidvip.sysctlgui.domain.exceptions.NoValidParamException
 import com.androidvip.sysctlgui.domain.usecase.AddUserParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
+import com.androidvip.sysctlgui.models.toUiKernelParam
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -63,7 +64,7 @@ class PresetsViewModel(
                 val params = presetsFileProcessor.getKernelParamsFromUri(uri)
                 setState {
                     copy(
-                        paramsToImport = params,
+                        paramsToImport = params.map { it.toUiKernelParam() },
                         incomingPresetsScreenState = IncomingPresetsScreenState.Idle
                     )
                 }

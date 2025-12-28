@@ -1,16 +1,19 @@
 package com.androidvip.sysctlgui.core.navigation
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
  * Represents the different routes in the application's UI.
  * This is used for navigation purposes.
  */
+@Immutable
 @Serializable
 sealed interface UiRoute {
     @Serializable
     data object BrowseParams : UiRoute
     @Serializable
+    @Immutable
     data class EditParam(val paramName: String) : UiRoute
     @Serializable
     data object Presets : UiRoute

@@ -27,10 +27,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -425,13 +421,13 @@ fun ParamValueContent(
             ) { editingActive ->
                 if (editingActive) {
                     Icon(
-                        imageVector = Icons.Rounded.Done,
+                        painter = painterResource(R.drawable.ic_check),
                         contentDescription = stringResource(R.string.apply_param),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
                     Icon(
-                        imageVector = Icons.Rounded.Edit,
+                        painter = painterResource(R.drawable.ic_edit),
                         contentDescription = stringResource(R.string.edit),
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -443,12 +439,12 @@ fun ParamValueContent(
 
 @Composable
 internal fun EditableParamValue(
+    modifier: Modifier = Modifier,
     isEditing: Boolean,
     paramValue: String,
     editedValue: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     onEditorValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
         AnimatedContent(
@@ -525,7 +521,7 @@ internal fun ParamDocs(
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.Warning,
+                            painter = painterResource(R.drawable.ic_warning),
                             contentDescription = stringResource(android.R.string.dialog_alert_title),
                             tint = MaterialTheme.colorScheme.onErrorContainer
                         )

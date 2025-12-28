@@ -139,4 +139,3 @@ private fun String.isKernelNameValid(): Boolean {
     if (this.startsWith(".") || this.endsWith(".")) return false
     return true
 }
-

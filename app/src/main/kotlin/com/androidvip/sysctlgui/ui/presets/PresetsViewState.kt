@@ -1,10 +1,10 @@
 package com.androidvip.sysctlgui.ui.presets
 
 import android.net.Uri
-import com.androidvip.sysctlgui.domain.models.KernelParam
+import com.androidvip.sysctlgui.models.UiKernelParam
 
 data class PresetsViewState(
-    val paramsToImport: List<KernelParam> = emptyList(),
+    val paramsToImport: List<UiKernelParam> = emptyList(),
     val loading: Boolean = false,
     val incomingPresetsScreenState: IncomingPresetsScreenState = IncomingPresetsScreenState.Idle
 )

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -36,12 +37,13 @@ internal fun MainNavRail(navController: NavHostController = rememberNavControlle
             NavigationRailItem(
                 icon = {
                     AnimatedContent(targetState = selected) { selectedState ->
+                        val iconRes = if (selectedState) {
+                            route.selectedIconRes
+                        } else {
+                            route.unselectedIconRes
+                        }
                         Icon(
-                            imageVector = if (selectedState) {
-                                route.selectedIcon
-                            } else {
-                                route.unselectedIcon
-                            },
+                            painterResource(iconRes),
                             contentDescription = route.name,
                         )
                     }

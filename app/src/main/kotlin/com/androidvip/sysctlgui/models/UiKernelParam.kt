@@ -56,3 +56,14 @@ data class UiKernelParam(
             name.substringAfterLast('.', name)
         }
 }
+
+fun KernelParam.toUiKernelParam(): UiKernelParam {
+    return UiKernelParam(
+        name = this.name,
+        path = this.path,
+        value = this.value,
+        isFavorite = this.isFavorite,
+        isTaskerParam = this.isTaskerParam,
+        taskerList = this.taskerList
+    )
+}

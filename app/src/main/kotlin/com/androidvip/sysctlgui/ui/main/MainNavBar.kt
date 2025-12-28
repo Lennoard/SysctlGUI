@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -37,12 +38,13 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
             NavigationBarItem(
                 icon = {
                     AnimatedContent(targetState = selected) { selectedState ->
+                        val iconRes = if (selectedState) {
+                            route.selectedIconRes
+                        } else {
+                            route.unselectedIconRes
+                        }
                         Icon(
-                            imageVector = if (selectedState) {
-                                route.selectedIcon
-                            } else {
-                                route.unselectedIcon
-                            },
+                            painter = painterResource(iconRes),
                             contentDescription = route.name,
                         )
                     }

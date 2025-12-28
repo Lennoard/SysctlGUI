@@ -1,15 +1,6 @@
 package com.androidvip.sysctlgui.ui.main
 
 import android.content.Context
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.rounded.Build
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Settings
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.core.navigation.TopLevelRoute
 import com.androidvip.sysctlgui.core.navigation.UiRoute
@@ -20,26 +11,26 @@ object TopLevelRouteProvider {
             TopLevelRoute(
                 name = context.getString(R.string.browse),
                 route = UiRoute.BrowseParams,
-                selectedIcon = Icons.Rounded.Home,
-                unselectedIcon = Icons.Outlined.Home
+                selectedIconRes = R.drawable.ic_home_filled,
+                unselectedIconRes = R.drawable.ic_home
             ),
             TopLevelRoute(
                 name = context.getString(R.string.presets),
                 route = UiRoute.Presets,
-                selectedIcon = Icons.Rounded.Build,
-                unselectedIcon = Icons.Outlined.Build
+                selectedIconRes = R.drawable.ic_build_filled,
+                unselectedIconRes = R.drawable.ic_build
             ),
             TopLevelRoute(
                 name = context.getString(R.string.favorites),
                 route = UiRoute.Favorites,
-                selectedIcon = Icons.Rounded.Favorite,
-                unselectedIcon = Icons.Outlined.FavoriteBorder
+                selectedIconRes = R.drawable.ic_favorite,
+                unselectedIconRes = R.drawable.ic_favorite_outlined
             ),
             TopLevelRoute(
                 name = context.getString(R.string.settings),
                 route = UiRoute.Settings,
-                selectedIcon = Icons.Rounded.Settings,
-                unselectedIcon = Icons.Outlined.Settings
+                selectedIconRes = R.drawable.ic_settings_filled,
+                unselectedIconRes = R.drawable.ic_settings
             )
         )
     }

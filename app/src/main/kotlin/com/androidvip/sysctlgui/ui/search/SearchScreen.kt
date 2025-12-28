@@ -20,10 +20,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -177,13 +173,13 @@ private fun SearchScreenContent(
                                         onSearchQueryChange("")
                                     }) {
                                         Icon(
-                                            Icons.AutoMirrored.Rounded.ArrowBack,
+                                            painter = painterResource(R.drawable.ic_arrow_back),
                                             contentDescription = stringResource(R.string.go_back)
                                         )
                                     }
                                 } else {
                                     Icon(
-                                        imageVector = Icons.Rounded.Search,
+                                        painter = painterResource(R.drawable.ic_search),
                                         contentDescription = stringResource(
                                             R.string.acessibility_search_icon
                                         )
@@ -201,7 +197,7 @@ private fun SearchScreenContent(
                                     onSearchQueryChange("")
                                 }) {
                                     Icon(
-                                        imageVector = Icons.Rounded.Clear,
+                                        painter = painterResource(R.drawable.ic_close),
                                         contentDescription = stringResource(R.string.clear_search)
                                     )
                                 }
@@ -306,7 +302,7 @@ private fun SearchViewContent(
                             modifier = Modifier.offset(16.dp)
                         ) {
                             Icon(
-                                Icons.Rounded.Clear,
+                                painter = painterResource(R.drawable.ic_close),
                                 contentDescription = stringResource(R.string.clear_history_item)
                             )
                         }

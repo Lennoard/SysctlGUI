@@ -26,8 +26,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -45,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -59,7 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
-import com.androidvip.sysctlgui.domain.models.KernelParam
+import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
@@ -164,7 +163,7 @@ fun ImportPresetScreen(
 
 @Composable
 private fun IncomingPresetsContent(
-    paramsToImport: List<KernelParam>,
+    paramsToImport: List<UiKernelParam>,
     onImportPressed: () -> Unit,
     onCancelPressed: () -> Unit
 ) {
@@ -281,7 +280,7 @@ private fun IncomingPresetsContent(
 
 @Composable
 private fun IncomingPresetsLandscapeContent(
-    paramsToImport: List<KernelParam>,
+    paramsToImport: List<UiKernelParam>,
     onImportPressed: () -> Unit,
     onCancelPressed: () -> Unit
 ) {
@@ -445,7 +444,7 @@ private fun SuccessIndicator(onAnimationEnd: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically)
     ) {
         Icon(
-            imageVector = Icons.Rounded.CheckCircle,
+            painter = painterResource(R.drawable.ic_checked_circle),
             contentDescription = stringResource(R.string.success),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(128.dp)
@@ -477,7 +476,7 @@ private fun IncomingPresetsScreenPreview() {
                 paramsToImport = buildList {
                     repeat(16) {
                         add(
-                            KernelParam(
+                            UiKernelParam(
                                 name = "vm.swappiness.$it",
                                 value = "value$it",
                                 path = ""

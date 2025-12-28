@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.androidvip.sysctlgui.R
@@ -76,7 +75,7 @@ internal fun ErrorContainer(message: String, onAnimationEnd: () -> Unit) {
             ) {
                 Icon(
                     modifier = Modifier.size(40.dp),
-                    imageVector = Icons.Rounded.Close,
+                    painter = painterResource(R.drawable.ic_close),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
