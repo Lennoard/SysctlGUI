@@ -1,6 +1,8 @@
 package com.androidvip.sysctlgui.ui.main
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -9,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -35,20 +36,15 @@ internal fun MainNavBar(navController: NavHostController = rememberNavController
                 ?.hierarchy
                 ?.any { it.hasRoute(route.route::class) } == true
 
+            val iconRes = if (selected) route.selectedAnimatedIconRes else route.unselectedAnimatedIconRes
+            val imageVector = AnimatedImageVector.animatedVectorResource(id = iconRes)
+            val animatedPainter = rememberAnimatedVectorPainter(
+                animatedImageVector = imageVector,
+                atEnd = selected
+            )
+
             NavigationBarItem(
-                icon = {
-                    AnimatedContent(targetState = selected) { selectedState ->
-                        val iconRes = if (selectedState) {
-                            route.selectedIconRes
-                        } else {
-                            route.unselectedIconRes
-                        }
-                        Icon(
-                            painter = painterResource(iconRes),
-                            contentDescription = route.name,
-                        )
-                    }
-                },
+                icon = { Icon(painter = animatedPainter, contentDescription = route.name) },
                 label = {
                     Text(
                         text = route.name,
