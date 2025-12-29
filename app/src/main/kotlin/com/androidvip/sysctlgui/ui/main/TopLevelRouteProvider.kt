@@ -11,26 +11,26 @@ object TopLevelRouteProvider {
             TopLevelRoute(
                 name = context.getString(R.string.browse),
                 route = UiRoute.BrowseParams,
-                selectedIconRes = R.drawable.ic_home_filled,
-                unselectedIconRes = R.drawable.ic_home
+                selectedAnimatedIconRes = R.drawable.avd_home_off,
+                unselectedAnimatedIconRes = R.drawable.avd_home_on
             ),
             TopLevelRoute(
                 name = context.getString(R.string.presets),
                 route = UiRoute.Presets,
-                selectedIconRes = R.drawable.ic_build_filled,
-                unselectedIconRes = R.drawable.ic_build
+                selectedAnimatedIconRes = R.drawable.avd_build_off,
+                unselectedAnimatedIconRes = R.drawable.avd_build_on
             ),
             TopLevelRoute(
                 name = context.getString(R.string.favorites),
                 route = UiRoute.Favorites,
-                selectedIconRes = R.drawable.ic_favorite,
-                unselectedIconRes = R.drawable.ic_favorite_outlined
+                selectedAnimatedIconRes = R.drawable.avd_favorite_off,
+                unselectedAnimatedIconRes = R.drawable.avd_favorite_on
             ),
             TopLevelRoute(
                 name = context.getString(R.string.settings),
                 route = UiRoute.Settings,
-                selectedIconRes = R.drawable.ic_settings_filled,
-                unselectedIconRes = R.drawable.ic_settings
+                selectedAnimatedIconRes = R.drawable.avd_settings_off,
+                unselectedAnimatedIconRes = R.drawable.avd_settings_on
             )
         )
     }

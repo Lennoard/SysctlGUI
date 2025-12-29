@@ -2,6 +2,7 @@
 activityCompose = "1.11.0"
 agp = "8.12.0"
 appcompat = "1.7.1"
+composeAnimationGraphics = "1.10.0"
 composeBom = "2025.09.01"
 composeMaterial3 = "1.5.0-alpha04"
 composeMaterial = "1.9.2"
@@ -30,6 +31,7 @@ workRuntimeKtx = "2.10.4"
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "composeAnimationGraphics" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
