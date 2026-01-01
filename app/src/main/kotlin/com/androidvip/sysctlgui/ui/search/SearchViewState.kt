@@ -1,8 +1,10 @@
 package com.androidvip.sysctlgui.ui.search
 
+import androidx.compose.runtime.Stable
 import com.androidvip.sysctlgui.models.SearchHint
 import com.androidvip.sysctlgui.models.UiKernelParam
 
+@Stable
 data class SearchViewState(
     val loading: Boolean = false,
     val searchHints: List<SearchHint> = emptyList(),

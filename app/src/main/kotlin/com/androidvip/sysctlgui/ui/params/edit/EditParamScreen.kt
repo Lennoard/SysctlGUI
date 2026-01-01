@@ -73,8 +73,8 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.enums.CommitMode
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.UiParamDocumentation
 import com.androidvip.sysctlgui.ui.components.ErrorContainer
 import com.androidvip.sysctlgui.ui.components.SingleChoiceDialog
 import com.androidvip.sysctlgui.ui.main.MainViewEffect
@@ -228,21 +228,19 @@ private fun EditParamContent(
     val coroutineScope = rememberCoroutineScope()
     val clipboardManager = LocalClipboard.current
     val scrollState = rememberScrollState()
+    val clipLabel = stringResource(R.string.kernel_params)
+    val toastMessage = stringResource(R.string.copied_to_clipboard)
 
     val copyParamContentToClipboard = {
         val clipData = ClipData.newPlainText(
-            context.getString(R.string.kernel_params),
+            clipLabel,
             "${param.lastNameSegment}=${param.value} (${param.path})"
         )
         val clipEntry = ClipEntry(clipData)
         coroutineScope.launch {
             clipboardManager.setClipEntry(clipEntry)
         }
-        Toast.makeText(
-            context,
-            context.getString(R.string.copied_to_clipboard),
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
     }
 
     Column(
@@ -256,6 +254,7 @@ private fun EditParamContent(
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            val toastCopyMessage = stringResource(R.string.long_press_to_copy)
             Text(
                 text = param.lastNameSegment,
                 style = MaterialTheme.typography.displayLarge,
@@ -265,11 +264,7 @@ private fun EditParamContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.long_press_to_copy),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context, toastCopyMessage, Toast.LENGTH_SHORT).show()
                         },
                         onLongClick = copyParamContentToClipboard
                     )
@@ -486,7 +481,7 @@ internal fun EditableParamValue(
 @Composable
 internal fun ParamDocs(
     modifier: Modifier = Modifier,
-    documentation: ParamDocumentation?,
+    documentation: UiParamDocumentation?,
     onReadMorePressed: () -> Unit,
 ) {
     HorizontalDivider()
@@ -540,13 +535,13 @@ internal fun ParamDocs(
 
 @Composable
 internal fun DocumentationContent(
-    documentation: ParamDocumentation,
+    documentation: UiParamDocumentation,
     onReadMorePressed: () -> Unit
 ) {
     Column {
         val documentationText = if (!documentation.documentationHtml.isNullOrEmpty()) {
             AnnotatedString.fromHtml(
-                htmlString = documentation.documentationHtml.orEmpty(),
+                htmlString = documentation.documentationHtml,
                 linkStyles = TextLinkStyles(
                     style = MaterialTheme.typography.bodyMedium.toSpanStyle().copy(
                         color = MaterialTheme.colorScheme.primary,
@@ -627,7 +622,7 @@ private fun EditParamContentPreview() {
                 ),
                 taskerAvailable = true,
                 keyboardType = KeyboardType.Number,
-                documentation = ParamDocumentation(
+                documentation = UiParamDocumentation(
                     title = "vm.enable_soft_offline",
                     documentationText = "",
                     documentationHtml = htmlDocs,

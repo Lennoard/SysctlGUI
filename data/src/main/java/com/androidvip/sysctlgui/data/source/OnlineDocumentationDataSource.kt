@@ -1,6 +1,7 @@
 package com.androidvip.sysctlgui.data.source
 
 import android.util.Log
+import com.androidvip.sysctlgui.data.models.ParamDocumentationDTO
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import io.ktor.client.HttpClient
@@ -50,10 +51,9 @@ class OnlineDocumentationDataSource(
             val document = Jsoup.parse(html)
             val htmlElementId = param.lastNameSegment.replace('_', '-')
 
-
             if (File(param.path).isDirectory) {
                 // If we got something out of the request, might as well return at least the URL
-                return@withContext ParamDocumentation(
+                return@withContext ParamDocumentationDTO(
                     title = param.name,
                     documentationText = "",
                     documentationHtml = "", // HTML might be huge (directory documentation)
@@ -74,7 +74,7 @@ class OnlineDocumentationDataSource(
                 elements.removeAt(0)
             }
 
-            return@withContext ParamDocumentation(
+            return@withContext ParamDocumentationDTO(
                 title = param.name,
                 documentationText = elements.text(),
                 documentationHtml = elements.html().optimizedDocumentationHtml(),

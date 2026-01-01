@@ -8,6 +8,7 @@ import com.androidvip.sysctlgui.domain.usecase.GetParamsFromFilesUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
 import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.toUiParamDocumentation
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import com.androidvip.sysctlgui.utils.Consts
 import com.topjohnwu.superuser.nio.FileSystemManager
@@ -88,7 +89,7 @@ class ParamBrowseViewModel(
                         params = newParams,
                         currentPath = parentParam.path,
                         backEnabled = parentParam.path != Consts.PROC_SYS,
-                        documentation = directoryDocumentation,
+                        documentation = directoryDocumentation?.toUiParamDocumentation(),
                         loading = false
                     )
                 }

@@ -1,14 +1,16 @@
 package com.androidvip.sysctlgui.ui.params.browse
 
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
+import androidx.compose.runtime.Immutable
 import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.UiParamDocumentation
 
+@Immutable
 data class ParamBrowseState(
     val loading: Boolean = false,
     val params: List<UiKernelParam> = emptyList(),
     val currentPath: String = "",
     val backEnabled: Boolean = false,
-    val documentation: ParamDocumentation? = null
+    val documentation: UiParamDocumentation? = null
 )
 
 sealed interface ParamBrowseViewEffect {
@@ -19,7 +21,7 @@ sealed interface ParamBrowseViewEffect {
 
 sealed interface ParamBrowseViewEvent {
     data class ParamClicked(val param: UiKernelParam) : ParamBrowseViewEvent
-    data class DocumentationClicked(val docs: ParamDocumentation) : ParamBrowseViewEvent
+    data class DocumentationClicked(val docs: UiParamDocumentation) : ParamBrowseViewEvent
     object BackRequested : ParamBrowseViewEvent
     object RefreshRequested : ParamBrowseViewEvent
 }

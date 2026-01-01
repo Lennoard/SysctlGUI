@@ -26,20 +26,18 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.core.text.HtmlCompat
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
+import com.androidvip.sysctlgui.models.UiParamDocumentation
 import com.androidvip.sysctlgui.utils.browse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
-import kotlin.text.append
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DocumentationBottomSheet(
-    documentation: ParamDocumentation,
+    documentation: UiParamDocumentation,
     sheetState: SheetState
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -57,7 +55,7 @@ internal fun DocumentationBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DocumentationBottomSheetContent(
-    documentation: ParamDocumentation,
+    documentation: UiParamDocumentation,
     sheetState: SheetState,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
@@ -98,7 +96,7 @@ private fun DocumentationBottomSheetContent(
         if (documentation.url != null) {
             TextButton(
                 onClick = {
-                    context.browse(documentation.url.orEmpty())
+                    context.browse(documentation.url)
                     coroutineScope.launch { sheetState.hide() }
                 },
                 modifier = Modifier
@@ -137,7 +135,7 @@ private fun DocumentationBottomSheetPreview() {
         </ul>
     """.trimIndent()
 
-    val documentation = ParamDocumentation(
+    val documentation = UiParamDocumentation(
         title = "/proc/sys/fs",
         url = "https://docs.kernel.org/admin-guide/sysctl/fs.html",
         documentationText = """

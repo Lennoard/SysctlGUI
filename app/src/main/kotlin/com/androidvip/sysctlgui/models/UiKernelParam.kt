@@ -2,7 +2,7 @@ package com.androidvip.sysctlgui.models
 
 import android.os.Build
 import android.os.Parcelable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.utils.Consts
 import kotlinx.parcelize.IgnoredOnParcel
@@ -14,7 +14,7 @@ import kotlin.io.path.isDirectory
 /**
  * Represents a kernel parameter with additional UI-specific properties.
  */
-@Stable
+@Immutable
 @Parcelize
 data class UiKernelParam(
     override val name: String = "",
