@@ -1,5 +1,7 @@
 package com.androidvip.sysctlgui.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents a search hint displayed to the user.
  *
@@ -9,6 +11,7 @@ package com.androidvip.sysctlgui.models
  * @property hint The text of the search hint.
  * @property isFromHistory A boolean flag indicating whether the hint is from the user's search history
  */
+@Immutable
 data class SearchHint(
     val hint: String,
     val isFromHistory: Boolean = false

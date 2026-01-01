@@ -1,8 +1,8 @@
 package com.androidvip.sysctlgui.data.repository
 
+import com.androidvip.sysctlgui.data.models.ParamDocumentationDTO
 import com.androidvip.sysctlgui.data.source.DocumentationDataSource
 import com.androidvip.sysctlgui.domain.models.KernelParam
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import io.mockk.called
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -25,7 +25,7 @@ class DocumentationRepositoryImplTest {
         value = "100"
     )
 
-    private val expectedDocumentation = ParamDocumentation(
+    private val expectedDocumentation = ParamDocumentationDTO(
         title = "Swappiness",
         documentationText = "Controls swappiness",
         url = "https://docs.kernel.org/admin-guide/sysctl/vm.html#swappiness"

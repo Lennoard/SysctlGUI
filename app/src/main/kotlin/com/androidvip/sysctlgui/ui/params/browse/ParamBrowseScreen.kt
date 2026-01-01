@@ -61,8 +61,8 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
 import com.androidvip.sysctlgui.domain.models.KernelParam
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.UiParamDocumentation
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
@@ -84,7 +84,7 @@ fun ParamBrowseScreen(
     viewModel: ParamBrowseViewModel = koinViewModel(),
     onParamSelected: (KernelParam) -> Unit
 ) {
-    var documentation by remember { mutableStateOf<ParamDocumentation?>(null) }
+    var documentation by remember { mutableStateOf<UiParamDocumentation?>(null) }
     val documentationSheetState = rememberModalBottomSheetState()
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -148,9 +148,9 @@ fun ParamBrowseScreen(
 private fun ParamBrowseScreenContent(
     params: List<UiKernelParam>,
     currentPath: String,
-    documentation: ParamDocumentation?,
+    documentation: UiParamDocumentation?,
     onParamClicked: (UiKernelParam) -> Unit,
-    onDocumentationClicked: (ParamDocumentation) -> Unit,
+    onDocumentationClicked: (UiParamDocumentation) -> Unit,
     backEnabled: Boolean = false,
     onBackPressed: () -> Unit,
     isRefreshing: Boolean,
@@ -341,7 +341,7 @@ internal fun ParamBrowseScreenContentPreview() {
             ParamBrowseScreenContent(
                 params = params,
                 currentPath = currentPath,
-                documentation = ParamDocumentation(
+                documentation = UiParamDocumentation(
                     title = currentPath,
                     documentationText = "Documentation for $currentPath",
                     url = null

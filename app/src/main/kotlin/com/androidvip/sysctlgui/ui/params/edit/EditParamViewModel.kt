@@ -17,6 +17,7 @@ import com.androidvip.sysctlgui.domain.usecase.GetUserParamByNameUseCase
 import com.androidvip.sysctlgui.domain.usecase.IsTaskerInstalledUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
+import com.androidvip.sysctlgui.models.toUiParamDocumentation
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import com.androidvip.sysctlgui.widgets.UpdateFavoriteWidgetUseCase
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ class EditParamViewModel(
 
             val documentation = runCatching { getDocumentation(param) }.getOrNull()
             setState {
-                copy(documentation = documentation)
+                copy(documentation = documentation?.toUiParamDocumentation())
             }
         }
     }
@@ -67,9 +68,13 @@ class EditParamViewModel(
             is EditParamViewEvent.UndoRequested -> {
                 previousKernelParamValue?.let { applyKernelParam(it, true) }
             }
+
             is EditParamViewEvent.DocumentationReadMoreClicked -> onDocumentationReadMoreClicked()
             is EditParamViewEvent.FavoriteTogglePressed -> onFavoriteTogglePressed(event.newState)
-            is EditParamViewEvent.TaskerTogglePressed -> onTaskerTogglePressed(event.newState, event.listId)
+            is EditParamViewEvent.TaskerTogglePressed -> onTaskerTogglePressed(
+                event.newState,
+                event.listId
+            )
         }
     }
 
@@ -95,6 +100,7 @@ class EditParamViewModel(
                     is BlankValueNotAllowedException -> stringProvider.getString(
                         R.string.apply_error_blank_values
                     )
+
                     is CommitModeException -> stringProvider.getString(
                         R.string.apply_error_commit_mode
                     )
@@ -102,6 +108,7 @@ class EditParamViewModel(
                     is ApplyValueException -> stringProvider.getString(
                         R.string.apply_error_command_execution_failed
                     )
+
                     else -> it.message.orEmpty()
                 }
                 setEffect {

@@ -1,14 +1,16 @@
 package com.androidvip.sysctlgui.ui.params.edit
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.input.KeyboardType
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.UiParamDocumentation
 
+@Immutable
 data class EditParamViewState(
     val kernelParam: UiKernelParam = UiKernelParam(),
     val taskerAvailable: Boolean = false,
     val keyboardType: KeyboardType = KeyboardType.Text,
-    val documentation: ParamDocumentation? = null,
+    val documentation: UiParamDocumentation? = null,
 )
 
 sealed interface EditParamViewEffect {

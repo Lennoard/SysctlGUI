@@ -14,7 +14,7 @@ fun interface DocumentationDataSource {
      * Retrieves documentation for a given kernel parameter.
      *
      * @param param The kernel parameter for which to fetch documentation.
-     * @return The documentation if found, null otherwise.
+     * @return The documentation if found, `null` otherwise.
      */
     suspend fun getDocumentation(param: KernelParam): ParamDocumentation?
 }

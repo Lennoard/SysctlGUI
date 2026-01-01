@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.domain.enums.CommitMode
-import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import com.androidvip.sysctlgui.models.UiKernelParam
+import com.androidvip.sysctlgui.models.UiParamDocumentation
 import com.androidvip.sysctlgui.ui.components.ErrorContainer
 import com.androidvip.sysctlgui.utils.performHapticFeedbackForToggle
 import kotlinx.coroutines.launch
@@ -64,20 +64,18 @@ internal fun EditParamLandscapeContent(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val clipboardManager = LocalClipboard.current
+    val clipLabelText = stringResource(R.string.kernel_params)
+    val toastCopiedText = stringResource(R.string.copied_to_clipboard)
+
     val copyParamContentToClipboard = {
         val clipData = ClipData.newPlainText(
-            context.getString(R.string.kernel_params),
-            "${param.lastNameSegment}=${param.value} (${param.path})"
+            clipLabelText, "${param.lastNameSegment}=${param.value} (${param.path})"
         )
         val clipEntry = ClipEntry(clipData)
         coroutineScope.launch {
             clipboardManager.setClipEntry(clipEntry)
         }
-        Toast.makeText(
-            context,
-            context.getString(R.string.copied_to_clipboard),
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(context, toastCopiedText, Toast.LENGTH_SHORT).show()
     }
 
     Row {
@@ -87,6 +85,7 @@ internal fun EditParamLandscapeContent(
                 .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
         ) {
+            val toastCopyMessage = stringResource(R.string.long_press_to_copy)
             Text(
                 text = param.lastNameSegment,
                 style = MaterialTheme.typography.displayMedium,
@@ -98,7 +97,7 @@ internal fun EditParamLandscapeContent(
                         onClick = {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.long_press_to_copy),
+                                toastCopyMessage,
                                 Toast.LENGTH_SHORT
                             ).show()
                         },
@@ -112,10 +111,8 @@ internal fun EditParamLandscapeContent(
 
             Row(
                 modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = if (param.isTaskerParam) 0.dp else 24.dp
-                ),
-                verticalAlignment = Alignment.CenterVertically
+                    horizontal = 16.dp, vertical = if (param.isTaskerParam) 0.dp else 24.dp
+                ), verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -138,22 +135,18 @@ internal fun EditParamLandscapeContent(
 
                 if (state.taskerAvailable) {
                     TaskerButton(
-                        isTaskerParam = param.isTaskerParam,
-                        onToggle = { newState ->
+                        isTaskerParam = param.isTaskerParam, onToggle = { newState ->
                             performHapticFeedbackForToggle(newState, view)
                             onTaskerClicked(newState)
-                        },
-                        modifier = Modifier.scale(0.85f)
+                        }, modifier = Modifier.scale(0.85f)
                     )
                 }
 
                 FavoriteButton(
-                    isFavorite = param.isFavorite,
-                    onFavoriteClick = { newState ->
+                    isFavorite = param.isFavorite, onFavoriteClick = { newState ->
                         performHapticFeedbackForToggle(newState, view)
                         onFavoriteToggle(newState)
-                    },
-                    modifier = Modifier.scale(0.85f)
+                    }, modifier = Modifier.scale(0.85f)
                 )
             }
 
@@ -169,8 +162,7 @@ internal fun EditParamLandscapeContent(
                             contentDescription = stringResource(R.string.tasker_list),
                             tint = MaterialTheme.colorScheme.tertiary
                         )
-                    }
-                )
+                    })
             }
         }
 
@@ -207,8 +199,7 @@ internal fun EditParamLandscapeContent(
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
 private fun EditParamContentPreview() {
 
-    @Language("html")
-    val htmlDocs = """
+    @Language("html") val htmlDocs = """
         <p>Correctable <a href="../">memory errors</a> are very common on servers.
         Soft-offline is kernel’s solution for memory pages having
         (excessive) corrected memory errors.</p>
@@ -220,12 +211,10 @@ private fun EditParamContentPreview() {
             <li>For a page that is part of a HugeTLB <b>hugepage</b>, <code>soft-offline</code> first migrates the entire HugeTLB hugepage, during which a free hugepage will be consumed as migration target. Then the original hugepage is dissolved into raw pages without compensation, reducing the capacity of the HugeTLB pool by 1.</li>
             <li>It is user’s call to choose between reliability <i>(staying away from fragile physical memory)</i> vs performance / capacity implications in transparent and HugeTLB cases.</li>
         </ul>
-    """.trimIndent()
-        .replace(
+    """.trimIndent().replace(
             "<code>",
             "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">"
-        )
-        .replace("</code>", "</span></b></font>")
+        ).replace("</code>", "</span></b></font>")
 
     var showError by remember { mutableStateOf(true) }
 
@@ -243,7 +232,7 @@ private fun EditParamContentPreview() {
                 ),
                 taskerAvailable = true,
                 keyboardType = KeyboardType.Number,
-                documentation = ParamDocumentation(
+                documentation = UiParamDocumentation(
                     title = "vm.enable_soft_offline",
                     documentationText = "",
                     documentationHtml = htmlDocs,
@@ -253,15 +242,12 @@ private fun EditParamContentPreview() {
             EditParamLandscapeContent(
                 state = state,
                 showError = showError,
-                errorMessage = "Sysctl command for 'wm.swappiness' executed, " +
-                        "but output did not confirm the change. Output: 'Access denied'. " +
-                        "Try using '${CommitMode.ECHO}' mode.",
+                errorMessage = "Sysctl command for 'wm.swappiness' executed, " + "but output did not confirm the change. Output: 'Access denied'. " + "Try using '${CommitMode.ECHO}' mode.",
                 onValueApply = {},
                 onTaskerClicked = {},
                 onDocsReadMorePressed = {},
                 onFavoriteToggle = {},
-                onErrorAnimationEnd = { showError = false }
-            )
+                onErrorAnimationEnd = { showError = false })
         }
     }
 }

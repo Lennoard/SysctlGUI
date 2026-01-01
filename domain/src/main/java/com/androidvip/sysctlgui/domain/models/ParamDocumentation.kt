@@ -8,9 +8,9 @@ package com.androidvip.sysctlgui.domain.models
  * @property documentationHtml The HTML formatted documentation, if available.
  * @property url The URL to the online documentation, if available.
  */
-data class ParamDocumentation(
-    val title: String = "",
-    val documentationText: String = "",
-    val documentationHtml: String? = null,
-    val url: String? = null
-)
+interface ParamDocumentation {
+    val title: String
+    val documentationText: String
+    val documentationHtml: String?
+    val url: String?
+}

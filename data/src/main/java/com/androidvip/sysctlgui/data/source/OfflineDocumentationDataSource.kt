@@ -3,6 +3,7 @@ package com.androidvip.sysctlgui.data.source
 import android.annotation.SuppressLint
 import android.content.Context
 import com.androidvip.sysctlgui.data.R
+import com.androidvip.sysctlgui.data.models.ParamDocumentationDTO
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.models.ParamDocumentation
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +55,7 @@ class OfflineDocumentationDataSource(
         val stringRes = runCatching { context.getString(resId) }.getOrNull()
 
         // Prefer the documented string resource
-        if (stringRes != null) return@withContext ParamDocumentation(
+        if (stringRes != null) return@withContext ParamDocumentationDTO(
             title = param.name,
             documentationText = stringRes
         )
@@ -110,7 +111,7 @@ class OfflineDocumentationDataSource(
 
         val documentationText = info.takeIf { it.isNullOrEmpty().not() }
         if (documentationText == null) return@withContext null
-        return@withContext ParamDocumentation(
+        return@withContext ParamDocumentationDTO(
             title = param.name,
             documentationText = documentationText
         )

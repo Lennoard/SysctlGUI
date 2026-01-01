@@ -395,7 +395,7 @@ private fun SearchResultsContent(
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 8.dp)
+            contentPadding = PaddingValues(bottom = 8.dp, top = 16.dp)
         ) {
             itemsIndexed(searchResults) { index, param ->
                 ParamRow(
