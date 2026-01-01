@@ -7,6 +7,7 @@ data class MainViewState(
     val topBarTitle: String = "Sysctl GUI",
     val showTopBar: Boolean = true,
     val showNavBar: Boolean = true,
+    val useTopBarScrollBehavior: Boolean = true,
     val showBackButton: Boolean = false,
     val showSearchAction: Boolean = true
 )

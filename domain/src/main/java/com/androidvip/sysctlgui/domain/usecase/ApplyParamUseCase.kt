@@ -1,11 +1,11 @@
 package com.androidvip.sysctlgui.domain.usecase
 
-import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.domain.exceptions.ApplyValueException
 import com.androidvip.sysctlgui.domain.exceptions.BlankValueNotAllowedException
 import com.androidvip.sysctlgui.domain.exceptions.CommitModeException
 import com.androidvip.sysctlgui.domain.exceptions.ShellCommandException
+import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.repository.ParamsRepository
 
@@ -46,6 +46,8 @@ class ApplyParamUseCase(
                 }
             }
 
+        } catch (e: CommitModeException) {
+            throw e
         } catch (e: ShellCommandException) {
             val message = e.cause?.message.orEmpty()
             throwApplyValueException(
