@@ -17,8 +17,7 @@ class RootUtils(private val shellDispatcher: CoroutineDispatcher = Dispatchers.D
     }
 
     suspend fun isRootAvailable(): Boolean = withContext(shellDispatcher) {
-        //Shell.isAppGrantedRoot() == true
-        true
+        Shell.isAppGrantedRoot() == true
     }
 
     suspend fun isBusyboxAvailable(): Boolean = withContext(shellDispatcher) {
