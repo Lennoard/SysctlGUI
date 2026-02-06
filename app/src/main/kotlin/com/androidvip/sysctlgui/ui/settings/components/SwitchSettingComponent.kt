@@ -41,12 +41,14 @@ fun SwitchSettingComponent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(space = 16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .size(24.dp)
-        ) {
-            icon?.invoke()
+        if (icon != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(24.dp)
+            ) {
+                icon()
+            }
         }
 
         SettingsComponentColumn(

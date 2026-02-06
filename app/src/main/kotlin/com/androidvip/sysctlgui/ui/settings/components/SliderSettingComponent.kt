@@ -12,7 +12,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,12 +34,14 @@ fun SliderSettingComponent(
         modifier = modifier.padding(all = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(space = 16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .size(24.dp)
-        ) {
-            icon?.invoke()
+        if (icon != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(24.dp)
+            ) {
+                icon()
+            }
         }
 
         val values = appSetting.values?.filterIsInstance<Int>() ?: emptyList()

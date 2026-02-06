@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         updateEdgeToEdgeConfiguration(prefs.forceDark)
+        super.onCreate(savedInstanceState)
 
         setContent {
             val themeState by mainViewModel.themeState.collectAsStateWithLifecycle()

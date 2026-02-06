@@ -6,13 +6,16 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
@@ -26,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
@@ -78,12 +82,21 @@ internal fun EditParamLandscapeContent(
         Toast.makeText(context, toastCopiedText, Toast.LENGTH_SHORT).show()
     }
 
-    Row {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Column(
             modifier = Modifier
                 .weight(1f)
-                .background(MaterialTheme.colorScheme.background)
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainer)
                 .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val toastCopyMessage = stringResource(R.string.long_press_to_copy)
             Text(
@@ -102,18 +115,13 @@ internal fun EditParamLandscapeContent(
                             ).show()
                         },
                         onLongClick = copyParamContentToClipboard
-                    )
-                    .padding(start = 16.dp, end = 16.dp, top = 24.dp),
+                    ),
                 maxLines = 3,
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis
             )
 
-            Row(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp, vertical = if (param.isTaskerParam) 0.dp else 24.dp
-                ), verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = param.name,
@@ -154,7 +162,6 @@ internal fun EditParamLandscapeContent(
                 val listName = taskerListNameResolver(param.taskerList)
                 AssistChip(
                     onClick = { onTaskerClicked(true) },
-                    modifier = Modifier.padding(16.dp),
                     label = { Text(text = stringResource(R.string.tasker_list_format, listName)) },
                     leadingIcon = {
                         Icon(
@@ -169,11 +176,13 @@ internal fun EditParamLandscapeContent(
         Column(
             modifier = Modifier
                 .weight(1f)
+                .clip(RoundedCornerShape(24.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ParamValueContent(
-                modifier = Modifier.padding(16.dp),
                 param = param,
                 keyboardType = state.keyboardType,
                 onValueApply = onValueApply
@@ -181,13 +190,11 @@ internal fun EditParamLandscapeContent(
 
             AnimatedVisibility(
                 visible = showError && errorMessage.isNotEmpty(),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             ) {
                 ErrorContainer(message = errorMessage, onAnimationEnd = onErrorAnimationEnd)
             }
 
             ParamDocs(
-                modifier = Modifier.padding(16.dp),
                 documentation = state.documentation,
                 onReadMorePressed = onDocsReadMorePressed
             )
