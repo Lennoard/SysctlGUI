@@ -9,14 +9,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -145,81 +150,50 @@ private fun SettingsScreenContent(
 ) {
     val groupedSettings = settings.groupBy { it.category }
     val columns = if (isLandscape()) 2 else 1
+    val containerColor = MaterialTheme.colorScheme.surfaceContainer
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        groupedSettings.forEach { (category, categorySettings) ->
+        groupedSettings.forEach { (category, settingsGroup) ->
             item(span = { GridItemSpan(columns) }) {
-                Text(
-                    text = category,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            top = 8.dp,
-                            bottom = 8.dp,
-                            start = if (columns > 1) 16.dp else 56.dp,
-                            end = 16.dp,
-                        )
-                )
-            }
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(containerColor)
+                ) {
+                    Text(
+                        text = category,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp, bottom = 8.dp)
+                            .padding(horizontal = 16.dp)
+                    )
 
-            items(
-                items = categorySettings,
-                key = { setting -> setting.key }
-            ) { appSetting ->
-                val itemModifier = if (columns > 1) {
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                } else {
-                    Modifier.fillMaxWidth()
-                }
-
-                when (appSetting.type) {
-                    SettingItemType.Text -> {
-                        HeaderComponent(
-                            modifier = itemModifier,
-                            appSetting = appSetting,
-                            onClick = { onSettingHeaderClicked(appSetting) }
-                        )
-                    }
-                    SettingItemType.List -> {
-                        TextSettingComponent(
-                            modifier = itemModifier,
-                            appSetting = appSetting,
-                            onValueChange = { newValue ->
-                                onValueChanged(appSetting, newValue)
-                            }
-                        )
-                    }
-                    SettingItemType.Switch -> {
-                        SwitchSettingComponent(
-                            modifier = itemModifier,
-                            appSetting = appSetting,
-                            onValueChange = { newValue ->
-                                onValueChanged(appSetting, newValue)
-                            }
-                        )
-                    }
-                    SettingItemType.Slider -> {
-                        SliderSettingComponent(
-                            modifier = itemModifier,
-                            appSetting = appSetting,
-                            onValueChange = { newValue ->
-                                onValueChanged(appSetting, newValue)
-                            }
-                        )
-                    }
+                    SettingsGroupItem(
+                        settingsGroup = settingsGroup,
+                        columns = columns,
+                        onSettingHeaderClicked = onSettingHeaderClicked,
+                        onValueChanged = onValueChanged
+                    )
                 }
             }
         }
 
         item(span = { GridItemSpan(columns) }) {
-            Box(contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainer),
+                contentAlignment = Alignment.Center
+            ) {
                 Row(
                     modifier = Modifier.padding(all = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -251,12 +225,74 @@ private fun SettingsScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top  = 64.dp,
+                        top = 64.dp,
                         bottom = 32.dp,
                         start = 24.dp,
                         end = 24.dp,
                     )
             )
+        }
+    }
+}
+
+@Composable
+private fun SettingsGroupItem(
+    settingsGroup: List<AppSetting<*>>,
+    columns: Int,
+    onSettingHeaderClicked: (AppSetting<*>) -> Unit,
+    onValueChanged: (AppSetting<*>, Any) -> Unit
+) {
+    settingsGroup.forEachIndexed { index, appSetting ->
+        val itemModifier = if (columns > 1) {
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        } else {
+            Modifier.fillMaxWidth()
+        }
+
+        when (appSetting.type) {
+            SettingItemType.Text -> {
+                HeaderComponent(
+                    modifier = itemModifier,
+                    appSetting = appSetting,
+                    onClick = { onSettingHeaderClicked(appSetting) }
+                )
+            }
+
+            SettingItemType.List -> {
+                TextSettingComponent(
+                    modifier = itemModifier,
+                    appSetting = appSetting,
+                    onValueChange = { newValue ->
+                        onValueChanged(appSetting, newValue)
+                    }
+                )
+            }
+
+            SettingItemType.Switch -> {
+                SwitchSettingComponent(
+                    modifier = itemModifier,
+                    appSetting = appSetting,
+                    onValueChange = { newValue ->
+                        onValueChanged(appSetting, newValue)
+                    }
+                )
+            }
+
+            SettingItemType.Slider -> {
+                SliderSettingComponent(
+                    modifier = itemModifier,
+                    appSetting = appSetting,
+                    onValueChange = { newValue ->
+                        onValueChanged(appSetting, newValue)
+                    }
+                )
+            }
+        }
+
+        if (index == settingsGroup.lastIndex) {
+            Spacer(modifier = Modifier.size(8.dp))
         }
     }
 }
@@ -308,7 +344,7 @@ internal fun SettingsScreenPreview() {
                 type = SettingItemType.List,
                 values = listOf(
                     CommitMode.SYSCTL.name.lowercase(),
-                    CommitMode.ECHO.name.lowercase(),
+                    CommitMode.ECHO.name.lowercase()
                 )
             ),
 
@@ -322,7 +358,7 @@ internal fun SettingsScreenPreview() {
                 type = SettingItemType.Text,
             )
         )
-        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             SettingsScreenContent(
                 settings = settings,
                 onSettingHeaderClicked = {},

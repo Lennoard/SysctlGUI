@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.ui.params.edit
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -11,10 +12,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -24,49 +30,81 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun ActionToggleButton(
     modifier: Modifier = Modifier,
+    size: Dp = 56.dp,
     isActive: Boolean,
     iconOnActive: Painter,
     iconOnInactive: Painter,
     contentDescription: String? = null,
     onToggle: (Boolean) -> Unit,
 ) {
+    var internalPressed by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val radius = if (isPressed || isActive) 16.dp else size / 2f
+    val cornerRadius = animateDpAsState(targetValue = radius)
+    val coroutineScope = rememberCoroutineScope()
     val containerColor by animateColorAsState(
-        targetValue = if (isActive) {
-            MaterialTheme.colorScheme.secondary
-        } else {
-            MaterialTheme.colorScheme.background
+        targetValue = when {
+            isPressed && isActive -> MaterialTheme.colorScheme.secondary
+            isPressed -> MaterialTheme.colorScheme.secondaryContainer
+            isActive -> MaterialTheme.colorScheme.secondary
+            else -> MaterialTheme.colorScheme.background
         },
         label = "FabContainerColor"
     )
 
+    val sizeAnimationSpec: AnimationSpec<Dp> = remember {
+        spring(dampingRatio = Spring.DampingRatioMediumBouncy)
+    }
+
     val defaultElevation by animateDpAsState(
         targetValue = if (isActive) 4.dp else 2.dp,
-        label = "FabElevation"
+        label = "FabElevation",
+        animationSpec = sizeAnimationSpec
+    )
+
+    val width by animateDpAsState(
+        targetValue = if (isPressed || internalPressed) size + 4.dp else size,
+        label = "FabWidth",
+        animationSpec = sizeAnimationSpec
     )
 
     FloatingActionButton(
-        modifier = modifier,
-        onClick = { onToggle(!isActive) },
+        modifier = modifier.width(width),
+        onClick = {
+            onToggle(!isActive)
+            internalPressed = !internalPressed
+            coroutineScope.launch {
+                delay(150L)
+                internalPressed = !internalPressed
+            }
+        },
         containerColor = containerColor,
+        interactionSource = interactionSource,
+        shape = RoundedCornerShape(cornerRadius.value),
         elevation = FloatingActionButtonDefaults.elevation(
             defaultElevation = defaultElevation,
             pressedElevation = defaultElevation * 2
-        ),
-        shape = CircleShape,
+        )
     ) {
         AnimatedContent(
             targetState = isActive,
@@ -94,14 +132,19 @@ internal fun ActionToggleButton(
                 MaterialTheme.colorScheme.onSurfaceVariant
             }
 
-            Icon(
-                painter = if (isCurrentlyActive) iconOnActive else iconOnInactive,
-                contentDescription = stringResource(
-                    R.string.toggle_format,
-                    contentDescription.orEmpty()
-                ),
-                tint = iconTint
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = if (isCurrentlyActive) iconOnActive else iconOnInactive,
+                    contentDescription = stringResource(
+                        R.string.toggle_format,
+                        contentDescription.orEmpty()
+                    ),
+                    tint = iconTint
+                )
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -59,8 +58,6 @@ fun TextSettingComponent(
                         modifier = Modifier.size(24.dp)
                     )
                 }
-            } else {
-                Spacer(modifier = Modifier.size(24.dp))
             }
 
             SettingsComponentColumn(
@@ -99,9 +96,11 @@ fun TextSettingComponent(
 @PreviewLightDark
 private fun TextSettingComponentPreview() {
     SysctlGuiTheme(dynamicColor = true) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
             TextSettingComponent(
                 appSetting = AppSetting(
                     key = "key",

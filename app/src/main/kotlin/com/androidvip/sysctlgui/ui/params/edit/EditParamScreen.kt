@@ -24,13 +24,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +48,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
@@ -247,17 +248,21 @@ private fun EditParamContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .padding(vertical = 24.dp, horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val toastCopyMessage = stringResource(R.string.long_press_to_copy)
             Text(
                 text = param.lastNameSegment,
-                style = MaterialTheme.typography.displayLarge,
+                style = MaterialTheme.typography.displaySmall,
                 modifier = Modifier
                     .combinedClickable(
                         enabled = true,
@@ -267,20 +272,13 @@ private fun EditParamContent(
                             Toast.makeText(context, toastCopyMessage, Toast.LENGTH_SHORT).show()
                         },
                         onLongClick = copyParamContentToClipboard
-                    )
-                    .padding(start = 16.dp, end = 16.dp, top = 64.dp),
+                    ),
                 maxLines = 3,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onSurface,
                 overflow = TextOverflow.Ellipsis
             )
 
-            Row(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = if (param.isTaskerParam) 0.dp else 24.dp
-                ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = param.name,
@@ -325,7 +323,6 @@ private fun EditParamContent(
                 val listName = taskerListNameResolver(param.taskerList)
                 AssistChip(
                     onClick = { onTaskerClicked(true) },
-                    modifier = Modifier.padding(16.dp),
                     label = { Text(text = stringResource(R.string.tasker_list_format, listName)) },
                     leadingIcon = {
                         Icon(
@@ -339,21 +336,24 @@ private fun EditParamContent(
         }
 
         ParamValueContent(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(16.dp),
             param = param,
             keyboardType = state.keyboardType,
             onValueApply = onValueApply
         )
 
-        AnimatedVisibility(
-            visible = showError && errorMessage.isNotEmpty(),
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        ) {
+        AnimatedVisibility(visible = showError && errorMessage.isNotEmpty(),) {
             ErrorContainer(message = errorMessage, onAnimationEnd = onErrorAnimationEnd)
         }
 
         ParamDocs(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .padding(16.dp),
             documentation = state.documentation,
             onReadMorePressed = onDocsReadMorePressed
         )
@@ -375,8 +375,6 @@ fun ParamValueContent(
         enabled = isEditing,
         onBack = { isEditing = false }
     )
-
-    HorizontalDivider()
 
     Row(
         modifier = modifier,
@@ -484,8 +482,6 @@ internal fun ParamDocs(
     documentation: UiParamDocumentation?,
     onReadMorePressed: () -> Unit,
 ) {
-    HorizontalDivider()
-
     Column(modifier = modifier) {
         Text(
             text = stringResource(R.string.documentation),
@@ -635,10 +631,10 @@ private fun EditParamContentPreview() {
                 errorMessage = "Sysctl command for 'wm.swappiness' executed, " +
                         "but output did not confirm the change. Output: 'Access denied'. " +
                         "Try using '${CommitMode.ECHO}' mode.",
-                onValueApply = {},
-                onTaskerClicked = {},
-                onDocsReadMorePressed = {},
-                onFavoriteToggle = {},
+                onValueApply = { },
+                onTaskerClicked = { },
+                onDocsReadMorePressed = { },
+                onFavoriteToggle = { },
                 onErrorAnimationEnd = { showError = false }
             )
         }

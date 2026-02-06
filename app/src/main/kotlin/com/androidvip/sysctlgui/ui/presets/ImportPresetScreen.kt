@@ -75,12 +75,13 @@ fun ImportPresetScreen(
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val topBarTitle = stringResource(R.string.applying_preset)
 
     LaunchedEffect(Unit) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
-                    topBarTitle = context.getString(R.string.applying_preset),
+                    topBarTitle = topBarTitle,
                     showTopBar = true,
                     showNavBar = false,
                     showBackButton = true,
@@ -187,7 +188,7 @@ private fun IncomingPresetsContent(
         ) {
             itemsIndexed(
                 items = paramsToImport,
-                key = { index, item -> item.name }
+                key = { _, item -> item.name }
             ) { index, item ->
                 Row(
                     modifier = Modifier
@@ -295,7 +296,7 @@ private fun IncomingPresetsLandscapeContent(
         ) {
             itemsIndexed(
                 items = paramsToImport,
-                key = { index, item -> item.name }
+                key = { _, item -> item.name }
             ) { index, item ->
                 Row(
                     modifier = Modifier
