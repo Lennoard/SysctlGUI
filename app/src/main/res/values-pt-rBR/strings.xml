@@ -105,4 +105,15 @@
     <string name="history_deleted">Histórico deletado</string>
     <string name="startup_params">Parâmetros da inicialização</string>
     <string name="sysctl_help">Sysctl é usado para modificar parâmetros do kernel em tempo de execução. Os parâmetros disponíveis são aqueles listados em /proc/sys e o objetivo principal deste aplicativo é fornecer uma maneira gráfica de editá-los.</string>
+    <string name="consent_title">Consentimento para editar parâmetros</string>
+    <string name="consent_message">Precisamos do seu consentimento para prosseguir. Veja o que o aplicativo pode e não pode fazer após o consentimento ser concedido:\n\t
+        ❌ Executar comandos não relacionados à ferramenta sysctl\n\t
+        ❌ Executar comandos sem permisão ou ação iniciada pelo usuário\n\t
+        ❌ Deixar alterações permanentes\n\t
+        ✅ Executar apenas comandos sysctl para os parâmetros escolhidos\n\t
+        ✅ Reverter todas as alterações
+    </string>
+    <string name="consent_checkbox">Eu concordo com o declarado acima</string>
+    <string name="continue_">Continuar</string>
+    <string name="consent_revert_info">Devido à natureza do kernel, as alterações feitas em tempo de execução podem ser revertidas com uma simples reinicialização do dispositivo. Você encontrará a opção de reversão nas configurações do aplicativo.</string>
 </resources>

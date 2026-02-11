@@ -23,6 +23,7 @@ interface AppPrefs {
     var askedForNotificationPermission: Boolean
     var useOnlineDocs: Boolean
     var contrastLevel: Int
+    var consentGranted: Boolean
     val searchHistory: Set<String>
     fun addSearchToHistory(query: String)
     fun removeSearchFromHistory(query: String)

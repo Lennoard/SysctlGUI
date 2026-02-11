@@ -14,5 +14,6 @@ enum class Prefs(val key: String) {
     AskedNotificationPermission("asked_notification_permission"),
     UseOnlineDocs("use_online_docs"),
     ContrastLevel("contrast_level"),
+    ConsentGranted("edit_consent_granted"),
     SearchHistory("search_history")
 }
