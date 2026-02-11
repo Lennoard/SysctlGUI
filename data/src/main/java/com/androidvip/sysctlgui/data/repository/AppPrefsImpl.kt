@@ -89,6 +89,11 @@ class AppPrefsImpl(private val prefs: SharedPreferences) : AppPrefs {
         set(value) {
             prefs.edit { putInt(Prefs.ContrastLevel.key, value) }
         }
+    override var consentGranted: Boolean
+        get() = prefs.getBoolean(Prefs.ConsentGranted.key, false)
+        set(value) {
+            prefs.edit { putBoolean(Prefs.ConsentGranted.key, value) }
+        }
     override val searchHistory: Set<String>
         get() = prefs.getStringSet(Prefs.SearchHistory.key, emptySet()) ?: emptySet()
 

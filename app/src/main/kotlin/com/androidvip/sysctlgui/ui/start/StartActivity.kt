@@ -27,12 +27,18 @@ class StartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
 
         splashScreen.setKeepOnScreenCondition { true }
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (!prefs.consentGranted) {
+            startActivity(Intent(this, ConsentActivity::class.java))
+            finish()
+            return
+        }
 
         lifecycleScope.launch {
             rootUtils.getRootShell()
@@ -72,7 +78,11 @@ class StartActivity : AppCompatActivity() {
 
     private fun navigate() {
         val shortcutNames = Actions.entries.map { it.name }
-        val nextIntent = Intent(this, MainActivity::class.java).apply {
+        val nextIntent = if (prefs.consentGranted) {
+            Intent(this, MainActivity::class.java)
+        } else {
+            Intent(this, ConsentActivity::class.java)
+        }.apply {
             if (intent.action in shortcutNames) {
                 putExtra(MainActivity.EXTRA_DESTINATION, intent.action)
                 putExtras(intent.extras ?: Bundle())

@@ -42,6 +42,9 @@
             android:name=".ui.start.StartErrorActivity"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".ui.start.ConsentActivity"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ui.tasker.TaskerPluginActivity"
             android:exported="true"
             android:label="@string/tasker_settings">

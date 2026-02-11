@@ -105,4 +105,15 @@
     <string name="history_deleted">History deleted</string>
     <string name="startup_params">Startup params</string>
     <string name="sysctl_help">Sysctl is used to modify kernel parameters at runtime. The parameters available are those listed under /proc/sys and this app\'s main purpose is to provide a graphical way to edit them.</string>
+    <string name="consent_title">Edit parameters consent</string>
+    <string name="consent_message">We need your consent before we can proceed. This is what the app can and cannot do, once consent is granted:\n\t
+        ❌ Execute commands unrelated to the sysctl tool\n\t
+        ❌ Execute commands without a user-initiated action or permission\n\t
+        ❌ Leave permanent changes in place\n\t
+        ✅ Execute only sysctl commands for the chosen parameters\n\t
+        ✅ Revert back all changes
+    </string>
+    <string name="consent_checkbox">I consent to the above</string>
+    <string name="continue_">Continue</string>
+    <string name="consent_revert_info">By the nature of the kernel, changes done at runtime can be reverted by a simple device reboot. You can find the revert back option in the app settings.</string>
 </resources>
