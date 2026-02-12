@@ -41,9 +41,9 @@ fun ParamFileRow(
 ) {
     Box(modifier = Modifier.clickable { onParamClicked(param) }) {
         val rowDescription = if (param.isDirectory) {
-            stringResource(R.string.acessibility_directory_description_format, param.name)
+            stringResource(R.string.accessibility_directory_description_format, param.name)
         } else {
-            stringResource(R.string.acessibility_param_description_format, param.name)
+            stringResource(R.string.accessibility_param_description_format, param.name)
         }
         Row(
             modifier = modifier
@@ -110,7 +110,7 @@ private fun ParamIcon(param: UiKernelParam) {
     ) {
         Icon(
             painter = painterResource(iconId),
-            contentDescription = stringResource(R.string.acessibility_param_icon_description),
+            contentDescription = stringResource(R.string.accessibility_param_icon_description),
             modifier = Modifier.size(24.dp),
             tint = iconColor
         )
@@ -122,7 +122,7 @@ private fun TrailingIcon(param: UiKernelParam, showFavoriteIcon: Boolean) {
     if (param.isDirectory) {
         Icon(
             painter = painterResource(R.drawable.ic_keyboard_arrow_right),
-            contentDescription = stringResource(R.string.acessibility_davegate_to_directory_description),
+            contentDescription = stringResource(R.string.accessibility_navigate_to_directory_description),
             modifier = Modifier.size(24.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )

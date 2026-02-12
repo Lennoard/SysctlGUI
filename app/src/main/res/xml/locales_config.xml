@@ -2,6 +2,6 @@
 <locale-config xmlns:android="http://schemas.android.com/apk/res/android">
     <locale android:name="en" />
     <locale android:name="de" />
-    <locale android:name="pt-rBR" />
+    <locale android:name="pt" />
     <locale android:name="tr" />
 </locale-config>
