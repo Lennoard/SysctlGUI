@@ -37,4 +37,7 @@
     <string name="pref_contributors_title">Contributors</string>
     <string name="pref_translations_title">Translations</string>
     <string name="pref_translations_description">Help translate this application</string>
+    <string name="prefs_startup_revert_changes">Revert changes</string>
+    <string name="prefs_startup_revert_changes_description">Revert changes made by this app</string>
+    <string name="prefs_startup_revert_changes_message">By the nature of the kernel, changes done at runtime can be reverted by a simple device reboot. The app will no longer attempt to reapply changes right after a completed boot cycle.</string>
 </resources>

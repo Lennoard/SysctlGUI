@@ -13,6 +13,7 @@ sealed interface SettingsViewEffect {
     class OpenBrowser(val url: String) : SettingsViewEffect
     class Navigate(val route: UiRoute) : SettingsViewEffect
     class ShowToast(val message: String) : SettingsViewEffect
+    data object ShowRevertDialog : SettingsViewEffect
 }
 
 data class SettingsViewState(

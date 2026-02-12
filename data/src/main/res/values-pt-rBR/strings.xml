@@ -37,4 +37,7 @@
     <string name="pref_contributors_title">Contribuidores</string>
     <string name="pref_translations_title">Traduções</string>
     <string name="pref_translations_description">Ajude a traduzir este aplicativo</string>
+    <string name="prefs_startup_revert_changes">Reverter mudanças</string>
+    <string name="prefs_startup_revert_changes_description">Reverter alterações feitas por este aplicativo</string>
+    <string name="prefs_startup_revert_changes_message">Devido à natureza do kernel, as alterações feitas em tempo de execução podem ser revertidas com uma simples reinicialização do dispositivo. O aplicativo não tentará mais reaplicar as alterações após um ciclo de inicialização completo.</string>
 </resources>

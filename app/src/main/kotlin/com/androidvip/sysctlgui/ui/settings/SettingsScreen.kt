@@ -17,13 +17,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -60,8 +63,8 @@ import com.androidvip.sysctlgui.ui.settings.components.SwitchSettingComponent
 import com.androidvip.sysctlgui.ui.settings.components.TextSettingComponent
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEffect
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEvent
-import com.androidvip.sysctlgui.utils.browse
 import org.koin.androidx.compose.koinViewModel
+import com.androidvip.sysctlgui.data.R as DataR
 
 internal const val DISABLED_ALPHA = 0.38f
 
@@ -71,8 +74,10 @@ internal fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel(),
     onNavigate: (UiRoute) -> Unit
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    var showRevertChangesDialog by remember { mutableStateOf(false) }
     var hasNotificationPermission by remember {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mutableStateOf(
@@ -117,7 +122,7 @@ internal fun SettingsScreen(
                 }
 
                 is SettingsViewEffect.OpenBrowser -> {
-                    context.browse(effect.url)
+                    uriHandler.openUri(effect.url)
                 }
 
                 is SettingsViewEffect.Navigate -> {
@@ -127,12 +132,16 @@ internal fun SettingsScreen(
                 is SettingsViewEffect.ShowToast -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
+
+                SettingsViewEffect.ShowRevertDialog -> {
+                    showRevertChangesDialog = true
+                }
             }
         }
     }
 
     SettingsScreenContent(
-        settings = state.value.settings,
+        settings = state.settings,
         onSettingHeaderClicked = { appSetting ->
             viewModel.onEvent(SettingsViewEvent.SettingHeaderClicked(appSetting))
         },
@@ -140,6 +149,10 @@ internal fun SettingsScreen(
             viewModel.onEvent(SettingsViewEvent.SettingValueChanged(appSetting, newValue))
         }
     )
+
+    if (showRevertChangesDialog) {
+        RevertChangesDialog(onDismissRequest = { showRevertChangesDialog = false })
+    }
 }
 
 @Composable
@@ -152,15 +165,15 @@ private fun SettingsScreenContent(
     val columns = if (isLandscape()) 2 else 1
     val containerColor = MaterialTheme.colorScheme.surfaceContainer
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(columns),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         groupedSettings.forEach { (category, settingsGroup) ->
-            item(span = { GridItemSpan(columns) }) {
+            item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -187,7 +200,7 @@ private fun SettingsScreenContent(
             }
         }
 
-        item(span = { GridItemSpan(columns) }) {
+        item {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(24.dp))
@@ -216,7 +229,7 @@ private fun SettingsScreenContent(
             }
         }
 
-        item(span = { GridItemSpan(columns) }) {
+        item(span = StaggeredGridItemSpan.FullLine) {
             Text(
                 text = "Developed with ❤️ by Lennoard Silva\nAndroid enthusiast 🤖",
                 style = MaterialTheme.typography.bodySmall,
@@ -295,6 +308,31 @@ private fun SettingsGroupItem(
             Spacer(modifier = Modifier.size(8.dp))
         }
     }
+}
+
+
+@Composable
+fun RevertChangesDialog(onDismissRequest: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(android.R.string.ok))
+            }
+        },
+        icon = {
+            Icon(
+                painter = painterResource(R.drawable.ic_restore_settings),
+                contentDescription = null
+            )
+        },
+        title = {
+            Text(text = stringResource(DataR.string.prefs_startup_revert_changes))
+        },
+        text = {
+            Text(text = stringResource(DataR.string.prefs_startup_revert_changes_message))
+        }
+    )
 }
 
 @Composable
