@@ -15,7 +15,7 @@ data class MainViewState(
 
 data class ThemeSettings(
     val forceDark: Boolean = false,
-    val dynamicColors: Boolean = false,
+    val dynamicColors: Boolean = true,
     val contrastLevel: Int = CONTRAST_LEVEL_NORMAL
 )
 

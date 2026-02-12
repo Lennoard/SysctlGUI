@@ -30,8 +30,9 @@ class AppSettingsRepositoryImpl(
 ) : AppSettingsRepository {
     override suspend fun getAppSettings(): List<AppSetting<*>> = withContext(ioContext) {
         val isTaskerInstalled = isTaskerInstalled()
-        val usingDynamicColors = sharedPreferences.getBoolean(Prefs.DynamicColors.key, false)
         val supportsDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        val usingDynamicColors =
+            sharedPreferences.getBoolean(Prefs.DynamicColors.key, supportsDynamicColors)
         val currentCommitMode = sharedPreferences.getString(
             Prefs.CommitMode.key,
             CommitMode.SYSCTL.name.lowercase()
