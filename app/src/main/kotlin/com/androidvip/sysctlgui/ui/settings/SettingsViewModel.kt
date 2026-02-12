@@ -11,6 +11,7 @@ import com.androidvip.sysctlgui.domain.enums.SettingItemType
 import com.androidvip.sysctlgui.domain.models.KEY_CONTRIBUTORS
 import com.androidvip.sysctlgui.domain.models.KEY_DELETE_HISTORY
 import com.androidvip.sysctlgui.domain.models.KEY_MANAGE_PARAMS
+import com.androidvip.sysctlgui.domain.models.KEY_REVERT_CHANGES
 import com.androidvip.sysctlgui.domain.models.KEY_SOURCE_CODE
 import com.androidvip.sysctlgui.domain.models.KEY_TRANSLATIONS
 import com.androidvip.sysctlgui.domain.usecase.GetAppSettingsUseCase
@@ -78,6 +79,16 @@ class SettingsViewModel(
 
             is SettingsViewEvent.SettingHeaderClicked<*> -> {
                 when (event.appSetting.key) {
+                    KEY_REVERT_CHANGES -> {
+                        setEffect { SettingsViewEffect.ShowRevertDialog }
+                        viewModelScope.launch {
+                            sharedPreferences.edit(commit = true) {
+                                putBoolean(Prefs.RunOnStartup.key, false)
+                            }
+                            loadSettings()
+                        }
+                    }
+
                     KEY_MANAGE_PARAMS -> {
                         setEffect { SettingsViewEffect.Navigate(UiRoute.UserParams) }
                     }

@@ -32,6 +32,7 @@ data class AppSetting<T>(
     val iconResource: Int? = null
 )
 
+const val KEY_REVERT_CHANGES = "revertChanges"
 const val KEY_MANAGE_PARAMS = "manageParams"
 const val KEY_DELETE_HISTORY = "deleteHistory"
 const val KEY_SOURCE_CODE = "sauce"

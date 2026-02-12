@@ -12,6 +12,7 @@ import com.androidvip.sysctlgui.domain.models.AppSetting
 import com.androidvip.sysctlgui.domain.models.KEY_CONTRIBUTORS
 import com.androidvip.sysctlgui.domain.models.KEY_DELETE_HISTORY
 import com.androidvip.sysctlgui.domain.models.KEY_MANAGE_PARAMS
+import com.androidvip.sysctlgui.domain.models.KEY_REVERT_CHANGES
 import com.androidvip.sysctlgui.domain.models.KEY_SOURCE_CODE
 import com.androidvip.sysctlgui.domain.models.KEY_TRANSLATIONS
 import com.androidvip.sysctlgui.domain.repository.AppSettingsRepository
@@ -170,6 +171,14 @@ class AppSettingsRepositoryImpl(
                 description = context.getString(R.string.prefs_startup_delay_description),
                 type = SettingItemType.Slider,
                 values = (0..10).toList(),
+            ),
+            AppSetting(
+                key = KEY_REVERT_CHANGES,
+                value = Unit,
+                category = context.getString(R.string.prefs_category_startup),
+                title = context.getString(R.string.prefs_startup_revert_changes),
+                description = context.getString(R.string.prefs_startup_revert_changes_description),
+                type = SettingItemType.Text
             ),
 
             ///////////  OTHERS  ////////////
