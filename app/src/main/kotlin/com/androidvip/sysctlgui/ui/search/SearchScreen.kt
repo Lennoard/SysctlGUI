@@ -181,7 +181,7 @@ private fun SearchScreenContent(
                                     Icon(
                                         painter = painterResource(R.drawable.ic_search),
                                         contentDescription = stringResource(
-                                            R.string.acessibility_search_icon
+                                            R.string.accessibility_search_icon
                                         )
                                     )
                                 }

@@ -62,10 +62,10 @@
     <string name="favorite_param_deleted_format">Parâmetro excluído: %s</string>
     <string name="go_back">Voltar</string>
     <string name="read_documentation_format">Ler a documentação para \"%1$s\"</string>
-    <string name="acessibility_directory_description_format">Diretório: %1$s</string>
-    <string name="acessibility_param_description_format">Parâmetro: %1$s</string>
-    <string name="acessibility_param_icon_description">Ícone de parâmetro</string>
-    <string name="acessibility_davegate_to_directory_description">Navegar para o diretório</string>
+    <string name="accessibility_directory_description_format">Diretório: %1$s</string>
+    <string name="accessibility_param_description_format">Parâmetro: %1$s</string>
+    <string name="accessibility_param_icon_description">Ícone de parâmetro</string>
+    <string name="accessibility_navigate_to_directory_description">Navegar para o diretório</string>
     <string name="marked_as_favorite">Marcado como favorito</string>
     <string name="toggle_format">Alternar %1$s</string>
     <string name="mark_as_favorite">Favoritar</string>
@@ -90,7 +90,7 @@
     <string name="search_no_suggestions">Nenhuma sugestão disponível</string>
     <string name="search_no_results_format">Nenhum resultado encontrado para \"%1$s\"</string>
     <string name="search_message">Insira uma consulta para pesquisar parâmetros do kernel</string>
-    <string name="acessibility_search_icon">Ícone de pesquisa</string>
+    <string name="accessibility_search_icon">Ícone de pesquisa</string>
     <string name="clear_search">Limpar pesquisa</string>
     <string name="recent_searches">Pesquisas recentes</string>
     <string name="history_item">Item do histórico</string>

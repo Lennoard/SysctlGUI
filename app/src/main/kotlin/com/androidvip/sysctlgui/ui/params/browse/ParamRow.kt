@@ -36,7 +36,7 @@ fun ParamRow(
     showFullName: Boolean = false
 ) {
     val rowDescription = stringResource(
-        R.string.acessibility_param_description_format,
+        R.string.accessibility_param_description_format,
         param.name
     )
     val rowState = if (param.isFavorite) stringResource(R.string.marked_as_favorite) else ""

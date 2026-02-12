@@ -62,10 +62,10 @@
     <string name="favorite_param_deleted_format">Param deleted: %s</string>
     <string name="go_back">Go back</string>
     <string name="read_documentation_format">Read documentation for \"%1$s\"</string>
-    <string name="acessibility_directory_description_format">Directory: %1$s</string>
-    <string name="acessibility_param_description_format">Parameter: %1$s</string>
-    <string name="acessibility_param_icon_description">Parameter icon</string>
-    <string name="acessibility_davegate_to_directory_description">Navigate to directory</string>
+    <string name="accessibility_directory_description_format">Directory: %1$s</string>
+    <string name="accessibility_param_description_format">Parameter: %1$s</string>
+    <string name="accessibility_param_icon_description">Parameter icon</string>
+    <string name="accessibility_navigate_to_directory_description">Navigate to directory</string>
     <string name="marked_as_favorite">Marked as favorite</string>
     <string name="toggle_format">Toggle %1$s</string>
     <string name="mark_as_favorite">Favorite</string>
@@ -90,7 +90,7 @@
     <string name="search_no_suggestions">No suggestions available</string>
     <string name="search_no_results_format">No results found for \"%1$s\"</string>
     <string name="search_message">Enter a query to search for kernel parameters</string>
-    <string name="acessibility_search_icon">Search Icon</string>
+    <string name="accessibility_search_icon">Search Icon</string>
     <string name="clear_search">Clear search</string>
     <string name="recent_searches">Recent searches</string>
     <string name="history_item">History item</string>
