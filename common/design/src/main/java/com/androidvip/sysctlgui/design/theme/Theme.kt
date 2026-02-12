@@ -243,7 +243,7 @@ private val highContrastDarkColorScheme = darkColorScheme(
 @Composable
 fun SysctlGuiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     contrastLevel: Int = 1,
     content: @Composable () -> Unit
 ) {

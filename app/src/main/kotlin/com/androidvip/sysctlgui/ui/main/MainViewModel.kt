@@ -16,7 +16,7 @@ class MainViewModel(
 ) : BaseViewModel<MainViewEvent, MainViewState, MainViewEffect>() {
     private val themeSettingsFlow: Flow<ThemeSettings> = combine(
         appPrefs.observeKey(Prefs.ForceDarkTheme.key, false),
-        appPrefs.observeKey(Prefs.DynamicColors.key, false),
+        appPrefs.observeKey(Prefs.DynamicColors.key, true),
         appPrefs.observeKey(Prefs.ContrastLevel.key, CONTRAST_LEVEL_NORMAL)
     ) { forceDark, dynamicColors, contrastLevel ->
         ThemeSettings(forceDark, dynamicColors, contrastLevel)
