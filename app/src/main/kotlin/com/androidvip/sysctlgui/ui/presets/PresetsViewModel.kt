@@ -7,6 +7,7 @@ import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.data.utils.PresetsFileProcessor
 import com.androidvip.sysctlgui.domain.StringProvider
 import com.androidvip.sysctlgui.domain.exceptions.EmptyFileException
+import com.androidvip.sysctlgui.domain.exceptions.InvalidFileException
 import com.androidvip.sysctlgui.domain.exceptions.MalformedLineException
 import com.androidvip.sysctlgui.domain.exceptions.NoValidParamException
 import com.androidvip.sysctlgui.domain.usecase.AddUserParamsUseCase
@@ -77,6 +78,8 @@ class PresetsViewModel(
                 setEffect { PresetsViewEffect.ShowError(stringProvider.getString(R.string.export_error_no_param)) }
             } catch (_: IOException) {
                 setEffect { PresetsViewEffect.ShowError(stringProvider.getString(R.string.export_error_io)) }
+            } catch (_: InvalidFileException) {
+                setEffect { PresetsViewEffect.ShowError(stringProvider.getString(R.string.import_error_invalid_type)) }
             } catch (e: Exception) {
                 Log.e("PresetsViewModel", "Error importing file", e)
                 setEffect { PresetsViewEffect.ShowError(stringProvider.getString(R.string.import_error)) }

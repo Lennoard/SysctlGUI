@@ -3,6 +3,8 @@ package com.androidvip.sysctlgui.data.utils
 import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
+import com.androidvip.sysctlgui.domain.exceptions.InvalidFileException
 import com.androidvip.sysctlgui.domain.exceptions.NoParameterFoundException
 import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.utils.isValidSysctlOutputLine
@@ -18,6 +20,7 @@ class PresetsFileProcessor(
     suspend fun getKernelParamsFromUri(
         uri: Uri
     ): List<KernelParam> = withContext(ioDispatcher) {
+        checkFileType(uri)
         contentResolver.openInputStream(uri)?.use { inputStream ->
             val lines = inputStream.bufferedReader().readLines()
             val params = lines.mapNotNull { line ->
@@ -55,5 +58,20 @@ class PresetsFileProcessor(
                 writer.flush()
             }
         } ?: throw IOException("Failed to open output stream for URI: $uri")
+    }
+
+
+    private suspend fun checkFileType(uri: Uri) = withContext(ioDispatcher) {
+        val mimeType = contentResolver.getType(uri)
+        if (mimeType != null && mimeType.startsWith("text/")) {
+            return@withContext // It's likely a text file, we're good.
+        }
+
+        val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString()).lowercase()
+        val allowedExtensions = listOf("conf", "cfg", "config", "ini", "txt")
+
+        if (fileExtension in allowedExtensions) return@withContext
+
+        throw InvalidFileException("Unsupported file type. MIME type: $mimeType.")
     }
 }

@@ -1,6 +1,9 @@
 package com.androidvip.sysctlgui.domain.exceptions
 
-class InvalidFileExtensionException : Exception()
+/**
+ * Thrown when an invalid file type is trying to be imported.
+ */
+class InvalidFileException(message: String) : Exception(message)
 /**
  * Thrown when an imported file is empty
  */
