@@ -44,6 +44,7 @@
     <string name="tile_start_app_label">Iniciar o SysctlGUI</string>
     <string name="export_options">Opções de exportação</string>
     <string name="export_error_no_param">Falha: nenhum parâmetro encontrado</string>
+    <string name="import_error_invalid_type">Tipo de arquivo inválido</string>
     <string name="export_error_io">A exportação de parâmetros falhou devido a um erro do armazenamento</string>
     <string name="export_options_sum">Importar, exportar ou fazer backup dos parâmetros do kernel</string>
     <string name="browse">Nevegar</string>

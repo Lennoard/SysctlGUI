@@ -42,6 +42,7 @@
     <string name="tile_toggle_start_up_label">Run Sysctl GUI at boot</string>
     <string name="tile_toggle_start_up_no_root_access_label">Requires root access</string>
     <string name="tile_toggle_start_up_no_root_access_toast">Root access required</string>
+    <string name="import_error_invalid_type">Invalid file type</string>
     <string name="export_error_io">Parameter export failed due to an IO error</string>
     <string name="export_error_no_param">Failed: no parameter found</string>
     <string name="export_options">Export options</string>

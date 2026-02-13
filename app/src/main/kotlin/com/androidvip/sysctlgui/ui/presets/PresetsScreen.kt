@@ -65,7 +65,7 @@ fun PresetsScreen(
         }
     )
     val createFileLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("*/*"),
+        contract = ActivityResultContracts.CreateDocument("text/plain"),
         onResult = { uri ->
             viewModel.onEvent(PresetsViewEvent.BackUpFileCreated(uri))
         }
