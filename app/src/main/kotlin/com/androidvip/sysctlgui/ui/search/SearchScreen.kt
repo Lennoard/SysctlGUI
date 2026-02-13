@@ -11,6 +11,10 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -41,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -160,6 +165,12 @@ private fun SearchScreenContent(
                         onSearch = onSearch,
                         expanded = searchActive,
                         onExpandedChange = onActiveChange,
+                        modifier = Modifier.padding(
+                            start = WindowInsets.displayCutout.asPaddingValues()
+                                .calculateStartPadding(
+                                    LocalLayoutDirection.current
+                                )
+                        ),
                         placeholder = { Text(stringResource(R.string.search_title)) },
                         leadingIcon = {
                             AnimatedContent(
@@ -193,9 +204,7 @@ private fun SearchScreenContent(
                                 enter = expandHorizontally(expandFrom = Alignment.Start) + fadeIn(),
                                 exit = shrinkHorizontally(shrinkTowards = Alignment.Start) + fadeOut()
                             ) {
-                                IconButton(onClick = {
-                                    onSearchQueryChange("")
-                                }) {
+                                IconButton(onClick = { onSearchQueryChange("") }) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_close),
                                         contentDescription = stringResource(R.string.clear_search)
@@ -266,7 +275,12 @@ private fun SearchViewContent(
 
     LazyVerticalGrid(
         columns = hintItemColumns,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = WindowInsets.displayCutout.asPaddingValues()
+                    .calculateStartPadding(LocalLayoutDirection.current)
+            )
     ) {
         if (historyHints.isNotEmpty()) {
             item(
