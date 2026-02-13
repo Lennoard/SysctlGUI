@@ -1,0 +1,6 @@
+- Improved layout and usability in landscape mode.
+- The app now checks for compatible file types when importing settings.
+- The app now uses dynamic colors by default.
+- Added a new option to revert changes.
+- Added a screen to ask for consent before editing kernel parameters.
+- Updated UI with Material You components.
