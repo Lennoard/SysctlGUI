@@ -96,7 +96,7 @@ fun EditParamScreen(
     onNavigateBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val state = viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val taskerListOptions = stringArrayResource(R.array.tasker_lists).toList()
     var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(false) }
     var selectedOptionIndex by rememberSaveable {
@@ -154,7 +154,7 @@ fun EditParamScreen(
 
     if (isLandscape()) {
         EditParamLandscapeContent(
-            state = state.value,
+            state = state,
             showError = showError,
             errorMessage = errorMessage,
             onValueApply = {
@@ -177,7 +177,7 @@ fun EditParamScreen(
         )
     } else {
         EditParamContent(
-            state = state.value,
+            state = state,
             showError = showError,
             errorMessage = errorMessage,
             onValueApply = {
