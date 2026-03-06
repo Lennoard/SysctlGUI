@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -57,7 +56,7 @@ dependencies {
 
     api(libs.material)
 
-    androidTestApi(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
     if (AppConfig.devCycle) {
         api(libs.androidx.compose.ui.tooling)
