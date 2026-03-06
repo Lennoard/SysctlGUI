@@ -2,12 +2,11 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.stability.analyzer)
-    id("kotlin-parcelize")
 }
 
 android {
@@ -70,12 +69,6 @@ android {
         compose = true
     }
 
-    sourceSets {
-        maybeCreate("main").java.srcDir("src/main/kotlin")
-        // Adds exported schema location as test app assets.
-        getByName("androidTest").assets.srcDir("$projectDir/schemas")
-    }
-
     packaging {
         resources.excludes.addAll(
             arrayOf(
@@ -116,7 +109,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.multidex)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.window)
     implementation(libs.androidx.work.runtime.ktx)
