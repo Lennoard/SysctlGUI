@@ -53,7 +53,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun removeUserParam(param: KernelParam) = withContext(coroutineContext) {
-        paramDao.deleteSingle(KernelParamDTO.fromKernelParam(param).name,KernelParamDTO.fromKernelParam(param).path)
+        val dto = KernelParamDTO.fromKernelParam(param)
+        paramDao.deleteSingle(dto.name, dto.path)
     }
 
     override suspend fun clearUserParams() = withContext(coroutineContext) {
