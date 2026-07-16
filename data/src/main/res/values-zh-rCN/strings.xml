@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_category_general">常规</string>
+    <string name="prefs_list_folders_first_title">文件夹优先</string>
+    <string name="prefs_list_folders_first_description">使用内核参数浏览器时，优先列出文件夹</string>
+    <string name="prefs_guess_input_type_title">推断输入类型</string>
+    <string name="prefs_guess_input_type_description">尝试根据内核参数的值，为软键盘设置最匹配的输入类型</string>
+    <string name="prefs_online_docs_title">使用在线文档</string>
+    <string name="prefs_online_docs_description">在显示参数描述时，尝试使用在线文档</string>
+    <string name="prefs_category_theme">主题</string>
+    <string name="prefs_force_dark_title">强制暗色模式</string>
+    <string name="prefs_force_dark_description">在可用时强制启用暗色主题</string>
+    <string name="prefs_dynamic_colors_title">动态色彩</string>
+    <string name="prefs_dynamic_colors_description">在可用时使用动态色彩（Material You）</string>
+    <string name="prefs_contrast_level_title">对比度级别</string>
+    <string name="prefs_contrast_level_description">主题颜色的对比度级别</string>
+    <string name="prefs_category_operations">操作</string>
+    <string name="prefs_commit_mode_title_format">提交模式 (%s)</string>
+    <string name="prefs_commit_mode_description">应用参数值时使用的命令</string>
+    <string name="prefs_use_busybox_title">使用 Busybox</string>
+    <string name="prefs_use_busybox_description">如果可用，使用 Busybox 来执行相关命令</string>
+    <string name="prefs_allow_blank_values_title">允许空值</string>
+    <string name="prefs_category_startup">开机自启</string>
+    <string name="prefs_run_on_startup_title">开机自动应用</string>
+    <string name="prefs_run_on_startup_description">允许应用程序在系统启动时自动应用内核参数</string>
+    <string name="prefs_startup_delay_title">自启延迟</string>
+    <string name="prefs_startup_delay_description">系统启动后，延迟指定时间（秒）再应用参数</string>
+    <string name="prefs_manage_parameters_title">管理参数</string>
+    <string name="prefs_manage_parameters_description">管理将在系统启动时自动应用的参数</string>
+    <string name="prefs_show_tasker_toast_title">显示 Tasker 气泡提示</string>
+    <string name="prefs_show_toast_description">当应用 Tasker 参数时显示气泡提示（Toast）</string>
+    <string name="pref_search_history_title">搜索历史</string>
+    <string name="pref_search_history_description">点击清空搜索历史记录</string>
+    <string name="prefs_category_others">其他</string>
+    <string name="pref_source_code_title">源代码</string>
+    <string name="pref_source_code_description">在 GitHub 上查看本项目源码！</string>
+    <string name="pref_contributors_title">贡献者</string>
+    <string name="pref_translations_title">翻译贡献</string>
+    <string name="pref_translations_description">协助我们翻译此应用程序</string>
+    <string name="prefs_startup_revert_changes">恢复修改</string>
+    <string name="prefs_startup_revert_changes_description">撤销该应用作出的所有修改</string>
+    <string name="prefs_startup_revert_changes_message">受限于 Linux 内核的固有特性，运行时所作的修改只需通过简单地重启设备即可完全恢复。应用将不再尝试在下次系统启动后重新应用这些参数。</string>
+</resources>
