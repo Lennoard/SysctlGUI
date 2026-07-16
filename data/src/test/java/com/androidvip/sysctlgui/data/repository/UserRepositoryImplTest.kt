@@ -46,6 +46,6 @@ class UserRepositoryImplTest {
 
         // Then
         val expectedDto = KernelParamDTO.fromKernelParam(paramToRemove)
-        coVerify { paramDao.delete(expectedDto) }
+        coVerify { paramDao.deleteSingle(expectedDto.name,expectedDto.path) }
     }
 }
