@@ -28,6 +28,9 @@ interface ParamDao {
     @Delete
     suspend fun delete(param: KernelParamDTO): Int
 
+    @Query("DELETE FROM $PARAMS_TABLE_NAME where name=:name and path=:path")
+    suspend fun deleteSingle(name:String,path:String): Int
+
     @Query("DELETE FROM $PARAMS_TABLE_NAME")
     suspend fun clearTable()
 }

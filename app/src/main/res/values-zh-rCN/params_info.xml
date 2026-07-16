@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- VM -->
+    <string name="admin_reserve_kbytes">系统中为拥有 cap_sys_admin 权限的用户保留的空闲内存量（KB）。</string>
+    <string name="block_dump">当设置为非零值时，启用块 I/O 调试。</string>
+    <string name="compact_memory">仅在启用 CONFIG_COMPACTION 时可用。向该文件写入 1 时，系统将对所有内存域（Zone）进行规整（Compaction），以便尽可能将空闲内存合并为连续的内存块。</string>
+    <string name="compact_unevictable_allowed">仅在启用 CONFIG_COMPACTION 时可用。设置为 1 时，允许内存在规整时检查不可回收的 LRU 链表（如被 mlock 锁定的页面）以寻找可规整的页面。设置为 0 则阻止规整功能移动不可回收的页面。默认值为 1。</string>
+    <string name="dirty_background_bytes">触发内核后台刷新线程（flusher threads）开始回写（Writeback）的脏内存量（字节）。</string>
+    <string name="dirty_background_ratio">触发内核后台刷新线程开始回写脏数据的页面数量占总可用内存（含空闲页面和可回收页面）的百分比。</string>
+    <string name="dirty_bytes">产生磁盘写入的进程自身开始回写脏数据时的脏内存量。注意：dirty_bytes 与 dirty_ratio 互为对应参数，一次只能指定其中一个。</string>
+    <string name="dirty_expire_centisecs">定义脏数据在内存中驻留多长时间后，才允许被内核刷新线程写入磁盘（单位：百分之一秒）。当刷新线程下次唤醒时，在内存中变脏时间超过该间隔的数据将被写回磁盘。</string>
+    <string name="dirty_ratio">产生磁盘写入的进程自身开始写回脏数据时，脏页数量占总可用内存（含空闲页面和可回收页面）的百分比。</string>
+    <string name="dirtytime_expire_seconds">定义脏 Inode（索引节点）在内存中驻留多长时间后，才允许被内核刷新线程回写。当一个 lazytime Inode 的页面不断变脏时，更新了时间戳的 Inode 将永远没有机会被写回。</string>
+    <string name="dirty_writeback_centisecs">内核刷新线程会定期唤醒并将“旧”数据写回磁盘。此参数表示这些唤醒之间的时间间隔（单位：百分之一秒）。设置为 0 将完全禁用定期回写。</string>
+    <string name="drop_caches">向此文件写入 1、2 或 3 将促使内核释放干净的缓存（Clean Caches）以及可回收的 slab 对象（如 dentries 和 inodes）。释放后，其占用的内存将变为可用空闲内存。</string>
+    <string name="extfrag_threshold">此参数影响内核在满足高阶（High-order）分配请求时，是进行内存规整还是直接进行内存回收。数值越接近 0，意味着分配更可能因内存不足而失败；数值越接近 1000，意味着分配失败主要是由内存碎片引起的；而 -1 则意味着只要满足水位线（Watermarks），分配就会成功。\n\n默认值：500。</string>
+    <string name="highmem_is_dirtyable">控制是否将高端内存（High Memory）计入脏数据写作者的限流（Throttling）考量中。</string>
+    <string name="laptop_mode">控制“笔记本模式（Laptop Mode）”的开关。笔记本模式用于尽可能减少磁盘启动旋转的次数，以节省电池电量。</string>
+    <string name="legacy_va_layout">如果非零，此 sysctl 将禁用新的 32 位 mmap 布局 —— 内核将对所有进程使用传统的（Linux 2.4）布局。</string>
+    <string name="max_map_count">一个进程可以拥有的最大内存映射区域（VMA）数量。虽然大多数应用程序需要的映射少于 1000 个，但某些程序（特别是 malloc 调试器）可能会消耗大量映射（例如每次分配需要一到两个映射）。默认值为 65536。</string>
+    <string name="min_free_kbytes">用于强制 Linux 虚拟内存（VM）保留的最小空闲内存量（KB）。设置得过高会使系统立即发生 OOM（内存溢出崩溃）。</string>
+    <string name="mmap_min_addr">此文件指示限制用户进程进行 mmap 映射的最低地址空间大小。</string>
+    <string name="mmap_rnd_bits">在支持调整地址空间布局随机化（ASLR）的架构上，此值用于选择在使用 mmap 分配 VMA 区域时，用于确定基地址随机偏移量的位数。该值会受到系统架构支持的最小值和最大值的限制。</string>
+    <string name="mmap_rnd_compat_bits">在支持调整地址空间布局随机化（ASLR）的架构上，此值用于选择在兼容模式下运行的应用程序使用 mmap 分配 VMA 区域时，用于确定基地址随机偏移量的位数。该值会受到系统架构支持的最小值和最大值的限制。</string>
+    <string name="oom_dump_tasks">启用后，当内核执行 OOM 强杀（OOM-killing）时，会输出系统范围的任务信息转储（不包括内核线程）。如果设置为 0，则不显示这些信息。如果设置为非零值，只要 OOM Killer 杀死了占用大量内存的任务，就会显示这些信息。</string>
+    <string name="oom_kill_allocating_task">启用或禁用在内存不足（OOM）时直接杀死触发 OOM 的任务。如果设置为非零值，OOM Killer 会直接杀死触发内存不足条件的那个任务，从而避免耗时的任务列表（tasklist）扫描。</string>
+    <string name="overcommit_kbytes">当 overcommit_memory 设置为 2 时，已提交的虚拟地址空间不允许超过交换空间（Swap）加上此处的物理内存量（KB）。注意：overcommit_kbytes 与 overcommit_ratio 互为对应参数，一次只能指定其中一个。</string>
+    <string name="overcommit_memory">此值包含启用内存超发（Overcommit）的标志。\n\n当此标志为 0 时，当用户空间请求更多内存时，内核会尝试估算剩余的空闲内存量。\n\n当此标志为 1 时，内核会假定始终有足够的内存，直到内存实际耗尽。\n\n当此标志为 2 时，内核采用“绝不超发”策略，尝试阻止任何内存超发行为。</string>
+    <string name="overcommit_ratio">当 overcommit_memory 设置为 2 时，已提交的虚拟地址空间不允许超过交换空间（Swap）加上此百分比的物理内存。</string>
+    <string name="page_cluster">控制单次尝试中从交换空间（Swap）中连续读取的最大页面数量。这是交换空间对应的页缓存预读（Readahead）机制。它是一个对数数值 —— 设置为 0 意味着 “1 页”，设置为 1 意味着 “2 页”，设置为 2 意味着 “4 页”，依此类推。\n设置为 0 将完全禁用交换预读。</string>
+    <string name="panic_on_oom">启用或禁用在发生内存不足（OOM）时触发系统崩溃（Kernel Panic）的功能。</string>
+    <string name="percpu_pagelist_fraction">为每个 CPU 的页面列表分配的、每个内存域（Zone）中最大页面比例的分数。此值的最小值是 8。</string>
+    <string name="stat_interval">更新虚拟内存统计信息（VM Statistics）的时间间隔。默认值为 1 秒。</string>
+    <string name="swappiness">用于定义内核使用交换分区（Swap）的积极程度。值越高，使用 Swap 的倾向越强；值越低，Swap 的使用越少。默认值：60。</string>
+
+    <!-- Kernel/Random -->
+    <string name="boot_id">唯一标识当前系统启动的 ID。</string>
+    <string name="entropy_avail">当前可用的熵（比特数）。</string>
+    <string name="poolsize">熵池（Entropy Pool）可容纳的最大比特数限制。</string>
+    <string name="read_wakeup_threshold">允许从随机设备接口（如 /dev/random）读取数据前，必须达到的最小可用熵（比特数）。</string>
+    <string name="write_wakeup_threshold">触发写入熵池的 entropy_avail 阈值。当可用熵低于此值时，会唤醒阻塞的设备向熵池中写入熵。</string>
+
+    <!-- NET/Core -->
+    <string name="busy_read">套接字（Socket）读取的低延迟繁忙轮询（Busy Poll）超时时间。（需要启用 CONFIG_NET_RX_BUSY_POLL）即在设备队列上忙循环等待数据包的近似时间（微秒）。此项设置 SO_BUSY_POLL 套接字选项的默认值。默认值：0（关闭）。</string>
+    <string name="busy_poll">poll 和 select 的低延迟繁忙轮询（Busy Poll）超时时间。（需要启用 CONFIG_NET_RX_BUSY_POLL）即忙循环等待事件的近似时间（微秒）。推荐值取决于你轮询的套接字数量：对于几个套接字建议设为 50，数百个则设为 100。默认值：0（关闭）。</string>
+    <string name="default_qdisc">网络设备默认使用的队列规则（Queuing Discipline）。这允许使用其他规则来替代默认的 pfifo_fast。默认值：pfifo_fast。</string>
+    <string name="dev_weight">内核在一次 NAPI 中断中可以处理的最大数据包数量，这是一个 Per-CPU（单 CPU 独立）变量。</string>
+    <string name="message_burst">message_burst 与 message_cost 用于限制网络代码向内核日志中写入警告信息的频率。它们通过强制实施速率限制来防止遭受拒绝服务（DOS）攻击。message_cost 系数越高，写入的日志信息就越少。message_burst 控制何时丢弃这些信息。默认设置限制警告信息每 5 秒最多输出一次。</string>
+    <string name="message_cost">message_burst 与 message_cost 用于限制网络代码向内核日志中写入警告信息的频率。它们通过强制实施速率限制来防止遭受拒绝服务（DOS）攻击。message_cost 系数越高，写入的日志信息就越少。message_burst 控制何时丢弃这些信息。默认设置限制警告信息每 5 秒最多输出一次。</string>
+    <string name="warnings">[已废弃] 此参数曾用于控制由于网络问题（如 IP 地址冲突或错误的校验和）而在控制台打印的来自网络协议栈的警告消息。</string>
+    <string name="netdev_budget">在单次轮询循环（NAPI poll）中，能从所有接口中获取的最大数据包数量。</string>
+    <string name="optmem_max">每个套接字（Socket）允许的最大辅助缓冲区大小。辅助数据是由 cmsghdr 结构体和附加数据组成的序列。</string>
+    <string name="rmem_default">套接字（Socket）接收缓冲区的默认大小（单位：字节）。</string>
+    <string name="rmem_max">套接字接收缓冲区的最大大小（单位：字节）。</string>
+    <string name="wmem_default">套接字发送缓冲区的默认大小（单位：字节）。</string>
+    <string name="wmem_max">套接字发送缓冲区的最大大小（单位：字节）。</string>
+
+</resources>
