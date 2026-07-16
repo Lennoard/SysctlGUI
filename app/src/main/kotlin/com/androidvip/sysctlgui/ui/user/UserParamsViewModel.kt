@@ -48,7 +48,7 @@ class UserParamsViewModel(
     private fun removeParam(param: UiKernelParam) {
         viewModelScope.launch {
             runCatching {
-                var count = removeParam.invoke(param)
+                val count = removeParam.invoke(param)
                 require(count>0)
             }.onSuccess {
                 setState { copy(userParams = userParams - param) }
