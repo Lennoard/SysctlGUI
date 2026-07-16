@@ -1,5 +1,6 @@
 package com.androidvip.sysctlgui.ui.user
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.RemoveUserParamUseCase
@@ -47,11 +48,14 @@ class UserParamsViewModel(
     private fun removeParam(param: UiKernelParam) {
         viewModelScope.launch {
             runCatching {
-                removeParam.invoke(param)
+                var count = removeParam.invoke(param)
+                require(count>0)
             }.onSuccess {
                 setState { copy(userParams = userParams - param) }
                 setEffect { UserParamsViewEffect.ShowUndoSnackBar(param) }
                 mostRecentlyRemovedParam = param
+            }.onFailure {
+
             }
         }
     }
