@@ -1,0 +1,98 @@
+name: Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-release:
+    name: Build and publish unsigned APK
+    runs-on: ubuntu-24.04
+    env:
+      TAG: ${{ github.ref_name }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Set up Android SDK (platform + build-tools)
+        uses: r0adkll/setup-android@v2
+        with:
+          api-level: 36
+          build-tools: '36.0.0'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Assemble release APK (unsigned)
+        run: ./gradlew :app:assembleRelease --no-daemon -x validateSigningRelease
+
+      - name: Find release APK
+        id: find_apk
+        run: |
+          set -e
+          APK=$(find app/build/outputs -type f -name "*release*.apk" | head -n1)
+          if [ -z "$APK" ]; then echo "No APK found"; exit 1; fi
+          echo "apk_path=$APK" >> $GITHUB_OUTPUT
+
+      - name: Copy & rename APK
+        id: rename
+        run: |
+          mkdir -p release
+          OUT=release/sysctlgui-${{ env.TAG }}.apk
+          cp "${{ steps.find_apk.outputs.apk_path }}" "$OUT"
+          echo "out_path=$OUT" >> $GITHUB_OUTPUT
+
+      - name: Prepare release body (changelog + compare link)
+        id: changelog
+        run: |
+          set -e
+          git fetch --tags
+          TAG=${{ env.TAG }}
+          REPO=${{ env.REPO }}
+          PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p' || true)
+          CHANGELOG_FILE=$(ls -t fastlane/metadata/android/en-US/changelogs/*.txt 2>/dev/null | head -n1 || true)
+          CHANGELOG=""
+          if [ -n "$CHANGELOG_FILE" ]; then CHANGELOG=$(cat "$CHANGELOG_FILE"); fi
+          if [ -n "$PREV_TAG" ]; then
+            COMP="[${PREV_TAG}...${TAG}](https://github.com/${REPO}/compare/${PREV_TAG}...${TAG})"
+          else
+            COMP=""
+          fi
+          BODY="[${TAG}](https://github.com/${REPO}/releases/tag/${TAG}) [Latest](https://github.com/${REPO}/releases/latest)\n\n## What's Changed\n\n${CHANGELOG}\n\n**Full Changelog**: ${COMP}"
+          echo "release_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: ${{ env.TAG }}
+          body: ${{ steps.changelog.outputs.release_body }}
+          draft: false
+          prerelease: false
+
+      - name: Upload APK to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.rename.outputs.out_path }}
+          asset_name: sysctlgui-${{ env.TAG }}.apk
+          asset_content_type: application/vnd.android.package-archive
