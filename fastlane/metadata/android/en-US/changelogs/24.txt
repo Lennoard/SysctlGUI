@@ -1,0 +1,4 @@
+- bugfix: Fixed unable to delete startup parameters (by BlockXe)
+- feature: Added Simplified Chinese translations (zh-rCN) (by BlockXe)
+- build: Updated Gradle, AGP, and Kotlin versions
+- build: Upgraded to JDK 21
