@@ -197,7 +197,7 @@ class AppSettingsRepositoryImpl(
                 value = "$SOURCE_CODE_URL/graphs/contributors",
                 category = context.getString(R.string.prefs_category_others),
                 title = context.getString(R.string.pref_contributors_title),
-                description = "free-bots, mikropsoft (Holi)",
+                description = "free-bots, mikropsoft (Holi), BlockXe",
                 iconResource = R.drawable.ic_group,
                 type = SettingItemType.Text,
             ),
