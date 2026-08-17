@@ -36,6 +36,19 @@ android {
 
     signingConfigs {
         create("release") {
+            val envStorePath = System.getenv("KEYSTORE_PATH")
+            val envStorePassword = System.getenv("KEYSTORE_PASSWORD")
+            val envKeyAlias = System.getenv("KEY_ALIAS")
+            val envKeyPassword = System.getenv("KEY_PASSWORD")
+
+            if (!envStorePath.isNullOrBlank()) {
+                storeFile = file(envStorePath)
+                storePassword = envStorePassword ?: ""
+                keyAlias = envKeyAlias ?: ""
+                keyPassword = envKeyPassword ?: ""
+                return@create
+            }
+
             val propFile = rootProject.file("keystore.properties")
             if (!propFile.exists()) {
                 propFile.createNewFile()
@@ -44,19 +57,36 @@ android {
                 load(propFile.inputStream())
             }
 
-            keyAlias = keystoreProps["keyAlias"] as? String ?: ""
-            keyPassword = keystoreProps["keyPassword"] as? String ?: ""
-            storeFile = file(keystoreProps["storeFile"] as? String ?: "/")
-            storePassword = keystoreProps["storePassword"] as? String ?: ""
+            val storeFilePath = keystoreProps["storeFile"] as? String
+            val keyAliasValue = keystoreProps["keyAlias"] as? String
+            val keyPasswordValue = keystoreProps["keyPassword"] as? String
+            val storePasswordValue = keystoreProps["storePassword"] as? String
+
+            keyAlias = keyAliasValue ?: ""
+            keyPassword = keyPasswordValue ?: ""
+            storeFile = if (!storeFilePath.isNullOrBlank()) file(storeFilePath) else file("/dev/null")
+            storePassword = storePasswordValue ?: ""
         }
     }
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = !AppConfig.devCycle
-            isShrinkResources = !AppConfig.devCycle
-            isDebuggable = AppConfig.devCycle
-            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            val envEnabled = !System.getenv("KEYSTORE_PATH").isNullOrBlank() &&
+                    !System.getenv("KEYSTORE_PASSWORD").isNullOrBlank() &&
+                    !System.getenv("KEY_ALIAS").isNullOrBlank() &&
+                    !System.getenv("KEY_PASSWORD").isNullOrBlank()
+            val propFile = rootProject.file("keystore.properties")
+            val keyStoreExists = propFile.exists() && propFile.readText().contains("storeFile")
+            val hasSigningValues = keyStoreExists && propFile.readText().contains("keyAlias") &&
+                    propFile.readText().contains("storePassword")
+            signingConfig = if (envEnabled || hasSigningValues) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
