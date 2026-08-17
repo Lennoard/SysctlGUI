@@ -16,7 +16,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = !AppConfig.devCycle
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -58,11 +58,6 @@ dependencies {
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
-    if (AppConfig.devCycle) {
-        api(libs.androidx.compose.ui.tooling)
-        api(libs.androidx.ui.test.manifest)
-    } else {
-        debugApi(libs.androidx.compose.ui.tooling)
-        debugApi(libs.androidx.ui.test.manifest)
-    }
+    debugApi(libs.androidx.compose.ui.tooling)
+    debugApi(libs.androidx.ui.test.manifest)
 }

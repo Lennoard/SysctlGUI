@@ -5,13 +5,18 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release tag name, e.g. v3.2.0'
+        required: true
+        type: string
 
 jobs:
   build-release:
-    name: Build and publish unsigned APK
+    name: Build and publish signed APK
     runs-on: ubuntu-24.04
     env:
-      TAG: ${{ github.ref_name }}
+      TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
       REPO: ${{ github.repository }}
     steps:
       - name: Checkout
@@ -20,23 +25,45 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Temurin JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'gradle'
 
-      - name: Set up Android SDK (platform + build-tools)
-        uses: r0adkll/setup-android@v2
-        with:
-          api-level: 36
-          build-tools: '36.0.0'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform and build-tools
+        run: |
+          yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager --licenses
+          "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Prepare release signing config
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ] && [ -n "$KEY_PASSWORD" ]; then
+            echo "$KEYSTORE_BASE64" | base64 --decode > "$GITHUB_WORKSPACE/release-keystore.jks"
+            echo "KEYSTORE_PATH=$GITHUB_WORKSPACE/release-keystore.jks" >> "$GITHUB_ENV"
+            echo "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+            echo "KEY_ALIAS=$KEY_ALIAS" >> "$GITHUB_ENV"
+            echo "KEY_PASSWORD=$KEY_PASSWORD" >> "$GITHUB_ENV"
+          fi
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Assemble release APK (unsigned)
-        run: ./gradlew :app:assembleRelease --no-daemon -x validateSigningRelease
+      - name: Assemble signed release APK
+        env:
+          KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}
+          KEYSTORE_PASSWORD: ${{ env.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ env.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ env.KEY_PASSWORD }}
+        run: ./gradlew :app:assembleRelease --no-daemon
 
       - name: Find release APK
         id: find_apk
@@ -61,8 +88,8 @@ jobs:
           git fetch --tags
           TAG=${{ env.TAG }}
           REPO=${{ env.REPO }}
-          PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p' || true)
-          CHANGELOG_FILE=$(ls -t fastlane/metadata/android/en-US/changelogs/*.txt 2>/dev/null | head -n1 || true)
+          PREV_TAG=$(git tag --sort=-v:refname | grep -v "^${TAG}$" | head -n 1 || true)
+          CHANGELOG_FILE=$(find fastlane/metadata/android/en-US/changelogs -maxdepth 1 -type f -name '*.txt' 2>/dev/null | sort -V | tail -n 1 || true)
           CHANGELOG=""
           if [ -n "$CHANGELOG_FILE" ]; then CHANGELOG=$(cat "$CHANGELOG_FILE"); fi
           if [ -n "$PREV_TAG" ]; then
@@ -70,10 +97,20 @@ jobs:
           else
             COMP=""
           fi
-          BODY="[${TAG}](https://github.com/${REPO}/releases/tag/${TAG}) [Latest](https://github.com/${REPO}/releases/latest)\n\n## What's Changed\n\n${CHANGELOG}\n\n**Full Changelog**: ${COMP}"
-          echo "release_body<<EOF" >> $GITHUB_OUTPUT
-          echo "$BODY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          BODY=$(printf '%s\n' \
+            "[${TAG}](https://github.com/${REPO}/releases/tag/${TAG}) [Latest](https://github.com/${REPO}/releases/latest)" \
+            "" \
+            "## What's Changed" \
+            "" \
+            "${CHANGELOG}" \
+            "" \
+            "**Full Changelog**: ${COMP}")
+          echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$BODY" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "--- GENERATED RELEASE BODY ---"
+          printf '%s\n' "$BODY"
+          echo "--- END RELEASE BODY ---"
 
       - name: Create GitHub Release
         id: create_release
