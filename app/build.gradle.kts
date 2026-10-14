@@ -13,6 +13,10 @@ android {
     namespace = AppConfig.appId
     compileSdk = AppConfig.compileSdkVersion
 
+    dependenciesInfo {
+        includeInApk = false
+    }
+
     defaultConfig {
         applicationId = AppConfig.appId
         minSdk = AppConfig.minSdkVersion
