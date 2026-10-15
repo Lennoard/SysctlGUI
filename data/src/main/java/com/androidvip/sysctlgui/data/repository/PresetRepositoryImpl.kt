@@ -18,10 +18,10 @@ class PresetRepositoryImpl(
     override suspend fun readPreset(
         stream: InputStream
     ): List<KernelParam> = withContext(ioCoroutineContext) {
-        if (stream.available() == 0) throw EmptyFileException()
-
-        return@withContext stream.bufferedReader().use { reader ->
-            reader.lineSequence()
+        stream.bufferedReader().use { reader ->
+            val firstLine = reader.readLine() ?: throw EmptyFileException()
+            sequenceOf(firstLine)
+                .plus(reader.lineSequence())
                 .filter { it.validConfLine() }
                 .map { line ->
                     val parts = line.split("=", limit = 2)

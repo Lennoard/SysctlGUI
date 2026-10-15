@@ -28,7 +28,11 @@ class ApplyParamUseCase(
             )
             when (commitMode) {
                 CommitMode.SYSCTL -> {
-                    if (!output.contains(param.name)) {
+                    val changeConfirmed = output.lineSequence().any { line ->
+                        val separatorIndex = line.indexOf('=')
+                        separatorIndex >= 0 && line.substring(0, separatorIndex).trim() == param.name
+                    }
+                    if (!changeConfirmed) {
                         throw CommitModeException(
                             "Sysctl command for '${param.name}' executed, but output did not confirm the change. " +
                                     "Output: '$output'. Try using '${CommitMode.ECHO}' mode."

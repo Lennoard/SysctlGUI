@@ -47,6 +47,19 @@ class PresetRepositoryImplTest {
         repository.readPreset(inputStream)
     }
 
+    @Test
+    fun `given a stream with unavailable bytes, when readPreset is called, then read its content`() = runTest(testDispatcher) {
+        val content = "net.ipv4.ip_forward=1"
+        val inputStream = object : ByteArrayInputStream(content.toByteArray()) {
+            override fun available() = 0
+        }
+
+        val params = repository.readPreset(inputStream)
+
+        assertEquals(1, params.size)
+        assertEquals("net.ipv4.ip_forward", params[0].name)
+    }
+
     @Test(expected = MalformedLineException::class)
     fun `given preset with malformed line, when readPreset is called, then throw MalformedLineException`() = runTest(testDispatcher) {
         // Given

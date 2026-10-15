@@ -50,6 +50,28 @@ class ApplyParamUseCaseTest {
     }
 
     @Test(expected = CommitModeException::class)
+    fun `given sysctl output for a different parameter containing the name, then throw exception`() = runTest {
+        every { appPrefs.commitMode } returns CommitMode.SYSCTL.name
+        every { appPrefs.useBusybox } returns false
+        val param = KernelParam(name = "net.ipv4.ip_forward", value = "1", path = "")
+        coEvery { repository.setRuntimeParam(param, CommitMode.SYSCTL, false) } returns
+            "other.${param.name} = 1"
+
+        useCase(param)
+    }
+
+    @Test
+    fun `given sysctl output for the exact parameter, when invoked, then complete successfully`() = runTest {
+        every { appPrefs.commitMode } returns CommitMode.SYSCTL.name
+        every { appPrefs.useBusybox } returns false
+        val param = KernelParam(name = "net.ipv4.ip_forward", value = "1", path = "")
+        coEvery { repository.setRuntimeParam(param, CommitMode.SYSCTL, false) } returns
+            "${param.name} = ${param.value}"
+
+        useCase(param)
+    }
+
+    @Test(expected = CommitModeException::class)
     fun `given echo mode, when output is not empty, then throw exception`() = runTest {
         // Given
         every { appPrefs.commitMode } returns CommitMode.ECHO.name.lowercase()

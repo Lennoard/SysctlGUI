@@ -2,6 +2,7 @@ package com.androidvip.sysctlgui.data.repository
 
 import android.util.Log
 import com.androidvip.sysctlgui.data.utils.RootUtils
+import com.androidvip.sysctlgui.domain.models.KernelParam
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -44,6 +45,21 @@ class ParamsRepositoryImplTest {
         assertEquals("1", params[0].value)
         assertEquals("vm.swappiness", params[1].name)
         assertEquals("60", params[1].value)
+    }
+
+    @Test
+    fun `given a saved parameter, when getRuntimeParams is called, then mark matching output as favorite`() = runTest(testDispatcher) {
+        val paramName = "net.ipv4.ip_forward"
+        coEvery { rootUtils.executeCommandAndStreamOutput(any()) } returns
+            flowOf("$paramName = 1", "vm.swappiness = 60")
+
+        val params = repository.getRuntimeParams(
+            useBusybox = false,
+            userParams = listOf(KernelParam.createFromName(paramName, "0"))
+        ).first()
+
+        assertEquals(true, params[0].isFavorite)
+        assertEquals(false, params[1].isFavorite)
     }
 
     @Test

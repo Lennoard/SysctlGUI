@@ -9,6 +9,7 @@ import com.androidvip.sysctlgui.utils.isValidSysctlOutputLine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -26,6 +27,7 @@ class ParamsRepositoryImpl(
         userParams: List<KernelParam>
     ): Flow<List<KernelParam>> = flow {
         val command = if (useBusybox) BUSYBOX_SYSCTL_GET_ALL_COMMAND else SYSCTL_GET_ALL_COMMAND
+        val favoriteParamNames = userParams.mapTo(HashSet(userParams.size)) { it.name }
         val paramsList = rootUtils.executeCommandAndStreamOutput(command)
             .filter { line -> line.isValidSysctlOutput() }
             .mapNotNull { line ->
@@ -37,7 +39,7 @@ class ParamsRepositoryImpl(
                     KernelParam.createFromName(
                         name = paramName,
                         value = paramValue,
-                        isFavorite = userParams.any { it.name == paramName }
+                        isFavorite = paramName in favoriteParamNames
                     )
                 }.getOrNull()
             }
@@ -90,7 +92,7 @@ class ParamsRepositoryImpl(
      * @param files A list of [File] objects representing the kernel parameter files.
      * @return A [Flow] emitting a list of [KernelParam] objects.
      *         Returns an empty list if no files are provided or if errors occur during processing.
-     *         Emits null for files that could not be processed.
+     *         Files that could not be processed are logged and omitted.
      */
     override fun getParamsFromFiles(files: List<File>): Flow<List<KernelParam>> = flow {
         val params = files.mapNotNull { file ->
@@ -119,8 +121,10 @@ class ParamsRepositoryImpl(
     }.flowOn(ioDispatcher)
 
     override fun getParamsFromPath(path: String): Flow<List<KernelParam>> {
-        val files = File(path).listFiles()?.toList() ?: emptyList()
-        return getParamsFromFiles(files)
+        return flow {
+            val files = File(path).listFiles()?.toList() ?: emptyList()
+            emitAll(getParamsFromFiles(files))
+        }.flowOn(ioDispatcher)
     }
 
     private fun String.isValidSysctlOutput(): Boolean {

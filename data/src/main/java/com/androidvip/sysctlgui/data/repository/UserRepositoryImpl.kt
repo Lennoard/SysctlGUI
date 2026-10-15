@@ -42,8 +42,14 @@ class UserRepositoryImpl(
         params: List<KernelParam>
     ) = withContext(coroutineContext) {
         val currentDatabaseParams = paramDao.getAll()
+        val currentParamsByName = HashMap<String, KernelParamDTO>(currentDatabaseParams.size)
+        currentDatabaseParams.forEach { param ->
+            if (param.name !in currentParamsByName) {
+                currentParamsByName[param.name] = param
+            }
+        }
         val newParams = params.map { param ->
-            val currentDatabaseParam = currentDatabaseParams.find { it.name == param.name }
+            val currentDatabaseParam = currentParamsByName[param.name]
             KernelParamDTO.fromKernelParam(param).copy(
                 id = currentDatabaseParam?.id ?: 0
             )

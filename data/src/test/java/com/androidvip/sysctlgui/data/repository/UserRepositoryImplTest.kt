@@ -48,4 +48,30 @@ class UserRepositoryImplTest {
         val expectedDto = KernelParamDTO.fromKernelParam(paramToRemove)
         coVerify { paramDao.deleteSingle(expectedDto.name,expectedDto.path) }
     }
+
+    @Test
+    fun `when upserting parameters, then preserve existing ids using name lookup`() = runTest(testDispatcher) {
+        val existingParams = listOf(
+            KernelParamDTO(id = 4, name = "net.ipv4.ip_forward"),
+            KernelParamDTO(id = 9, name = "vm.swappiness")
+        )
+        val updatedParams = listOf(
+            KernelParamDTO(name = "vm.swappiness", value = "30"),
+            KernelParamDTO(name = "net.ipv4.ip_forward", value = "1"),
+            KernelParamDTO(name = "kernel.panic", value = "10")
+        )
+        coEvery { paramDao.getAll() } returns existingParams
+
+        repository.upsertUserParams(updatedParams)
+
+        coVerify {
+            paramDao.upsertAll(
+                listOf(
+                    updatedParams[0].copy(id = 9),
+                    updatedParams[1].copy(id = 4),
+                    updatedParams[2].copy(id = 0)
+                )
+            )
+        }
+    }
 }
