@@ -26,7 +26,8 @@ internal fun AppNavHost(
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues, // Handled in the outer scope, this is for inner scaffolds
     navController: NavHostController,
-    startDestination: UiRoute = UiRoute.BrowseParams
+    startDestination: UiRoute = UiRoute.BrowseParams,
+    showSnackbar: (String, String?, () -> Unit) -> Unit
 ) {
     NavHost(
         modifier = modifier,
@@ -50,7 +51,10 @@ internal fun AppNavHost(
         }
 
         composable<UiRoute.EditParam> {
-            EditParamScreen(onNavigateBack = { navController.popBackStack() })
+            EditParamScreen(
+                onNavigateBack = { navController.popBackStack() },
+                showSnackbar = showSnackbar
+            )
         }
 
         composable<UiRoute.Presets> {

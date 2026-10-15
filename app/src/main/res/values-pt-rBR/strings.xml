@@ -101,6 +101,7 @@
     <string name="apply_error_blank_values">Valores em branco não são permitidos atualmente</string>
     <string name="apply_error_commit_mode">O valor se recusou a aplicar com o modo de aplicação atual</string>
     <string name="apply_error_command_execution_failed">Falha na execução do comando</string>
+    <string name="apply_error_value_rejected">O kernel rejeitou o valor. Tente outro valor ou altere o modo de aplicação para \'echo\' nas Configurações.</string>
     <string name="suggestions">Sugestões</string>
     <string name="favorite_widget_title">Parâmetros favoritos</string>
     <string name="history_deleted">Histórico deletado</string>

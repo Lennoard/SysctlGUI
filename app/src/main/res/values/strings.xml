@@ -101,6 +101,7 @@
     <string name="apply_error_blank_values">Blank values are currently not allowed</string>
     <string name="apply_error_commit_mode">Value refused to apply with current commit mode</string>
     <string name="apply_error_command_execution_failed">Command execution failed</string>
+    <string name="apply_error_value_rejected">The kernel rejected this value. Try another value or change the commit mode to \'echo\' in Settings.</string>
     <string name="suggestions">Suggestions</string>
     <string name="favorite_widget_title">Favorite Kernel Params</string>
     <string name="history_deleted">History deleted</string>

@@ -106,10 +106,13 @@ class EditParamViewModel(
                     )
 
                     is ApplyValueException -> stringProvider.getString(
-                        R.string.apply_error_command_execution_failed
+                        R.string.apply_error_value_rejected
                     )
 
-                    else -> it.message.orEmpty()
+                    else -> it.message?.takeIf(String::isNotBlank)
+                        ?: stringProvider.getString(
+                            R.string.apply_error_command_execution_failed
+                        )
                 }
                 setEffect {
                     EditParamViewEffect.ShowError(message)

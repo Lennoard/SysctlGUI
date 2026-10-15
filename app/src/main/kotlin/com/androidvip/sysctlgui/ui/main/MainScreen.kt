@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -34,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,6 +48,19 @@ fun MainScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val showSnackbar: (String, String?, () -> Unit) -> Unit = { message, actionLabel, onAction ->
+        coroutineScope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                actionLabel = actionLabel,
+                duration = SnackbarDuration.Long
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onAction()
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -59,7 +75,7 @@ fun MainScreen(
         }
     }
 
-    MainScreenContent(state, navController, snackbarHostState, startDestination)
+    MainScreenContent(state, navController, snackbarHostState, startDestination, showSnackbar)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +84,8 @@ private fun MainScreenContent(
     state: MainViewState,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState,
-    startDestination: UiRoute = UiRoute.BrowseParams
+    startDestination: UiRoute = UiRoute.BrowseParams,
+    showSnackbar: (String, String?, () -> Unit) -> Unit
 ) {
     val onBackPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
     val isLandscape = isLandscape()
@@ -125,7 +142,8 @@ private fun MainScreenContent(
                         .then(if (isLandscape) Modifier.navigationBarsPadding() else Modifier),
                     innerPadding = innerPadding,
                     navController = navController,
-                    startDestination = startDestination
+                    startDestination = startDestination,
+                    showSnackbar = showSnackbar
                 )
             }
         }
@@ -140,7 +158,8 @@ private fun MainScreenPreview() {
         MainScreenContent(
             state = MainViewState(),
             navController = rememberNavController(),
-            snackbarHostState = remember { SnackbarHostState() }
+            snackbarHostState = remember { SnackbarHostState() },
+            showSnackbar = { _, _, _ -> }
         )
     }
 }

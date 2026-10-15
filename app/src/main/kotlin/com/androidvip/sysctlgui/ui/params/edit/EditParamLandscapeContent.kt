@@ -44,10 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
-import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.models.UiParamDocumentation
-import com.androidvip.sysctlgui.ui.components.ErrorContainer
 import com.androidvip.sysctlgui.utils.performHapticFeedbackForToggle
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
@@ -55,13 +53,10 @@ import org.intellij.lang.annotations.Language
 @Composable
 internal fun EditParamLandscapeContent(
     state: EditParamViewState,
-    showError: Boolean,
-    errorMessage: String,
     onDocsReadMorePressed: () -> Unit,
     onValueApply: (String) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit,
     onTaskerClicked: (Boolean) -> Unit,
-    onErrorAnimationEnd: () -> Unit,
     taskerListNameResolver: (Int) -> String = { "List #$it" },
 ) {
     val param = state.kernelParam
@@ -190,12 +185,6 @@ internal fun EditParamLandscapeContent(
                 onValueApply = onValueApply
             )
 
-            AnimatedVisibility(
-                visible = showError && errorMessage.isNotEmpty(),
-            ) {
-                ErrorContainer(message = errorMessage, onAnimationEnd = onErrorAnimationEnd)
-            }
-
             ParamDocs(
                 documentation = state.documentation,
                 onReadMorePressed = onDocsReadMorePressed
@@ -225,8 +214,6 @@ private fun EditParamContentPreview() {
             "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">"
         ).replace("</code>", "</span></b></font>")
 
-    var showError by remember { mutableStateOf(true) }
-
     SysctlGuiTheme(dynamicColor = true) {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
 
@@ -250,13 +237,10 @@ private fun EditParamContentPreview() {
             )
             EditParamLandscapeContent(
                 state = state,
-                showError = showError,
-                errorMessage = "Sysctl command for 'wm.swappiness' executed, " + "but output did not confirm the change. Output: 'Access denied'. " + "Try using '${CommitMode.ECHO}' mode.",
                 onValueApply = {},
                 onTaskerClicked = {},
                 onDocsReadMorePressed = {},
-                onFavoriteToggle = {},
-                onErrorAnimationEnd = { showError = false })
+                onFavoriteToggle = {})
         }
     }
 }

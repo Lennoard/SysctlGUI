@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -73,12 +74,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
-import com.androidvip.sysctlgui.domain.enums.CommitMode
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.models.UiParamDocumentation
-import com.androidvip.sysctlgui.ui.components.ErrorContainer
 import com.androidvip.sysctlgui.ui.components.SingleChoiceDialog
-import com.androidvip.sysctlgui.ui.main.MainViewEffect
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
@@ -93,17 +91,18 @@ import org.koin.androidx.compose.koinViewModel
 fun EditParamScreen(
     viewModel: EditParamViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    showSnackbar: (String, String?, () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val taskerListOptions = stringArrayResource(R.array.tasker_lists).toList()
     var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(false) }
+    var applyErrorMessage by rememberSaveable { mutableStateOf("") }
     var selectedOptionIndex by rememberSaveable {
         mutableIntStateOf(Consts.LIST_NUMBER_PRIMARY_TASKER)
     }
-    var errorMessage by rememberSaveable { mutableStateOf("") }
-    var showError by rememberSaveable { mutableStateOf(false) }
+    var showApplyErrorDialog by rememberSaveable { mutableStateOf(false) }
     val appBarTitle = stringResource(R.string.edit_params)
 
     LaunchedEffect(Unit) {
@@ -119,11 +118,6 @@ fun EditParamScreen(
             )
         )
 
-        mainViewModel.effect.collect { effect ->
-            if (effect is MainViewEffect.ActUponSckbarActionPerformed) {
-                viewModel.onEvent(EditParamViewEvent.UndoRequested)
-            }
-        }
     }
 
     val successMessage = stringResource(R.string.value_applied_successfully)
@@ -134,19 +128,16 @@ fun EditParamScreen(
                 EditParamViewEffect.GoBack -> onNavigateBack()
 
                 is EditParamViewEffect.ShowError -> {
-                    errorMessage = effect.message
-                    showError = true
+                    applyErrorMessage = effect.message
+                    showApplyErrorDialog = true
                 }
 
                 is EditParamViewEffect.OpenBrowser -> context.browse(effect.url)
 
                 is EditParamViewEffect.ShowApplySuccess -> {
-                    mainViewModel.onEvent(
-                        MainViewEvent.ShowSnackbarRequested(
-                            message = successMessage,
-                            actionLabel = undoText
-                        )
-                    )
+                    showSnackbar(successMessage, undoText) {
+                        viewModel.onEvent(EditParamViewEvent.UndoRequested)
+                    }
                 }
             }
         }
@@ -155,8 +146,6 @@ fun EditParamScreen(
     if (isLandscape()) {
         EditParamLandscapeContent(
             state = state,
-            showError = showError,
-            errorMessage = errorMessage,
             onValueApply = {
                 viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
             },
@@ -170,7 +159,6 @@ fun EditParamScreen(
             onFavoriteToggle = {
                 viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
             },
-            onErrorAnimationEnd = { showError = false },
             taskerListNameResolver = { listId ->
                 taskerListOptions.getOrNull(listId).orEmpty()
             }
@@ -178,8 +166,6 @@ fun EditParamScreen(
     } else {
         EditParamContent(
             state = state,
-            showError = showError,
-            errorMessage = errorMessage,
             onValueApply = {
                 viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
             },
@@ -193,8 +179,20 @@ fun EditParamScreen(
             onFavoriteToggle = {
                 viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
             },
-            onErrorAnimationEnd = { showError = false },
             taskerListNameResolver = { listId -> taskerListOptions.getOrNull(listId).orEmpty() }
+        )
+    }
+
+    if (showApplyErrorDialog) {
+        AlertDialog(
+            onDismissRequest = { showApplyErrorDialog = false },
+            title = { Text(stringResource(R.string.error)) },
+            text = { Text(applyErrorMessage) },
+            confirmButton = {
+                TextButton(onClick = { showApplyErrorDialog = false }) {
+                    Text(stringResource(R.string.done))
+                }
+            }
         )
     }
 
@@ -214,13 +212,10 @@ fun EditParamScreen(
 @Composable
 private fun EditParamContent(
     state: EditParamViewState,
-    showError: Boolean,
-    errorMessage: String,
     onDocsReadMorePressed: () -> Unit,
     onValueApply: (String) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit,
     onTaskerClicked: (Boolean) -> Unit,
-    onErrorAnimationEnd: () -> Unit,
     taskerListNameResolver: (Int) -> String = { "List #$it" },
 ) {
     val param = state.kernelParam
@@ -344,10 +339,6 @@ private fun EditParamContent(
             keyboardType = state.keyboardType,
             onValueApply = onValueApply
         )
-
-        AnimatedVisibility(visible = showError && errorMessage.isNotEmpty(),) {
-            ErrorContainer(message = errorMessage, onAnimationEnd = onErrorAnimationEnd)
-        }
 
         ParamDocs(
             modifier = Modifier
@@ -602,8 +593,6 @@ private fun EditParamContentPreview() {
         )
         .replace("</code>", "</span></b></font>")
 
-    var showError by remember { mutableStateOf(true) }
-
     SysctlGuiTheme(dynamicColor = true) {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
 
@@ -627,15 +616,10 @@ private fun EditParamContentPreview() {
             )
             EditParamContent(
                 state = state,
-                showError = showError,
-                errorMessage = "Sysctl command for 'wm.swappiness' executed, " +
-                        "but output did not confirm the change. Output: 'Access denied'. " +
-                        "Try using '${CommitMode.ECHO}' mode.",
                 onValueApply = { },
                 onTaskerClicked = { },
                 onDocsReadMorePressed = { },
-                onFavoriteToggle = { },
-                onErrorAnimationEnd = { showError = false }
+                onFavoriteToggle = { }
             )
         }
     }
