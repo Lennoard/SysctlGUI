@@ -33,11 +33,16 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
 
       - name: Install Android platform and build-tools
         run: |
-          yes | "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager --licenses
-          "$ANDROID_HOME"/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+          sdkmanager --install \
+            "cmdline-tools;latest" \
+            "platform-tools" \
+            "platforms;android-36" \
+            "build-tools;36.0.0"
 
       - name: Prepare release signing config
         env:
