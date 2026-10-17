@@ -15,6 +15,7 @@ import com.androidvip.sysctlgui.domain.usecase.GetParamDocumentationUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetRuntimeParamUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamByNameUseCase
 import com.androidvip.sysctlgui.domain.usecase.IsTaskerInstalledUseCase
+import com.androidvip.sysctlgui.domain.usecase.RecordParamChangeUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
 import com.androidvip.sysctlgui.models.toUiParamDocumentation
@@ -31,6 +32,7 @@ class EditParamViewModel(
     private val getUserParam: GetUserParamByNameUseCase,
     private val isTaskerInstalled: IsTaskerInstalledUseCase,
     private val updateFavoriteWidget: UpdateFavoriteWidgetUseCase,
+    private val recordParamChange: RecordParamChangeUseCase,
     private val stringProvider: StringProvider,
     private val appPrefs: AppPrefs
 ) : BaseViewModel<EditParamViewEvent, EditParamViewState, EditParamViewEffect>() {
@@ -82,18 +84,38 @@ class EditParamViewModel(
         val oldParam = currentState.kernelParam
         viewModelScope.launch {
             val newParam = oldParam.copy(value = newValue)
+            var previousValue = oldParam.value
             runCatching {
+                previousValue = getRuntimeParam(oldParam.name)?.value ?: oldParam.value
                 applyParam(newParam)
                 upsertUserParam(newParam)
             }.onSuccess {
                 setState { copy(kernelParam = newParam) }
-                if (!isUndo) {
+                previousKernelParamValue = previousValue
+                updateFavoriteWidget()
+
+                val historySaved = previousValue == newValue || runCatching {
+                    recordParamChange(
+                        paramName = oldParam.name,
+                        path = oldParam.path,
+                        previousValue = previousValue,
+                        newValue = newValue
+                    )
+                }.onFailure {
+                    Log.e("EditParamViewModel", "Failed to record parameter change", it)
+                }.isSuccess
+
+                if (!historySaved) {
                     setEffect {
-                        EditParamViewEffect.ShowApplySuccess(previousValue = oldParam.value)
+                        EditParamViewEffect.ShowError(
+                            stringProvider.getString(R.string.apply_history_save_failed)
+                        )
+                    }
+                } else if (!isUndo) {
+                    setEffect {
+                        EditParamViewEffect.ShowApplySuccess(previousValue = previousValue)
                     }
                 }
-                previousKernelParamValue = oldParam.value
-                updateFavoriteWidget()
             }.onFailure {
                 Log.e("EditParamViewModel", "Failed to apply param", it)
                 val message = when (it) {

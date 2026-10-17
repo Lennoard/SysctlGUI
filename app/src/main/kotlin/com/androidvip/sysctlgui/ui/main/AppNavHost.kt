@@ -15,6 +15,7 @@ import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.ui.params.browse.ParamBrowseScreen
 import com.androidvip.sysctlgui.ui.params.browse.ParamBrowseScreenContentPreview
 import com.androidvip.sysctlgui.ui.params.edit.EditParamScreen
+import com.androidvip.sysctlgui.ui.history.ParamChangeHistoryScreen
 import com.androidvip.sysctlgui.ui.presets.ImportPresetScreen
 import com.androidvip.sysctlgui.ui.presets.PresetsScreen
 import com.androidvip.sysctlgui.ui.search.SearchScreen
@@ -92,6 +93,10 @@ internal fun AppNavHost(
                     navController.navigate(route)
                 }
             )
+        }
+
+        composable<UiRoute.ParamChangeHistory> {
+            ParamChangeHistoryScreen(showSnackbar = showSnackbar)
         }
 
         composable<UiRoute.UserParams> {

@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +55,7 @@ import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.ui.params.browse.ParamFileRow
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
+import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
 const val ANIMATION_DURATION = 300
@@ -67,13 +67,14 @@ fun UserParamsScreen(
     filterPredicate: (UiKernelParam) -> Boolean = { true },
     onParamSelected: (KernelParam) -> Unit,
 ) {
-    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val appBarTitle = if (state.userParams.all { it.isFavorite }) {
         stringResource(R.string.app_name)
     } else {
         stringResource(R.string.startup_params)
     }
+    val deletedParamMessageFormat = stringResource(R.string.favorite_param_deleted_format)
+    val undoLabel = stringResource(R.string.undo)
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(UserParamsViewEvent.ScreenLoaded(filterPredicate))
@@ -107,11 +108,12 @@ fun UserParamsScreen(
                 is UserParamsViewEffect.ShowUndoSnackBar -> {
                     mainViewModel.onEvent(
                         MainViewEvent.ShowSnackbarRequested(
-                            message = context.getString(
-                                R.string.favorite_param_deleted_format,
+                            message = String.format(
+                                Locale.getDefault(),
+                                deletedParamMessageFormat,
                                 effect.param.name
                             ),
-                            actionLabel = context.getString(R.string.undo)
+                            actionLabel = undoLabel
                         )
                     )
                 }

@@ -10,7 +10,8 @@ data class MainViewState(
     val showTopBar: Boolean = true,
     val showNavBar: Boolean = true,
     val showBackButton: Boolean = false,
-    val showSearchAction: Boolean = true
+    val showSearchAction: Boolean = true,
+    val deleteAllHistoryAction: (() -> Unit)? = null
 )
 
 data class ThemeSettings(

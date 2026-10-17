@@ -27,6 +27,12 @@ object TopLevelRouteProvider {
                 unselectedAnimatedIconRes = R.drawable.avd_favorite_on
             ),
             TopLevelRoute(
+                name = context.getString(R.string.history),
+                route = UiRoute.ParamChangeHistory,
+                selectedAnimatedIconRes = R.drawable.avd_history,
+                unselectedAnimatedIconRes = R.drawable.avd_history
+            ),
+            TopLevelRoute(
                 name = context.getString(R.string.settings),
                 route = UiRoute.Settings,
                 selectedAnimatedIconRes = R.drawable.avd_settings_off,

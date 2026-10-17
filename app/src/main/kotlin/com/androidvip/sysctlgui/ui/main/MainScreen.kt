@@ -103,6 +103,7 @@ private fun MainScreenContent(
                     title = state.topBarTitle,
                     showSearch = state.showSearchAction,
                     showBack = state.showBackButton,
+                    onDeleteAllPressed = state.deleteAllHistoryAction,
                     onSearchPressed = { navController.navigate(UiRoute.Search) },
                     onBackPressed = {
                         onBackPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed()

@@ -14,6 +14,7 @@ import com.androidvip.sysctlgui.domain.usecase.GetUserParamByNameUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.IsTaskerInstalledUseCase
 import com.androidvip.sysctlgui.domain.usecase.RemoveUserParamUseCase
+import com.androidvip.sysctlgui.domain.usecase.RecordParamChangeUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.factoryOf
@@ -32,6 +33,7 @@ val domainModule = module {
     factoryOf(::UpsertUserParamUseCase)
     factoryOf(::BackupParamsUseCase)
     factoryOf(::ExportParamsUseCase)
+    factoryOf(::RecordParamChangeUseCase)
     factoryOf(::GetAppSettingsUseCase)
     factoryOf(::GetParamDocumentationUseCase)
     factory { IsTaskerInstalledUseCase(androidContext()) }

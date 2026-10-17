@@ -3,11 +3,14 @@ package com.androidvip.sysctlgui.data.di
 import androidx.preference.PreferenceManager
 import com.androidvip.sysctlgui.data.db.ParamDatabase
 import com.androidvip.sysctlgui.data.db.ParamDatabaseManager
+import com.androidvip.sysctlgui.data.db.ParamChangeHistoryDatabase
+import com.androidvip.sysctlgui.data.db.ParamChangeHistoryDatabaseManager
 import com.androidvip.sysctlgui.data.repository.AppPrefsImpl
 import com.androidvip.sysctlgui.data.repository.AppSettingsRepositoryImpl
 import com.androidvip.sysctlgui.data.repository.DocumentationRepositoryImpl
 import com.androidvip.sysctlgui.data.repository.ParamsRepositoryImpl
 import com.androidvip.sysctlgui.data.repository.PresetRepositoryImpl
+import com.androidvip.sysctlgui.data.repository.ParamChangeHistoryRepositoryImpl
 import com.androidvip.sysctlgui.data.repository.UserRepositoryImpl
 import com.androidvip.sysctlgui.data.source.DocumentationDataSource
 import com.androidvip.sysctlgui.data.source.OfflineDocumentationDataSource
@@ -20,6 +23,7 @@ import com.androidvip.sysctlgui.domain.repository.AppPrefs
 import com.androidvip.sysctlgui.domain.repository.AppSettingsRepository
 import com.androidvip.sysctlgui.domain.repository.DocumentationRepository
 import com.androidvip.sysctlgui.domain.repository.ParamsRepository
+import com.androidvip.sysctlgui.domain.repository.ParamChangeHistoryRepository
 import com.androidvip.sysctlgui.domain.repository.PresetRepository
 import com.androidvip.sysctlgui.domain.repository.UserRepository
 import io.ktor.client.HttpClient
@@ -42,6 +46,7 @@ val utilsModule = module {
 
 val dbModule = module {
     single { ParamDatabaseManager.getInstance(androidContext()) }
+    single { ParamChangeHistoryDatabaseManager.getInstance(androidContext()) }
     factory { PreferenceManager.getDefaultSharedPreferences(androidContext()) }
 }
 
@@ -51,6 +56,11 @@ val repositoryModule = module {
     factoryOf(::PresetRepositoryImpl) bind PresetRepository::class
 
     single<UserRepository> { UserRepositoryImpl(paramDao = get<ParamDatabase>().paramDao()) }
+    single<ParamChangeHistoryRepository> {
+        ParamChangeHistoryRepositoryImpl(
+            dao = get<ParamChangeHistoryDatabase>().paramChangeHistoryDao()
+        )
+    }
 
     factory<AppSettingsRepository> {
         AppSettingsRepositoryImpl(

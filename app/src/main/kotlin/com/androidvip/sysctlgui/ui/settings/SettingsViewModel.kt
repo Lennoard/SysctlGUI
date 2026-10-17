@@ -11,6 +11,7 @@ import com.androidvip.sysctlgui.domain.enums.SettingItemType
 import com.androidvip.sysctlgui.domain.models.KEY_CONTRIBUTORS
 import com.androidvip.sysctlgui.domain.models.KEY_DELETE_HISTORY
 import com.androidvip.sysctlgui.domain.models.KEY_MANAGE_PARAMS
+import com.androidvip.sysctlgui.domain.models.KEY_PARAM_CHANGE_HISTORY
 import com.androidvip.sysctlgui.domain.models.KEY_REVERT_CHANGES
 import com.androidvip.sysctlgui.domain.models.KEY_SOURCE_CODE
 import com.androidvip.sysctlgui.domain.models.KEY_TRANSLATIONS
@@ -91,6 +92,10 @@ class SettingsViewModel(
 
                     KEY_MANAGE_PARAMS -> {
                         setEffect { SettingsViewEffect.Navigate(UiRoute.UserParams) }
+                    }
+
+                    KEY_PARAM_CHANGE_HISTORY -> {
+                        setEffect { SettingsViewEffect.Navigate(UiRoute.ParamChangeHistory) }
                     }
 
                     KEY_DELETE_HISTORY -> {

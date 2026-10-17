@@ -12,6 +12,7 @@ import com.androidvip.sysctlgui.domain.models.AppSetting
 import com.androidvip.sysctlgui.domain.models.KEY_CONTRIBUTORS
 import com.androidvip.sysctlgui.domain.models.KEY_DELETE_HISTORY
 import com.androidvip.sysctlgui.domain.models.KEY_MANAGE_PARAMS
+import com.androidvip.sysctlgui.domain.models.KEY_PARAM_CHANGE_HISTORY
 import com.androidvip.sysctlgui.domain.models.KEY_REVERT_CHANGES
 import com.androidvip.sysctlgui.domain.models.KEY_SOURCE_CODE
 import com.androidvip.sysctlgui.domain.models.KEY_TRANSLATIONS
@@ -70,6 +71,14 @@ class AppSettingsRepositoryImpl(
                 category = context.getString(R.string.prefs_category_general),
                 title = context.getString(R.string.pref_search_history_title),
                 description = context.getString(R.string.pref_search_history_description),
+                type = SettingItemType.Text,
+            ),
+            AppSetting(
+                key = KEY_PARAM_CHANGE_HISTORY,
+                value = Unit,
+                category = context.getString(R.string.prefs_category_general),
+                title = context.getString(R.string.prefs_change_history_title),
+                description = context.getString(R.string.prefs_change_history_description),
                 type = SettingItemType.Text,
             ),
 

@@ -36,7 +36,7 @@
             <set>
                 <objectAnimator
                     android:propertyName="scaleX"
-                    android:startOffset="350"
+                    android:startOffset="300"
                     android:duration="150"
                     android:valueFrom="0.85"
                     android:valueTo="1"
@@ -44,7 +44,7 @@
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="scaleY"
-                    android:startOffset="350"
+                    android:startOffset="300"
                     android:duration="150"
                     android:valueFrom="0.85"
                     android:valueTo="1"

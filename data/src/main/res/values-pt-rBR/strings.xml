@@ -31,6 +31,8 @@
     <string name="prefs_show_toast_description">Mostrar uma mensagem quando um parâmetro do Tasker for aplicado</string>
     <string name="pref_search_history_title">Histórico de pesquisa</string>
     <string name="pref_search_history_description">Toque para limpar o histórico de pesquisa</string>
+    <string name="prefs_change_history_title">Histórico de alterações</string>
+    <string name="prefs_change_history_description">Revise e reverta alterações nos parâmetros</string>
     <string name="prefs_category_others">Outros</string>
     <string name="pref_source_code_title">Código fonte</string>
     <string name="pref_source_code_description">Confira o código fonte no GitHub!</string>

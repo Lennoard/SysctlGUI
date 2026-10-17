@@ -3,6 +3,7 @@ package com.androidvip.sysctlgui.di
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.params.browse.ParamBrowseViewModel
 import com.androidvip.sysctlgui.ui.params.edit.EditParamViewModel
+import com.androidvip.sysctlgui.ui.history.ParamChangeHistoryViewModel
 import com.androidvip.sysctlgui.ui.presets.PresetsViewModel
 import com.androidvip.sysctlgui.ui.search.SearchViewModel
 import com.androidvip.sysctlgui.ui.settings.SettingsViewModel
@@ -18,6 +19,7 @@ internal val presentationModule = module {
     viewModelOf(::SettingsViewModel)
     viewModelOf(::ParamBrowseViewModel)
     viewModelOf(::EditParamViewModel)
+    viewModelOf(::ParamChangeHistoryViewModel)
     viewModelOf(::SearchViewModel)
     singleOf(::PresetsViewModel)
     viewModelOf(::UserParamsViewModel)

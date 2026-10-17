@@ -28,21 +28,21 @@
             <set>
                 <objectAnimator
                     android:propertyName="scaleY"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="1"
                     android:valueTo="0.95"
                     android:valueType="floatType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="scaleX"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="1"
                     android:valueTo="0.95"
                     android:valueType="floatType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="rotation"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="0"
                     android:valueTo="20"
                     android:valueType="floatType"
@@ -50,7 +50,7 @@
                 <objectAnimator
                     android:propertyName="rotation"
                     android:startOffset="250"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="20"
                     android:valueTo="0"
                     android:valueType="floatType"
@@ -58,7 +58,7 @@
                 <objectAnimator
                     android:propertyName="scaleY"
                     android:startOffset="250"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="0.95"
                     android:valueTo="1"
                     android:valueType="floatType"
@@ -66,14 +66,14 @@
                 <objectAnimator
                     android:propertyName="scaleX"
                     android:startOffset="250"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="0.95"
                     android:valueTo="1"
                     android:valueType="floatType"
                     android:interpolator="@android:interpolator/fast_out_slow_in"/>
                 <objectAnimator
                     android:propertyName="translateY"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="0"
                     android:valueTo="30"
                     android:valueType="floatType"
@@ -81,7 +81,7 @@
                 <objectAnimator
                     android:propertyName="translateY"
                     android:startOffset="250"
-                    android:duration="250"
+                    android:duration="200"
                     android:valueFrom="30"
                     android:valueTo="0"
                     android:valueType="floatType"

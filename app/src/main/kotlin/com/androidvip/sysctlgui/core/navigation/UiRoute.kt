@@ -27,4 +27,6 @@ sealed interface UiRoute {
     data object Search : UiRoute
     @Serializable
     data object Settings : UiRoute
+    @Serializable
+    data object ParamChangeHistory : UiRoute
 }

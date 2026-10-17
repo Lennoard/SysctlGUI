@@ -24,6 +24,7 @@ fun MainTopBar(
     title: String = stringResource(R.string.app_name),
     showBack: Boolean = false,
     showSearch: Boolean = false,
+    onDeleteAllPressed: (() -> Unit)? = null,
     onSearchPressed: () -> Unit,
     onBackPressed: () -> Unit
 ) {
@@ -42,6 +43,18 @@ fun MainTopBar(
             Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis)
         },
         actions = {
+            AnimatedVisibility(
+                visible = onDeleteAllPressed != null,
+                enter = expandHorizontally() + fadeIn(),
+                exit = shrinkHorizontally() + fadeOut()
+            ) {
+                IconButton(onClick = { onDeleteAllPressed?.invoke() }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_delete_sweep),
+                        contentDescription = stringResource(R.string.change_history_delete_all)
+                    )
+                }
+            }
             AnimatedVisibility(
                 visible = showSearch,
                 enter = expandHorizontally() + fadeIn(),
