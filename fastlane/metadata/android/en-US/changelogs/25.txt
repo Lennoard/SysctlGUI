@@ -1,0 +1,3 @@
+- Added parameter change history and rollback feature
+- Enhanced parameter handling and validation
+- Fixed UI feedback for error handling when applying parameters

@@ -21,8 +21,8 @@ android {
         applicationId = AppConfig.appId
         minSdk = AppConfig.minSdkVersion
         targetSdk = AppConfig.targetSdkVersion
-        versionCode = 24
-        versionName = "3.2.0"
+        versionCode = 25
+        versionName = "3.3.0"
         vectorDrawables.useSupportLibrary = true
         androidResources {
             localeFilters += listOf("en", "de", "pt-rBR", "tr", "zh-rCN")
