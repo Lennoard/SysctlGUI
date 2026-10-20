@@ -15,6 +15,7 @@ data class EditParamViewState(
 
 sealed interface EditParamViewEffect {
     data class OpenBrowser(val url: String) : EditParamViewEffect
+    data class NavigateToParam(val paramName: String) : EditParamViewEffect
     data class ShowApplySuccess(val previousValue: String) : EditParamViewEffect
     data class ShowError(val message: String) : EditParamViewEffect
     data object GoBack : EditParamViewEffect
@@ -25,5 +26,9 @@ sealed interface EditParamViewEvent {
     data object UndoRequested : EditParamViewEvent
     data class FavoriteTogglePressed(val newState: Boolean) : EditParamViewEvent
     data class TaskerTogglePressed(val newState: Boolean, val listId: Int) : EditParamViewEvent
+    data class DocumentationParamLinkClicked(
+        val paramName: String,
+        val fallbackUrl: String
+    ) : EditParamViewEvent
     data object DocumentationReadMoreClicked : EditParamViewEvent
 }

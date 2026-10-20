@@ -23,11 +23,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +51,7 @@ import org.intellij.lang.annotations.Language
 internal fun EditParamLandscapeContent(
     state: EditParamViewState,
     onDocsReadMorePressed: () -> Unit,
+    onDocumentationParamLinkClicked: (String, String) -> Unit,
     onValueApply: (String) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit,
     onTaskerClicked: (Boolean) -> Unit,
@@ -187,7 +185,9 @@ internal fun EditParamLandscapeContent(
 
             ParamDocs(
                 documentation = state.documentation,
-                onReadMorePressed = onDocsReadMorePressed
+                onReadMorePressed = onDocsReadMorePressed,
+                currentParamName = param.name,
+                onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
             )
         }
     }
@@ -240,6 +240,7 @@ private fun EditParamContentPreview() {
                 onValueApply = {},
                 onTaskerClicked = {},
                 onDocsReadMorePressed = {},
+                onDocumentationParamLinkClicked = { _, _ -> },
                 onFavoriteToggle = {})
         }
     }

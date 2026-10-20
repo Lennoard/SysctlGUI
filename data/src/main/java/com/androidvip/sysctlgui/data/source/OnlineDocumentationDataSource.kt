@@ -11,9 +11,10 @@ import io.ktor.http.isSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import java.io.File
 import kotlin.coroutines.CoroutineContext
-
 
 class OnlineDocumentationDataSource(
     private val client: HttpClient,
@@ -61,7 +62,7 @@ class OnlineDocumentationDataSource(
                 )
             }
 
-            val elements = document.select("section#$htmlElementId :not(h2)")
+            val elements = document.documentationElements(htmlElementId)
 
             if (elements.isEmpty()) {
                 Log.w(
@@ -69,9 +70,6 @@ class OnlineDocumentationDataSource(
                     "No documentation found for ${param.name} with id $htmlElementId on $url"
                 )
                 return@withContext null
-            } else {
-                // Remove first element (usually a heading remnant)
-                elements.removeAt(0)
             }
 
             return@withContext ParamDocumentationDTO(
@@ -94,30 +92,69 @@ class OnlineDocumentationDataSource(
         return "${DOC_BASE_URL}$configName.html#${param.lastNameSegment.replace('_', '-')}"
     }
 
-    /**
-     * Optimizes HTML documentation for display.
-     *
-     * This function performs a series of replacements on the input HTML string
-     * to try and improve its rendering in a basic HTML text renderer, such as Android's TextView.
-     * @return The optimized HTML string.
-     */
-    private fun String.optimizedDocumentationHtml(): String {
-        return this.trimIndent()
-            .replace("<pre>", "<font face=\"monospace\"><b>")
-            .replace("</pre>", "</b></font>")  // For "code" blocks
-            .replace(
-                "<code ", // Handles <code ATTRIBUTES...>
-                "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\" "
-            )
-            .replace(
-                "<code>", // Handles <code NO ATTRIBUTES>
-                "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">"
-            )
-            .replace("</code>", "</span></b></font>") // Universal closer for the above
-            .removeSuffix("<br />")
-    }
-
     companion object {
-        internal const val DOC_BASE_URL = "https://docs.kernel.org/admin-guide/sysctl/"
+        const val DOC_BASE_URL = "https://docs.kernel.org/admin-guide/sysctl/"
     }
+}
+
+internal fun Document.documentationElements(htmlElementId: String): Elements =
+    select("section#$htmlElementId > :not(h2)")
+
+/**
+ * Optimizes HTML documentation for display in Compose's HTML text renderer.
+ */
+internal fun String.optimizedDocumentationHtml(): String =
+    Jsoup.parseBodyFragment(trimIndent()).apply {
+        select("div.highlight-none, div.highlight").unwrap()
+        select("pre span:empty").remove()
+    }.body().html()
+        .replace(Regex("<dt\\b[^>]*>"), "<p>")
+        .replace("</dt>", "</p>")
+        .replace(
+            Regex("<dd\\b[^>]*>\\s*<p\\b[^>]*>"),
+            "<p>&nbsp;&nbsp;&nbsp;&nbsp;"
+        )
+        .replace(Regex("</p>\\s*</dd>"), "</p>")
+        .replace(Regex("<pre\\b[^>]*>(.*?)</pre>", RegexOption.DOT_MATCHES_ALL)) { match ->
+            "<br><font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCE9F5\">${match.groupValues[1].trim().preservePreformattedWhitespace()}</span></b></font><br>"
+        }
+        .replace(
+            "<code ", // Handles <code ATTRIBUTES...>
+            "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\" "
+        )
+        .replace(
+            "<code>", // Handles <code NO ATTRIBUTES>
+            "<font face=\"monospace\" color=\"#222\"><b><span style=\"background-color: #DCDCF5\">"
+        )
+        .replace("</code>", "</span></b></font>") // Universal closer for the above
+        .removeSuffix("<br />")
+
+private fun String.preservePreformattedWhitespace(): String {
+    val result = StringBuilder()
+    var inTag = false
+    var index = 0
+
+    while (index < length) {
+        val character = this[index]
+        when {
+            character == '<' -> {
+                inTag = true
+                result.append(character)
+            }
+            character == '>' -> {
+                inTag = false
+                result.append(character)
+            }
+            !inTag && character == '\r' -> {
+                if (getOrNull(index + 1) == '\n') index++
+                result.append("<br>")
+            }
+            !inTag && character == '\n' -> result.append("<br>")
+            !inTag && character == '\t' -> result.append("&nbsp;&nbsp;&nbsp;&nbsp;")
+            !inTag && character == ' ' -> result.append("&nbsp;")
+            else -> result.append(character)
+        }
+        index++
+    }
+    return result.toString()
 }

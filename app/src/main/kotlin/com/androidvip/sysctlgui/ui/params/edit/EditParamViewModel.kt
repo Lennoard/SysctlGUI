@@ -77,6 +77,9 @@ class EditParamViewModel(
                 event.newState,
                 event.listId
             )
+            is EditParamViewEvent.DocumentationParamLinkClicked -> {
+                onDocumentationParamLinkClicked(event.paramName, event.fallbackUrl)
+            }
         }
     }
 
@@ -181,6 +184,22 @@ class EditParamViewModel(
     private fun onDocumentationReadMoreClicked() {
         currentState.documentation?.url?.let { documentationUrl ->
             setEffect { EditParamViewEffect.OpenBrowser(documentationUrl) }
+        }
+    }
+
+    private fun onDocumentationParamLinkClicked(paramName: String, fallbackUrl: String) {
+        viewModelScope.launch {
+            val param = runCatching { getRuntimeParam(paramName) }
+                .getOrElse {
+                    Log.w("EditParamViewModel", "Failed to resolve documentation link $paramName", it)
+                    null
+                }
+
+            if (param == null) {
+                setEffect { EditParamViewEffect.OpenBrowser(fallbackUrl) }
+            } else {
+                setEffect { EditParamViewEffect.NavigateToParam(param.name) }
+            }
         }
     }
 

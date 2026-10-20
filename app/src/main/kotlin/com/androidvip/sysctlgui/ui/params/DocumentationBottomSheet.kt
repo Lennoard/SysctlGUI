@@ -17,9 +17,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
@@ -61,6 +63,7 @@ private fun DocumentationBottomSheetContent(
 ) {
     Column(modifier = Modifier.padding(24.dp)) {
         val context = LocalContext.current
+        val uriHandler = LocalUriHandler.current
         Text(
             text = documentation.title,
             style = MaterialTheme.typography.titleLarge,
@@ -81,7 +84,12 @@ private fun DocumentationBottomSheetContent(
                         textDecoration = TextDecoration.Underline,
                         fontWeight = FontWeight.Medium
                     )
-                )
+                ),
+                linkInteractionListener = { link ->
+                    if (link is LinkAnnotation.Url) {
+                        uriHandler.openUri(link.url)
+                    }
+                }
             )
         } else {
             AnnotatedString(documentation.documentationText)

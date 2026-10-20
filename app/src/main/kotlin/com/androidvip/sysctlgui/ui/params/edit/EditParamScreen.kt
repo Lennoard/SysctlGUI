@@ -54,11 +54,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
@@ -72,8 +75,10 @@ import androidx.core.view.HapticFeedbackConstantsCompat
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
+import com.androidvip.sysctlgui.data.source.OnlineDocumentationDataSource.Companion.DOC_BASE_URL
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 import com.androidvip.sysctlgui.design.utils.isLandscape
+import com.androidvip.sysctlgui.domain.models.KernelParam
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.models.UiParamDocumentation
 import com.androidvip.sysctlgui.ui.components.SingleChoiceDialog
@@ -81,7 +86,6 @@ import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.utils.Consts
-import com.androidvip.sysctlgui.utils.browse
 import com.androidvip.sysctlgui.utils.performHapticFeedbackForToggle
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
@@ -92,9 +96,10 @@ fun EditParamScreen(
     viewModel: EditParamViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
+    onNavigateToParam: (String) -> Unit,
     showSnackbar: (String, String?, () -> Unit) -> Unit
 ) {
-    val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val taskerListOptions = stringArrayResource(R.array.tasker_lists).toList()
     var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(false) }
@@ -127,12 +132,16 @@ fun EditParamScreen(
             when (effect) {
                 EditParamViewEffect.GoBack -> onNavigateBack()
 
+                is EditParamViewEffect.NavigateToParam -> onNavigateToParam(effect.paramName)
+
                 is EditParamViewEffect.ShowError -> {
                     applyErrorMessage = effect.message
                     showApplyErrorDialog = true
                 }
 
-                is EditParamViewEffect.OpenBrowser -> context.browse(effect.url)
+                is EditParamViewEffect.OpenBrowser -> {
+                    runCatching { uriHandler.openUri(effect.url) }
+                }
 
                 is EditParamViewEffect.ShowApplySuccess -> {
                     showSnackbar(successMessage, undoText) {
@@ -156,6 +165,11 @@ fun EditParamScreen(
             onDocsReadMorePressed = {
                 viewModel.onEvent(EditParamViewEvent.DocumentationReadMoreClicked)
             },
+            onDocumentationParamLinkClicked = { paramName, fallbackUrl ->
+                viewModel.onEvent(
+                    EditParamViewEvent.DocumentationParamLinkClicked(paramName, fallbackUrl)
+                )
+            },
             onFavoriteToggle = {
                 viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
             },
@@ -175,6 +189,11 @@ fun EditParamScreen(
             },
             onDocsReadMorePressed = {
                 viewModel.onEvent(EditParamViewEvent.DocumentationReadMoreClicked)
+            },
+            onDocumentationParamLinkClicked = { paramName, fallbackUrl ->
+                viewModel.onEvent(
+                    EditParamViewEvent.DocumentationParamLinkClicked(paramName, fallbackUrl)
+                )
             },
             onFavoriteToggle = {
                 viewModel.onEvent(EditParamViewEvent.FavoriteTogglePressed(it))
@@ -213,6 +232,7 @@ fun EditParamScreen(
 private fun EditParamContent(
     state: EditParamViewState,
     onDocsReadMorePressed: () -> Unit,
+    onDocumentationParamLinkClicked: (String, String) -> Unit,
     onValueApply: (String) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit,
     onTaskerClicked: (Boolean) -> Unit,
@@ -346,7 +366,9 @@ private fun EditParamContent(
                 .background(MaterialTheme.colorScheme.surfaceContainer)
                 .padding(16.dp),
             documentation = state.documentation,
-            onReadMorePressed = onDocsReadMorePressed
+            currentParamName = param.name,
+            onReadMorePressed = onDocsReadMorePressed,
+            onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
         )
     }
 }
@@ -472,6 +494,8 @@ internal fun ParamDocs(
     modifier: Modifier = Modifier,
     documentation: UiParamDocumentation?,
     onReadMorePressed: () -> Unit,
+    currentParamName: String,
+    onDocumentationParamLinkClicked: (String, String) -> Unit
 ) {
     Column(modifier = modifier) {
         Text(
@@ -484,7 +508,9 @@ internal fun ParamDocs(
             if (documentationAvailable && documentation != null) {
                 DocumentationContent(
                     documentation = documentation,
-                    onReadMorePressed = onReadMorePressed
+                    currentParamName = currentParamName,
+                    onReadMorePressed = onReadMorePressed,
+                    onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
                 )
             } else {
                 Card(
@@ -523,9 +549,12 @@ internal fun ParamDocs(
 @Composable
 internal fun DocumentationContent(
     documentation: UiParamDocumentation,
-    onReadMorePressed: () -> Unit
+    currentParamName: String,
+    onReadMorePressed: () -> Unit,
+    onDocumentationParamLinkClicked: (String, String) -> Unit
 ) {
     Column {
+        val uriHandler = LocalUriHandler.current
         val documentationText = if (!documentation.documentationHtml.isNullOrEmpty()) {
             AnnotatedString.fromHtml(
                 htmlString = documentation.documentationHtml,
@@ -540,7 +569,18 @@ internal fun DocumentationContent(
                         textDecoration = TextDecoration.Underline,
                         fontWeight = FontWeight.Medium
                     )
-                )
+                ),
+                linkInteractionListener = { annotation ->
+                    if (annotation is LinkAnnotation.Url) {
+                        handleUrl(
+                            uriHandler = uriHandler,
+                            url = annotation.url,
+                            documentation = documentation,
+                            currentParamName = currentParamName,
+                            onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
+                        )
+                    }
+                }
             )
         } else {
             AnnotatedString(documentation.documentationText)
@@ -565,6 +605,29 @@ internal fun DocumentationContent(
         ) {
             Text(text = stringResource(R.string.read_more))
         }
+    }
+}
+
+private fun handleUrl(
+    uriHandler: UriHandler,
+    url: String,
+    documentation: UiParamDocumentation,
+    currentParamName: String,
+    onDocumentationParamLinkClicked: (String, String) -> Unit
+) {
+    if (url.startsWith("#")) {
+        val anchor = url.removePrefix("#")
+        val groupName = currentParamName.substringBeforeLast('.', "")
+        val paramName = "$groupName.${anchor.replace('-', '_')}"
+        val fallbackUrl = documentation.url
+            ?.replaceAfter('#', anchor)
+            ?: run {
+                val param = KernelParam.createFromName(name = currentParamName, value = "")
+                "${DOC_BASE_URL}${param.groupName}.html#$anchor"
+            }
+        onDocumentationParamLinkClicked(paramName, fallbackUrl)
+    } else {
+        runCatching { uriHandler.openUri(url) }
     }
 }
 
@@ -619,6 +682,7 @@ private fun EditParamContentPreview() {
                 onValueApply = { },
                 onTaskerClicked = { },
                 onDocsReadMorePressed = { },
+                onDocumentationParamLinkClicked = { _, _ -> },
                 onFavoriteToggle = { }
             )
         }

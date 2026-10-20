@@ -54,6 +54,9 @@ internal fun AppNavHost(
         composable<UiRoute.EditParam> {
             EditParamScreen(
                 onNavigateBack = { navController.popBackStack() },
+                onNavigateToParam = { paramName ->
+                    navController.navigate(UiRoute.EditParam(paramName))
+                },
                 showSnackbar = showSnackbar
             )
         }
