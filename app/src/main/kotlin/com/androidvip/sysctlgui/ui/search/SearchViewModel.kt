@@ -78,6 +78,7 @@ class SearchViewModel(
     private fun handleSearch(query: String) {
         viewModelScope.launch {
             setState { copy(loading = true) }
+            searchHistory.remove(query)
             searchHistory.add(query)
             appPrefs.addSearchToHistory(query)
 
