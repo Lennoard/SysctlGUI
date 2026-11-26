@@ -35,7 +35,6 @@ android {
                 )
             }
         }
-        multiDexEnabled = true
     }
 
     val envStorePath = System.getenv("KEYSTORE_PATH")

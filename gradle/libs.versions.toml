@@ -1,6 +1,6 @@
 [versions]
 activityCompose = "1.11.0"
-agp = "9.1.0"
+agp = "9.5.2"
 appcompat = "1.7.1"
 composeAnimationGraphics = "1.10.0"
 composeBom = "2025.09.01"
