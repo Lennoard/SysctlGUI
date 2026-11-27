@@ -1,0 +1,5 @@
+- Added predictive back gesture support with progress-based animations
+- Added adaptive layout support for tablets, foldables, and split-screen
+- Added interactive parameter links and in-app navigation within documentation text
+- Fixed crash when tapping recent search items (@Glucy-2)
+- Updated target SDK to Android 17 (API 37) and upgraded build dependencies
