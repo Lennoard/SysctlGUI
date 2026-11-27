@@ -19,15 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import android.R as AndroidResources
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SingleChoiceDialog(
     showDialog: Boolean,
     title: String,
-    options: List<String>,
+    options: ImmutableList<String>,
     initialSelectedOptionIndex: Int,
     onDismissRequest: () -> Unit,
-    onOptionSelected: (Int) -> Unit
+    onOptionSelect: (Int) -> Unit
 ) {
     if (showDialog) {
         var selectedOptionIndex by remember { mutableIntStateOf(initialSelectedOptionIndex) }
@@ -60,7 +61,7 @@ fun SingleChoiceDialog(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        onOptionSelected(selectedOptionIndex)
+                        onOptionSelect(selectedOptionIndex)
                         onDismissRequest()
                     }
                 ) {

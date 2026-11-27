@@ -36,6 +36,8 @@ import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.models.toUiKernelParam
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @SuppressLint("RestrictedApi")
 class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
@@ -45,6 +47,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
         val favoriteParams = getUserParamsUseCase()
             .filter { it.isFavorite }
             .map { it.toUiKernelParam() }
+            .toImmutableList()
 
         provideContent {
             FavoritesWidgetContent(params = favoriteParams)
@@ -52,7 +55,7 @@ class FavoritesGlanceWidget : GlanceAppWidget(), KoinComponent {
     }
 
     @Composable
-    fun FavoritesWidgetContent(params: List<UiKernelParam>) {
+    fun FavoritesWidgetContent(params: ImmutableList<UiKernelParam>) {
         Column(
             modifier = GlanceModifier
                 .fillMaxSize()

@@ -8,7 +8,9 @@ import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.utils.BaseViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
+import kotlin.collections.minus
 
 class UserParamsViewModel(
     private val getUserParams: GetUserParamsUseCase,
@@ -41,6 +43,7 @@ class UserParamsViewModel(
             val params = getUserParams()
                 .map(UiKernelParamMapper::map)
                 .filter(predicate)
+                .toImmutableList()
             setState { copy(userParams = params, loading = false) }
         }
     }
@@ -51,7 +54,7 @@ class UserParamsViewModel(
                 val count = removeParam.invoke(param)
                 require(count>0)
             }.onSuccess {
-                setState { copy(userParams = userParams - param) }
+                setState { copy(userParams = (userParams - param).toImmutableList()) }
                 setEffect { UserParamsViewEffect.ShowUndoSnackBar(param) }
                 mostRecentlyRemovedParam = param
             }.onFailure {
@@ -66,7 +69,7 @@ class UserParamsViewModel(
                 val newId = upsertParam(param)
                 require(newId > 0)
             }.onSuccess {
-                setState { copy(userParams = userParams + param) }
+                setState { copy(userParams = (userParams + param).toImmutableList()) }
                 mostRecentlyRemovedParam = null
             }
         }

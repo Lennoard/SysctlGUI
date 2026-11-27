@@ -2,8 +2,8 @@ package com.androidvip.sysctlgui.ui.main
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,21 +12,24 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.androidvip.sysctlgui.core.navigation.UiRoute
+import com.androidvip.sysctlgui.ui.components.PredictiveBackContainer
+import com.androidvip.sysctlgui.ui.history.ParamChangeHistoryScreen
 import com.androidvip.sysctlgui.ui.params.browse.ParamBrowseScreen
 import com.androidvip.sysctlgui.ui.params.browse.ParamBrowseScreenContentPreview
 import com.androidvip.sysctlgui.ui.params.edit.EditParamScreen
-import com.androidvip.sysctlgui.ui.history.ParamChangeHistoryScreen
 import com.androidvip.sysctlgui.ui.presets.ImportPresetScreen
 import com.androidvip.sysctlgui.ui.presets.PresetsScreen
 import com.androidvip.sysctlgui.ui.search.SearchScreen
 import com.androidvip.sysctlgui.ui.settings.SettingsScreen
 import com.androidvip.sysctlgui.ui.user.UserParamsScreen
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 internal fun AppNavHost(
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues, // Handled in the outer scope, this is for inner scaffolds
     navController: NavHostController,
+    mainViewModel: MainViewModel = koinViewModel(),
     startDestination: UiRoute = UiRoute.BrowseParams,
     showSnackbar: (String, String?, () -> Unit) -> Unit
 ) {
@@ -34,17 +37,17 @@ internal fun AppNavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination,
-        enterTransition = { scaleIn(initialScale = 0.9f) + fadeIn() },
-        exitTransition = { scaleOut(targetScale = 0.9f) + fadeOut() },
-        popEnterTransition = { scaleIn(initialScale = 1.1f) + fadeIn() },
-        popExitTransition = { scaleOut(targetScale = 1.1f) + fadeOut() }
+        enterTransition = { slideInHorizontally(initialOffsetX = { it / 4 }) + fadeIn() },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut() },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn() },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { it / 4 }) + fadeOut() }
     ) {
         composable<UiRoute.BrowseParams> {
             if (LocalView.current.isInEditMode) {
                 ParamBrowseScreenContentPreview()
             } else {
                 ParamBrowseScreen(
-                    onParamSelected = {
+                    onParamSelect = {
                         navController.navigate(UiRoute.EditParam(paramName = it.name))
                     }
                 )
@@ -52,13 +55,18 @@ internal fun AppNavHost(
         }
 
         composable<UiRoute.EditParam> {
-            EditParamScreen(
-                onNavigateBack = { navController.popBackStack() },
-                onNavigateToParam = { paramName ->
-                    navController.navigate(UiRoute.EditParam(paramName))
-                },
-                showSnackbar = showSnackbar
-            )
+            PredictiveBackContainer(
+                mainViewModel = mainViewModel,
+                onBack = { navController.popBackStack() }
+            ) {
+                EditParamScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToParam = { paramName ->
+                        navController.navigate(UiRoute.EditParam(paramName))
+                    },
+                    showSnackbar = showSnackbar
+                )
+            }
         }
 
         composable<UiRoute.Presets> {
@@ -69,25 +77,36 @@ internal fun AppNavHost(
         }
 
         composable<UiRoute.ImportPresets> {
-            ImportPresetScreen(onNavigateBack = { navController.popBackStack() })
+            PredictiveBackContainer(
+                mainViewModel = mainViewModel,
+                onBack = { navController.popBackStack() }
+            ) {
+                ImportPresetScreen(onNavigateBack = { navController.popBackStack() })
+            }
         }
 
         composable<UiRoute.Favorites> {
             UserParamsScreen(
                 filterPredicate = { it.isFavorite },
-                onParamSelected = {
+                onParamSelect = {
                     navController.navigate(UiRoute.EditParam(paramName = it.name))
                 }
             )
         }
 
         composable<UiRoute.Search> {
-            SearchScreen(
-                outerScaffoldPadding = innerPadding,
-                onParamSelected = {
-                    navController.navigate(UiRoute.EditParam(paramName = it.name))
-                }
-            )
+            PredictiveBackContainer(
+                mainViewModel = mainViewModel,
+                onBack = { navController.popBackStack() }
+            ) {
+                SearchScreen(
+                    outerScaffoldPadding = innerPadding,
+                    onNavigateBack = { navController.popBackStack() },
+                    onParamSelect = {
+                        navController.navigate(UiRoute.EditParam(paramName = it.name))
+                    }
+                )
+            }
         }
 
         composable<UiRoute.Settings> {
@@ -105,7 +124,7 @@ internal fun AppNavHost(
         composable<UiRoute.UserParams> {
             UserParamsScreen(
                 filterPredicate = { true },
-                onParamSelected = {
+                onParamSelect = {
                     navController.navigate(UiRoute.EditParam(paramName = it.name))
                 }
             )

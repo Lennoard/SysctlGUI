@@ -119,6 +119,7 @@ dependencies {
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
@@ -126,6 +127,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.window)
     implementation(libs.androidx.work.runtime.ktx)
 

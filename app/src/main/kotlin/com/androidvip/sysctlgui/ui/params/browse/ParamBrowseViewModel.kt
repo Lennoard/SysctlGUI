@@ -12,6 +12,7 @@ import com.androidvip.sysctlgui.models.toUiParamDocumentation
 import com.androidvip.sysctlgui.utils.BaseViewModel
 import com.androidvip.sysctlgui.utils.Consts
 import com.topjohnwu.superuser.nio.FileSystemManager
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -34,7 +35,7 @@ class ParamBrowseViewModel(
         viewModelScope.launch {
             setState { copy(loading = true) }
             val startingDirectory = File(Consts.PROC_SYS)
-            val params = getParams(startingDirectory)
+            val params = getParams(startingDirectory).toImmutableList()
 
             runCatching {
                 userParams.clear()
@@ -75,7 +76,7 @@ class ParamBrowseViewModel(
             setState { copy(loading = true) }
             runCatching {
                 val newParamsDeferred = async {
-                    getParams(File(parentParam.path))
+                    getParams(File(parentParam.path)).toImmutableList()
                 }
                 val directoryDocumentationDeferred = async {
                     runCatching { getParamDocumentation(parentParam) }.getOrNull()

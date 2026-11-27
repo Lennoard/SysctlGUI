@@ -3,6 +3,8 @@ package com.androidvip.sysctlgui.ui.main
 import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -10,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -22,11 +25,15 @@ import androidx.navigation.compose.rememberNavController
 import com.androidvip.sysctlgui.design.theme.SysctlGuiTheme
 
 @Composable
-internal fun MainNavRail(navController: NavHostController = rememberNavController()) {
+internal fun MainNavRail(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController()
+) {
     val context = LocalContext.current
     val topLevelRoutes = remember { TopLevelRouteProvider(context) }
+    val scrollState = rememberScrollState()
 
-    NavigationRail {
+    NavigationRail(modifier = modifier.verticalScroll(scrollState)) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 

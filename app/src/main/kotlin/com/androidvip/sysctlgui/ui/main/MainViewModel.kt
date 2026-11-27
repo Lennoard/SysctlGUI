@@ -35,6 +35,10 @@ class MainViewModel(
         )
     }
 
+    fun updatePredictiveBackProgress(progress: Float) {
+        setState { copy(predictiveBackProgress = progress) }
+    }
+
     override fun createInitialState() = MainViewState()
 
     override fun onEvent(event: MainViewEvent) {

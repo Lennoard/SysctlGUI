@@ -2,10 +2,12 @@ package com.androidvip.sysctlgui.ui.history
 
 import androidx.compose.runtime.Immutable
 import com.androidvip.sysctlgui.domain.models.ParamChange
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class ParamChangeHistoryState(
-    val changes: List<ParamChange> = emptyList(),
+    val changes: ImmutableList<ParamChange> = persistentListOf(),
     val loading: Boolean = true,
     val rollbackInProgress: Boolean = false
 )

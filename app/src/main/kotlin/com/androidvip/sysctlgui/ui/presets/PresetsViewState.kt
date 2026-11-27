@@ -2,9 +2,11 @@ package com.androidvip.sysctlgui.ui.presets
 
 import android.net.Uri
 import com.androidvip.sysctlgui.models.UiKernelParam
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class PresetsViewState(
-    val paramsToImport: List<UiKernelParam> = emptyList(),
+    val paramsToImport: ImmutableList<UiKernelParam> = persistentListOf(),
     val loading: Boolean = false,
     val incomingPresetsScreenState: IncomingPresetsScreenState = IncomingPresetsScreenState.Idle
 )

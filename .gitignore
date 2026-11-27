@@ -12,3 +12,4 @@ app/build/*
 app/build/generated/*
 app/src/main/gen/*
 /keystore.properties
+.vscode/

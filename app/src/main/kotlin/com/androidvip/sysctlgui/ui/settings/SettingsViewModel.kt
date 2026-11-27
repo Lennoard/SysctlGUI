@@ -20,6 +20,7 @@ import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEffect
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEvent
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewState
 import com.androidvip.sysctlgui.utils.BaseViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
@@ -116,7 +117,7 @@ class SettingsViewModel(
     }
 
     private suspend fun loadSettings() {
-        val settings = getSettings()
+        val settings = getSettings().toImmutableList()
         setState { copy(settings = settings) }
     }
 }

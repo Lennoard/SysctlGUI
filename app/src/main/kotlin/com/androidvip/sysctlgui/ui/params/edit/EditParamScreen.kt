@@ -87,21 +87,23 @@ import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.utils.Consts
 import com.androidvip.sysctlgui.utils.performHapticFeedbackForToggle
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EditParamScreen(
-    viewModel: EditParamViewModel = koinViewModel(),
-    mainViewModel: MainViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToParam: (String) -> Unit,
-    showSnackbar: (String, String?, () -> Unit) -> Unit
+    showSnackbar: (String, String?, () -> Unit) -> Unit,
+    viewModel: EditParamViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val uriHandler = LocalUriHandler.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val taskerListOptions = stringArrayResource(R.array.tasker_lists).toList()
+    val taskerLists = stringArrayResource(R.array.tasker_lists)
+    val taskerListOptions = remember { taskerLists.toImmutableList() }
     var showSelectTaskerListDialog by rememberSaveable { mutableStateOf(false) }
     var applyErrorMessage by rememberSaveable { mutableStateOf("") }
     var selectedOptionIndex by rememberSaveable {
@@ -110,7 +112,7 @@ fun EditParamScreen(
     var showApplyErrorDialog by rememberSaveable { mutableStateOf(false) }
     val appBarTitle = stringResource(R.string.edit_params)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(mainViewModel) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
@@ -122,12 +124,11 @@ fun EditParamScreen(
                 )
             )
         )
-
     }
 
     val successMessage = stringResource(R.string.value_applied_successfully)
     val undoText = stringResource(R.string.undo)
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(viewModel.effect, onNavigateBack, onNavigateToParam, showSnackbar) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 EditParamViewEffect.GoBack -> onNavigateBack()
@@ -183,14 +184,14 @@ fun EditParamScreen(
             onValueApply = {
                 viewModel.onEvent(EditParamViewEvent.ApplyPressed(it))
             },
-            onTaskerClicked = {
+            onTaskerClick = {
                 showSelectTaskerListDialog = it
                 viewModel.onEvent(EditParamViewEvent.TaskerTogglePressed(it, selectedOptionIndex))
             },
-            onDocsReadMorePressed = {
+            onDocsReadMorePress = {
                 viewModel.onEvent(EditParamViewEvent.DocumentationReadMoreClicked)
             },
-            onDocumentationParamLinkClicked = { paramName, fallbackUrl ->
+            onDocumentationParamLinkClick = { paramName, fallbackUrl ->
                 viewModel.onEvent(
                     EditParamViewEvent.DocumentationParamLinkClicked(paramName, fallbackUrl)
                 )
@@ -221,7 +222,7 @@ fun EditParamScreen(
         options = taskerListOptions,
         initialSelectedOptionIndex = selectedOptionIndex,
         onDismissRequest = { showSelectTaskerListDialog = false },
-        onOptionSelected = {
+        onOptionSelect = {
             selectedOptionIndex = it
             viewModel.onEvent(EditParamViewEvent.TaskerTogglePressed(true, it))
         }
@@ -231,11 +232,11 @@ fun EditParamScreen(
 @Composable
 private fun EditParamContent(
     state: EditParamViewState,
-    onDocsReadMorePressed: () -> Unit,
-    onDocumentationParamLinkClicked: (String, String) -> Unit,
+    onDocsReadMorePress: () -> Unit,
+    onDocumentationParamLinkClick: (String, String) -> Unit,
     onValueApply: (String) -> Unit,
     onFavoriteToggle: (Boolean) -> Unit,
-    onTaskerClicked: (Boolean) -> Unit,
+    onTaskerClick: (Boolean) -> Unit,
     taskerListNameResolver: (Int) -> String = { "List #$it" },
 ) {
     val param = state.kernelParam
@@ -318,7 +319,7 @@ private fun EditParamContent(
                         isTaskerParam = param.isTaskerParam,
                         onToggle = { newState ->
                             performHapticFeedbackForToggle(newState, view)
-                            onTaskerClicked(newState)
+                            onTaskerClick(newState)
                         },
                         modifier = Modifier.scale(0.85f)
                     )
@@ -337,7 +338,7 @@ private fun EditParamContent(
             AnimatedVisibility(visible = param.isTaskerParam && state.taskerAvailable) {
                 val listName = taskerListNameResolver(param.taskerList)
                 AssistChip(
-                    onClick = { onTaskerClicked(true) },
+                    onClick = { onTaskerClick(true) },
                     label = { Text(text = stringResource(R.string.tasker_list_format, listName)) },
                     leadingIcon = {
                         Icon(
@@ -367,21 +368,21 @@ private fun EditParamContent(
                 .padding(16.dp),
             documentation = state.documentation,
             currentParamName = param.name,
-            onReadMorePressed = onDocsReadMorePressed,
-            onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
+            onReadMorePress = onDocsReadMorePress,
+            onDocumentationParamLinkClick = onDocumentationParamLinkClick
         )
     }
 }
 
 @Composable
 fun ParamValueContent(
-    modifier: Modifier = Modifier,
     param: UiKernelParam,
     keyboardType: KeyboardType,
-    onValueApply: (String) -> Unit
+    onValueApply: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    var isEditing by remember { mutableStateOf(false) }
-    var editedValue by remember(param.value) { mutableStateOf(param.value) }
+    var isEditing by rememberSaveable { mutableStateOf(false) }
+    var editedValue by rememberSaveable(param.value) { mutableStateOf(param.value) }
     val view = LocalView.current
 
     BackHandler(
@@ -445,12 +446,12 @@ fun ParamValueContent(
 
 @Composable
 internal fun EditableParamValue(
-    modifier: Modifier = Modifier,
     isEditing: Boolean,
     paramValue: String,
     editedValue: String,
-    keyboardType: KeyboardType = KeyboardType.Text,
     onEditorValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    keyboardType: KeyboardType = KeyboardType.Text
 ) {
     Box(modifier = modifier) {
         AnimatedContent(
@@ -491,11 +492,11 @@ internal fun EditableParamValue(
 
 @Composable
 internal fun ParamDocs(
-    modifier: Modifier = Modifier,
     documentation: UiParamDocumentation?,
-    onReadMorePressed: () -> Unit,
+    onReadMorePress: () -> Unit,
     currentParamName: String,
-    onDocumentationParamLinkClicked: (String, String) -> Unit
+    onDocumentationParamLinkClick: (String, String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         Text(
@@ -509,8 +510,8 @@ internal fun ParamDocs(
                 DocumentationContent(
                     documentation = documentation,
                     currentParamName = currentParamName,
-                    onReadMorePressed = onReadMorePressed,
-                    onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
+                    onReadMorePress = onReadMorePress,
+                    onDocumentationParamLinkClick = onDocumentationParamLinkClick
                 )
             } else {
                 Card(
@@ -550,8 +551,8 @@ internal fun ParamDocs(
 internal fun DocumentationContent(
     documentation: UiParamDocumentation,
     currentParamName: String,
-    onReadMorePressed: () -> Unit,
-    onDocumentationParamLinkClicked: (String, String) -> Unit
+    onReadMorePress: () -> Unit,
+    onDocumentationParamLinkClick: (String, String) -> Unit
 ) {
     Column {
         val uriHandler = LocalUriHandler.current
@@ -577,7 +578,7 @@ internal fun DocumentationContent(
                             url = annotation.url,
                             documentation = documentation,
                             currentParamName = currentParamName,
-                            onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
+                            onDocumentationParamLinkClicked = onDocumentationParamLinkClick
                         )
                     }
                 }
@@ -598,7 +599,7 @@ internal fun DocumentationContent(
         }
 
         TextButton(
-            onClick = onReadMorePressed,
+            onClick = onReadMorePress,
             modifier = Modifier
                 .padding(vertical = 8.dp)
                 .align(Alignment.End)
@@ -680,9 +681,9 @@ private fun EditParamContentPreview() {
             EditParamContent(
                 state = state,
                 onValueApply = { },
-                onTaskerClicked = { },
-                onDocsReadMorePressed = { },
-                onDocumentationParamLinkClicked = { _, _ -> },
+                onTaskerClick = { },
+                onDocsReadMorePress = { },
+                onDocumentationParamLinkClick = { _, _ -> },
                 onFavoriteToggle = { }
             )
         }

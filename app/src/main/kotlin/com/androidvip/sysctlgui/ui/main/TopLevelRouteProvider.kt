@@ -4,10 +4,12 @@ import android.content.Context
 import com.androidvip.sysctlgui.R
 import com.androidvip.sysctlgui.core.navigation.TopLevelRoute
 import com.androidvip.sysctlgui.core.navigation.UiRoute
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 object TopLevelRouteProvider {
-    operator fun invoke(context: Context): List<TopLevelRoute<out UiRoute>> {
-        return listOf(
+    operator fun invoke(context: Context): ImmutableList<TopLevelRoute<out UiRoute>> {
+        return persistentListOf(
             TopLevelRoute(
                 name = context.getString(R.string.browse),
                 route = UiRoute.BrowseParams,

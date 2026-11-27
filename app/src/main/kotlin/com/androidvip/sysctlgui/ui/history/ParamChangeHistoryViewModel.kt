@@ -13,6 +13,7 @@ import com.androidvip.sysctlgui.domain.usecase.RecordParamChangeUseCase
 import com.androidvip.sysctlgui.domain.usecase.UpsertUserParamUseCase
 import com.androidvip.sysctlgui.domain.repository.ParamChangeHistoryRepository
 import com.androidvip.sysctlgui.utils.BaseViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -30,7 +31,7 @@ class ParamChangeHistoryViewModel(
         viewModelScope.launch {
             try {
                 historyRepository.observeChanges().collect { changes ->
-                    setState { copy(changes = changes, loading = false) }
+                    setState { copy(changes = changes.toImmutableList(), loading = false) }
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled

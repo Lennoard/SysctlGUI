@@ -1,9 +1,11 @@
 package com.androidvip.sysctlgui.ui.user
 
 import com.androidvip.sysctlgui.models.UiKernelParam
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class UserParamsViewState(
-    val userParams: List<UiKernelParam> = emptyList(),
+    val userParams: ImmutableList<UiKernelParam> = persistentListOf(),
     val loading: Boolean = true
 )
 

@@ -53,6 +53,8 @@ import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.ui.params.browse.ParamFileRow
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import org.koin.compose.viewmodel.koinViewModel
 import java.util.Locale
@@ -65,7 +67,7 @@ fun UserParamsScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     viewModel: UserParamsViewModel = koinViewModel(),
     filterPredicate: (UiKernelParam) -> Boolean = { true },
-    onParamSelected: (KernelParam) -> Unit,
+    onParamSelect: (KernelParam) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val appBarTitle = if (state.userParams.all { it.isFavorite }) {
@@ -76,7 +78,7 @@ fun UserParamsScreen(
     val deletedParamMessageFormat = stringResource(R.string.favorite_param_deleted_format)
     val undoLabel = stringResource(R.string.undo)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(mainViewModel, filterPredicate) {
         viewModel.onEvent(UserParamsViewEvent.ScreenLoaded(filterPredicate))
 
         mainViewModel.onEvent(
@@ -98,11 +100,11 @@ fun UserParamsScreen(
         }
     }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(viewModel.effect, onParamSelect) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is UserParamsViewEffect.ShowParamDetails -> {
-                    onParamSelected(effect.param)
+                    onParamSelect(effect.param)
                 }
 
                 is UserParamsViewEffect.ShowUndoSnackBar -> {
@@ -124,10 +126,10 @@ fun UserParamsScreen(
     FavoritesScreenContent(
         favoriteParams = state.userParams,
         loading = state.loading,
-        onParamClicked = {
+        onParamClick = {
             viewModel.onEvent(UserParamsViewEvent.ParamClicked(it))
         },
-        onParamDeleteRequested = {
+        onParamDeleteRequest = {
             viewModel.onEvent(UserParamsViewEvent.ParamDeleteRequested(it))
         }
     )
@@ -135,10 +137,10 @@ fun UserParamsScreen(
 
 @Composable
 private fun FavoritesScreenContent(
-    favoriteParams: List<UiKernelParam>,
+    favoriteParams: ImmutableList<UiKernelParam>,
     loading: Boolean,
-    onParamClicked: (UiKernelParam) -> Unit,
-    onParamDeleteRequested: (UiKernelParam) -> Unit
+    onParamClick: (UiKernelParam) -> Unit,
+    onParamDeleteRequest: (UiKernelParam) -> Unit
 ) {
     val isLandscape = isLandscape()
     val gridState = rememberLazyGridState()
@@ -186,14 +188,14 @@ private fun FavoritesScreenContent(
         itemsIndexed(
             items = favoriteParams,
             key = { index, param -> "$index[${param.name}]" }
-        ) { index, param ->
+        ) { _, param ->
             var showParam by remember { mutableStateOf(true) }
             val dismissState = rememberSwipeToDismissBoxState()
 
-            LaunchedEffect(showParam, param) {
+            LaunchedEffect(showParam, param, onParamDeleteRequest) {
                 if (!showParam) {
                     delay(ANIMATION_DURATION.milliseconds)
-                    onParamDeleteRequested(param)
+                    onParamDeleteRequest(param)
                 }
             }
 
@@ -240,7 +242,7 @@ private fun FavoritesScreenContent(
                             .fillMaxWidth(),
                         param = param,
                         showFavoriteIcon = true,
-                        onParamClicked = onParamClicked
+                        onParamClicked = onParamClick
                     )
                 }
             }
@@ -252,7 +254,7 @@ private fun FavoritesScreenContent(
 @PreviewLightDark
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
 private fun FavoriteScreenContentPreview() {
-    val params = listOf(
+    val params = persistentListOf(
         UiKernelParam(
             name = "vm.swappiness",
             path = "/proc/sys/vm/swappiness",
@@ -277,8 +279,8 @@ private fun FavoriteScreenContentPreview() {
             FavoritesScreenContent(
                 favoriteParams = params,
                 loading = false,
-                onParamClicked = {},
-                onParamDeleteRequested = {}
+                onParamClick = {},
+                onParamDeleteRequest = {}
             )
         }
     }

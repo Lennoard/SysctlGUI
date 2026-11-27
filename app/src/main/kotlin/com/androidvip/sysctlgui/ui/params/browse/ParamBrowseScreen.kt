@@ -68,6 +68,9 @@ import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.ui.params.DocumentationBottomSheet
 import com.androidvip.sysctlgui.utils.browse
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -77,19 +80,19 @@ import org.koin.compose.viewmodel.koinViewModel
 import java.io.File
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ParamBrowseScreen(
     mainViewModel: MainViewModel = koinViewModel(),
     viewModel: ParamBrowseViewModel = koinViewModel(),
-    onParamSelected: (KernelParam) -> Unit
+    onParamSelect: (KernelParam) -> Unit
 ) {
     var documentation by remember { mutableStateOf<UiParamDocumentation?>(null) }
     val documentationSheetState = rememberModalBottomSheetState()
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state) {
+    LaunchedEffect(state.backEnabled) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
@@ -102,10 +105,10 @@ fun ParamBrowseScreen(
         )
     }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(viewModel.effect, onParamSelect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ParamBrowseViewEffect.EditKernelParam -> onParamSelected(effect.param)
+                is ParamBrowseViewEffect.EditKernelParam -> onParamSelect(effect.param)
                 is ParamBrowseViewEffect.OpenBrowser -> context.browse(effect.url)
                 is ParamBrowseViewEffect.ShowError -> Toast.makeText(
                     context,
@@ -120,14 +123,14 @@ fun ParamBrowseScreen(
         params = state.params,
         currentPath = state.currentPath,
         documentation = state.documentation,
-        onParamClicked = {
+        onParamClick = {
             viewModel.onEvent(ParamBrowseViewEvent.ParamClicked(it))
         },
-        onDocumentationClicked = {
+        onDocumentationClick = {
             viewModel.onEvent(ParamBrowseViewEvent.DocumentationClicked(it))
         },
         backEnabled = state.backEnabled,
-        onBackPressed = {
+        onBackPress = {
             viewModel.onEvent(ParamBrowseViewEvent.BackRequested)
         },
         isRefreshing = state.loading,
@@ -146,15 +149,15 @@ fun ParamBrowseScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun ParamBrowseScreenContent(
-    params: List<UiKernelParam>,
+    params: ImmutableList<UiKernelParam>,
     currentPath: String,
     documentation: UiParamDocumentation?,
-    onParamClicked: (UiKernelParam) -> Unit,
-    onDocumentationClicked: (UiParamDocumentation) -> Unit,
-    backEnabled: Boolean = false,
-    onBackPressed: () -> Unit,
+    onParamClick: (UiKernelParam) -> Unit,
+    onDocumentationClick: (UiParamDocumentation) -> Unit,
+    onBackPress: () -> Unit,
     isRefreshing: Boolean,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    backEnabled: Boolean = false
 ) {
     val listState = rememberLazyGridState()
     // TODO: Use Material3 PullToRefresh instead
@@ -162,7 +165,7 @@ private fun ParamBrowseScreenContent(
         rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     var headerVisible by remember { mutableStateOf(backEnabled) }
 
-    BackHandler(enabled = backEnabled, onBack = onBackPressed)
+    BackHandler(enabled = backEnabled, onBack = onBackPress)
 
     LaunchedEffect(listState) {
         var previousOffset = listState.firstVisibleItemScrollOffset
@@ -217,10 +220,9 @@ private fun ParamBrowseScreenContent(
                 key = { param -> param.name }
             ) { param ->
                 ParamFileRow(
-                    modifier = Modifier.animateItem(),
                     param = param,
                     showFavoriteIcon = true,
-                    onParamClicked = onParamClicked,
+                    onParamClicked = onParamClick,
                 )
             }
 
@@ -240,7 +242,7 @@ private fun ParamBrowseScreenContent(
             InfoItem(
                 text = currentPath,
                 icon = painterResource(R.drawable.ic_arrow_upward),
-                onClicked = onBackPressed
+                onClick = onBackPress
             )
         }
 
@@ -260,7 +262,7 @@ private fun ParamBrowseScreenContent(
                     color = MaterialTheme.colorScheme.primary
                 ),
                 icon = painterResource(R.drawable.ic_documentation),
-                onClicked = { onDocumentationClicked(documentation!!) }
+                onClick = { onDocumentationClick(documentation!!) }
             )
         }
 
@@ -276,13 +278,13 @@ private fun ParamBrowseScreenContent(
 
 @Composable
 private fun InfoItem(
-    modifier: Modifier = Modifier,
     text: String,
+    icon: Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.titleSmall.copy(
         color = MaterialTheme.colorScheme.onSurfaceVariant
-    ),
-    icon: Painter,
-    onClicked: () -> Unit,
+    )
 ) {
     val context = LocalContext.current
     Row(
@@ -290,7 +292,7 @@ private fun InfoItem(
             .fillMaxWidth()
             .combinedClickable(
                 role = Role.Button,
-                onClick = onClicked,
+                onClick = onClick,
                 onLongClick = { Toast.makeText(context, text, Toast.LENGTH_SHORT).show() },
             )
             .background(MaterialTheme.colorScheme.surfaceContainer)
@@ -317,7 +319,7 @@ private fun InfoItem(
 @PreviewLightDark
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
 internal fun ParamBrowseScreenContentPreview() {
-    fun mapFilesToParams(files: Array<File>?): List<UiKernelParam> {
+    fun mapFilesToParams(files: Array<File>?): ImmutableList<UiKernelParam> {
         return files?.map { file ->
             UiKernelParam(
                 name = file.name,
@@ -325,7 +327,7 @@ internal fun ParamBrowseScreenContentPreview() {
                 value = "",
                 isFavorite = (0..5).random() % 2 == 0
             )
-        } ?: emptyList()
+        }?.toImmutableList() ?: persistentListOf()
     }
 
     val root = File("/")
@@ -346,15 +348,15 @@ internal fun ParamBrowseScreenContentPreview() {
                     documentationText = "Documentation for $currentPath",
                     url = null
                 ),
-                onParamClicked = {
+                onParamClick = {
                     if (it.isDirectory) {
                         currentPath = it.path
                         params = mapFilesToParams(File(it.path).listFiles())
                     }
                 },
-                onDocumentationClicked = {},
+                onDocumentationClick = {},
                 backEnabled = currentPath != root.path,
-                onBackPressed = { currentPath = File(currentPath).parent ?: root.path },
+                onBackPress = { currentPath = File(currentPath).parent ?: root.path },
                 isRefreshing = isRefreshingPreview,
                 onRefresh = {
                     scope.launch {

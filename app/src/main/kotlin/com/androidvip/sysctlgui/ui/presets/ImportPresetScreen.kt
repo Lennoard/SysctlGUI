@@ -64,11 +64,12 @@ import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
 private const val SUCCESS_ANIMATION_DURATION = 4000
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ImportPresetScreen(
     viewModel: PresetsViewModel = koinViewModel(),
@@ -79,7 +80,7 @@ fun ImportPresetScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val topBarTitle = stringResource(R.string.applying_preset)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(mainViewModel) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
@@ -93,7 +94,7 @@ fun ImportPresetScreen(
         )
     }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(viewModel.effect, onNavigateBack) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is PresetsViewEffect.ShowError -> {
@@ -128,20 +129,20 @@ fun ImportPresetScreen(
                     if (isLandscape()) {
                         IncomingPresetsLandscapeContent(
                             paramsToImport = state.paramsToImport,
-                            onImportPressed = {
+                            onImportPress = {
                                 viewModel.onEvent(PresetsViewEvent.ConfirmImportPressed)
                             },
-                            onCancelPressed = {
+                            onCancelPress = {
                                 viewModel.onEvent(PresetsViewEvent.CancelImportPressed)
                             }
                         )
                     } else {
                         IncomingPresetsContent(
                             paramsToImport = state.paramsToImport,
-                            onImportPressed = {
+                            onImportPress = {
                                 viewModel.onEvent(PresetsViewEvent.ConfirmImportPressed)
                             },
-                            onCancelPressed = {
+                            onCancelPress = {
                                 viewModel.onEvent(PresetsViewEvent.CancelImportPressed)
                             }
                         )
@@ -166,9 +167,9 @@ fun ImportPresetScreen(
 
 @Composable
 private fun IncomingPresetsContent(
-    paramsToImport: List<UiKernelParam>,
-    onImportPressed: () -> Unit,
-    onCancelPressed: () -> Unit
+    paramsToImport: ImmutableList<UiKernelParam>,
+    onImportPress: () -> Unit,
+    onCancelPress: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -262,14 +263,14 @@ private fun IncomingPresetsContent(
         ) {
             OutlinedButton(
                 modifier = Modifier.weight(1f),
-                onClick = onCancelPressed
+                onClick = onCancelPress
             ) {
                 Text(text = stringResource(android.R.string.cancel))
             }
 
             OutlinedButton(
                 modifier = Modifier.weight(1f),
-                onClick = onImportPressed,
+                onClick = onImportPress,
                 enabled = paramsToImport.isNotEmpty(),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -284,9 +285,9 @@ private fun IncomingPresetsContent(
 
 @Composable
 private fun IncomingPresetsLandscapeContent(
-    paramsToImport: List<UiKernelParam>,
-    onImportPressed: () -> Unit,
-    onCancelPressed: () -> Unit
+    paramsToImport: ImmutableList<UiKernelParam>,
+    onImportPress: () -> Unit,
+    onCancelPress: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -384,14 +385,14 @@ private fun IncomingPresetsLandscapeContent(
             ) {
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    onClick = onCancelPressed
+                    onClick = onCancelPress
                 ) {
                     Text(text = stringResource(android.R.string.cancel))
                 }
 
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    onClick = onImportPressed,
+                    onClick = onImportPress,
                     enabled = paramsToImport.isNotEmpty(),
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -489,9 +490,9 @@ private fun IncomingPresetsScreenPreview() {
                             )
                         )
                     }
-                },
-                onImportPressed = {},
-                onCancelPressed = {},
+                }.toImmutableList(),
+                onImportPress = {},
+                onCancelPress = {},
             )
         }
     }

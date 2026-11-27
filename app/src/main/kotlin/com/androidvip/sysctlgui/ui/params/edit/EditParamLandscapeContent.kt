@@ -185,9 +185,9 @@ internal fun EditParamLandscapeContent(
 
             ParamDocs(
                 documentation = state.documentation,
-                onReadMorePressed = onDocsReadMorePressed,
+                onReadMorePress = onDocsReadMorePressed,
                 currentParamName = param.name,
-                onDocumentationParamLinkClicked = onDocumentationParamLinkClicked
+                onDocumentationParamLinkClick = onDocumentationParamLinkClicked
             )
         }
     }

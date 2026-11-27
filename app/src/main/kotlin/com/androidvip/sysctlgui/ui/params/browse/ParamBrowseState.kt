@@ -3,11 +3,13 @@ package com.androidvip.sysctlgui.ui.params.browse
 import androidx.compose.runtime.Immutable
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.models.UiParamDocumentation
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class ParamBrowseState(
     val loading: Boolean = false,
-    val params: List<UiKernelParam> = emptyList(),
+    val params: ImmutableList<UiKernelParam> = persistentListOf(),
     val currentPath: String = "",
     val backEnabled: Boolean = false,
     val documentation: UiParamDocumentation? = null

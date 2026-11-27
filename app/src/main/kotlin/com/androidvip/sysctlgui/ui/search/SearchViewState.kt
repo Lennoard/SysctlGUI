@@ -3,12 +3,14 @@ package com.androidvip.sysctlgui.ui.search
 import androidx.compose.runtime.Stable
 import com.androidvip.sysctlgui.models.SearchHint
 import com.androidvip.sysctlgui.models.UiKernelParam
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Stable
 data class SearchViewState(
     val loading: Boolean = false,
-    val searchHints: List<SearchHint> = emptyList(),
-    val searchResults: List<UiKernelParam> = emptyList()
+    val searchHints: ImmutableList<SearchHint> = persistentListOf(),
+    val searchResults: ImmutableList<UiKernelParam> = persistentListOf()
 )
 
 sealed interface SearchViewEvent {

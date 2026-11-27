@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -51,6 +52,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.androidvip.sysctlgui.R
@@ -62,20 +65,23 @@ import com.androidvip.sysctlgui.ui.main.MainViewEvent
 import com.androidvip.sysctlgui.ui.main.MainViewModel
 import com.androidvip.sysctlgui.ui.main.MainViewState
 import com.androidvip.sysctlgui.ui.params.browse.ParamRow
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SearchScreen(
+    outerScaffoldPadding: PaddingValues,
+    onParamSelect: (UiKernelParam) -> Unit,
     viewModel: SearchViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
-    outerScaffoldPadding: PaddingValues,
-    onParamSelected: (UiKernelParam) -> Unit
+    onNavigateBack: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
     var searchActive by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
@@ -86,16 +92,17 @@ fun SearchScreen(
         )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel, onParamSelect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is SearchViewEffect.EditKernelParam -> onParamSelected(effect.param)
+                is SearchViewEffect.EditKernelParam -> onParamSelect(effect.param)
             }
         }
     }
 
     SearchScreenContent(
         outerScaffoldPadding = outerScaffoldPadding,
+        onNavigateBack = onNavigateBack,
         searchQuery = searchQuery,
         onSearchQueryChange = {
             searchQuery = it
@@ -104,10 +111,10 @@ fun SearchScreen(
         searchActive = searchActive,
         onSearchActiveChange = { searchActive = it },
         state = state,
-        onHistoryItemRemoveClicked = {
+        onHistoryItemRemoveClick = {
             viewModel.onEvent(SearchViewEvent.HistoryItemRemoveClicked(it))
         },
-        onParamClicked = {
+        onParamClick = {
             viewModel.onEvent(SearchViewEvent.ParamClicked(it))
         },
         onSearch = { query ->
@@ -121,14 +128,15 @@ fun SearchScreen(
 @Composable
 private fun SearchScreenContent(
     state: SearchViewState,
-    outerScaffoldPadding: PaddingValues = PaddingValues(),
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     searchActive: Boolean,
     onSearchActiveChange: (Boolean) -> Unit,
-    onHistoryItemRemoveClicked: (SearchHint) -> Unit,
-    onParamClicked: (UiKernelParam) -> Unit,
+    onHistoryItemRemoveClick: (SearchHint) -> Unit,
+    onParamClick: (UiKernelParam) -> Unit,
     onSearch: (String) -> Unit,
+    outerScaffoldPadding: PaddingValues = PaddingValues(),
+    onNavigateBack: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     val navHostTopPadding = outerScaffoldPadding.calculateTopPadding()
@@ -146,7 +154,7 @@ private fun SearchScreenContent(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .offset(y = -navHostTopPadding),
+            .offset { IntOffset(0, -navHostTopPadding.roundToPx()) },
         topBar = {
             val onActiveChange: (Boolean) -> Unit = { isActive ->
                 if (searchActive != isActive) {
@@ -173,29 +181,19 @@ private fun SearchScreenContent(
                         ),
                         placeholder = { Text(stringResource(R.string.search_title)) },
                         leadingIcon = {
-                            AnimatedContent(
-                                targetState = searchActive,
-                                label = "SearchIconsAnimation"
-                            ) { targetSearchActive ->
-                                if (targetSearchActive) {
-                                    IconButton(onClick = {
-                                        focusManager.clearFocus()
-                                        onSearchActiveChange(false)
-                                        onSearchQueryChange("")
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_arrow_back),
-                                            contentDescription = stringResource(R.string.go_back)
-                                        )
-                                    }
+                            IconButton(onClick = {
+                                if (searchActive) {
+                                    focusManager.clearFocus()
+                                    onSearchActiveChange(false)
+                                    onSearchQueryChange("")
                                 } else {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_search),
-                                        contentDescription = stringResource(
-                                            R.string.accessibility_search_icon
-                                        )
-                                    )
+                                    onNavigateBack()
                                 }
+                            }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_arrow_back),
+                                    contentDescription = stringResource(R.string.go_back)
+                                )
                             }
                         },
                         trailingIcon = {
@@ -219,8 +217,10 @@ private fun SearchScreenContent(
                 onExpandedChange = onActiveChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = searchBarHorizontalPadding)
-                    .padding(top = searchBarTopPadding),
+                    .deferredPadding(
+                        horizontal = { searchBarHorizontalPadding },
+                        top = { searchBarTopPadding }
+                    ),
                 shape = SearchBarDefaults.inputFieldShape,
                 colors = searchBarColors,
                 tonalElevation = SearchBarDefaults.TonalElevation,
@@ -229,7 +229,7 @@ private fun SearchScreenContent(
             ) {
                 SearchViewContent(
                     searchHints = state.searchHints,
-                    onHistoryItemRemoveClicked = onHistoryItemRemoveClicked,
+                    onHistoryItemRemoveClick = onHistoryItemRemoveClick,
                     onSearchQueryChange = onSearchQueryChange,
                     onSearch = onSearch,
                     onSearchActiveChange = onSearchActiveChange,
@@ -252,7 +252,7 @@ private fun SearchScreenContent(
                 SearchResultsContent(
                     searchResults = state.searchResults,
                     searchQuery = searchQuery,
-                    onParamClicked = onParamClicked
+                    onParamClick = onParamClick
                 )
             }
         }
@@ -261,15 +261,15 @@ private fun SearchScreenContent(
 
 @Composable
 private fun SearchViewContent(
-    searchHints: List<SearchHint>,
-    onHistoryItemRemoveClicked: (SearchHint) -> Unit,
+    searchHints: ImmutableList<SearchHint>,
+    onHistoryItemRemoveClick: (SearchHint) -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onSearchActiveChange: (Boolean) -> Unit,
     searchQuery: String
 ) {
-    val historyHints = searchHints.filter { it.isFromHistory }
-    val suggestionHints = searchHints.filter { !it.isFromHistory }
+    val historyHints = remember(searchHints) { searchHints.filter { it.isFromHistory } }
+    val suggestionHints = remember(searchHints) { searchHints.filter { !it.isFromHistory } }
     val columnsCount = if (isLandscape()) 2 else 1
     val hintItemColumns = GridCells.Fixed(columnsCount)
 
@@ -285,7 +285,8 @@ private fun SearchViewContent(
         if (historyHints.isNotEmpty()) {
             item(
                 key = "history_header",
-                span = { GridItemSpan(maxLineSpan) }
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "header"
             ) {
                 Text(
                     text = stringResource(R.string.recent_searches),
@@ -298,7 +299,10 @@ private fun SearchViewContent(
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
-            items(historyHints, key = { "history:${it.hint}" }) { historyItem ->
+            items(
+                items = historyHints,
+                key = { "history:${it.hint}" },
+                contentType = { _ -> "historyEntry" }) { historyItem ->
                 ListItem(
                     colors = ListItemDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -312,7 +316,7 @@ private fun SearchViewContent(
                     },
                     trailingContent = {
                         IconButton(
-                            onClick = { onHistoryItemRemoveClicked(historyItem) },
+                            onClick = { onHistoryItemRemoveClick(historyItem) },
                             modifier = Modifier.offset(16.dp)
                         ) {
                             Icon(
@@ -336,7 +340,8 @@ private fun SearchViewContent(
             if (suggestionHints.isNotEmpty()) {
                 item(
                     key = "history_suggestion_divider",
-                    span = { GridItemSpan(maxLineSpan) }
+                    span = { GridItemSpan(maxLineSpan) },
+                    contentType = "suggestionDivider"
                 ) {
                     HorizontalDivider(
                         modifier = Modifier
@@ -350,7 +355,8 @@ private fun SearchViewContent(
         if (suggestionHints.isNotEmpty()) {
             item(
                 key = "suggestions_header",
-                span = { GridItemSpan(maxLineSpan) }
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "suggestionHeader"
             ) {
                 Text(
                     text = stringResource(R.string.suggestions),
@@ -362,7 +368,10 @@ private fun SearchViewContent(
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 )
             }
-            items(suggestionHints, key = { "hint:${it.hint}" }) { hintItem ->
+            items(
+                items = suggestionHints,
+                key = { "hint:${it.hint}" },
+                contentType = { _ -> "suggestion" }) { hintItem ->
                 ListItem(
                     colors = ListItemDefaults.colors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -383,7 +392,8 @@ private fun SearchViewContent(
         if (searchHints.isEmpty() && searchQuery.isBlank()) {
             item(
                 key = "empty_search_suggestions",
-                span = { GridItemSpan(maxLineSpan) }
+                span = { GridItemSpan(maxLineSpan) },
+                contentType = "emptySuggestion"
             ) {
                 Box(
                     modifier = Modifier
@@ -400,9 +410,9 @@ private fun SearchViewContent(
 
 @Composable
 private fun SearchResultsContent(
-    searchResults: List<UiKernelParam>,
+    searchResults: ImmutableList<UiKernelParam>,
     searchQuery: String,
-    onParamClicked: (UiKernelParam) -> Unit
+    onParamClick: (UiKernelParam) -> Unit
 ) {
     val columns = if (isLandscape()) 2 else 1
     if (searchResults.isNotEmpty()) {
@@ -419,7 +429,7 @@ private fun SearchResultsContent(
                         .padding(4.dp),
                     param = param,
                     showFullName = true,
-                    onParamClicked = onParamClicked
+                    onParamClicked = onParamClick
                 )
 
                 if (columns == 1 && index < searchResults.lastIndex) {
@@ -505,11 +515,11 @@ private fun SearchScreenPreview() {
             searchActive = searchActive,
             onSearchActiveChange = { searchActive = it },
             state = SearchViewState(
-                searchHints = searchHints,
-                searchResults = searchResults
+                searchHints = searchHints.toImmutableList(),
+                searchResults = searchResults.toImmutableList()
             ),
-            onHistoryItemRemoveClicked = { searchHints = searchHints - it },
-            onParamClicked = {},
+            onHistoryItemRemoveClick = { searchHints = searchHints - it },
+            onParamClick = {},
             onSearch = {
                 searchResults = searchResults.filter {
                     it.name.contains(searchQuery, ignoreCase = true)
@@ -518,3 +528,47 @@ private fun SearchScreenPreview() {
         )
     }
 }
+
+private fun Modifier.deferredPadding(
+    horizontal: () -> Dp,
+    top: () -> Dp
+): Modifier = layout { measurable, constraints ->
+    val horizontalPx = horizontal().roundToPx()
+    val topPx = top().roundToPx()
+
+    val newMaxWidth = (constraints.maxWidth - horizontalPx * 2).coerceAtLeast(0)
+    val newMinWidth = constraints.minWidth.coerceAtMost(newMaxWidth)
+
+    val newMaxHeight = if (constraints.hasBoundedHeight) {
+        (constraints.maxHeight - topPx).coerceAtLeast(0)
+    } else {
+        constraints.maxHeight
+    }
+    val newMinHeight = constraints.minHeight.coerceAtMost(newMaxHeight)
+
+    val placeable = measurable.measure(
+        constraints.copy(
+            minWidth = newMinWidth,
+            maxWidth = newMaxWidth,
+            minHeight = newMinHeight,
+            maxHeight = newMaxHeight
+        )
+    )
+
+    val totalWidth = if (constraints.hasFixedWidth) {
+        constraints.maxWidth
+    } else {
+        (placeable.width + horizontalPx * 2).coerceAtMost(constraints.maxWidth)
+    }
+
+    val totalHeight = if (constraints.hasFixedHeight) {
+        constraints.maxHeight
+    } else {
+        placeable.height + topPx
+    }
+
+    layout(totalWidth, totalHeight) {
+        placeable.placeRelative(horizontalPx, topPx)
+    }
+}
+

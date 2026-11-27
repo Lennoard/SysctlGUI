@@ -63,6 +63,9 @@ import com.androidvip.sysctlgui.ui.settings.components.SwitchSettingComponent
 import com.androidvip.sysctlgui.ui.settings.components.TextSettingComponent
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEffect
 import com.androidvip.sysctlgui.ui.settings.model.SettingsViewEvent
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 import com.androidvip.sysctlgui.data.R as DataR
 
@@ -98,7 +101,7 @@ internal fun SettingsScreen(
         }
     )
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(mainViewModel) {
         mainViewModel.onEvent(
             MainViewEvent.OnSateChangeRequested(
                 MainViewState(
@@ -110,7 +113,7 @@ internal fun SettingsScreen(
         )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 SettingsViewEffect.RequestNotificationPermission -> {
@@ -142,10 +145,10 @@ internal fun SettingsScreen(
 
     SettingsScreenContent(
         settings = state.settings,
-        onSettingHeaderClicked = { appSetting ->
+        onSettingHeaderClick = { appSetting ->
             viewModel.onEvent(SettingsViewEvent.SettingHeaderClicked(appSetting))
         },
-        onValueChanged = { appSetting, newValue ->
+        onValueChange = { appSetting, newValue ->
             viewModel.onEvent(SettingsViewEvent.SettingValueChanged(appSetting, newValue))
         }
     )
@@ -157,11 +160,11 @@ internal fun SettingsScreen(
 
 @Composable
 private fun SettingsScreenContent(
-    settings: List<AppSetting<*>> = emptyList(),
-    onSettingHeaderClicked: (AppSetting<*>) -> Unit,
-    onValueChanged: (AppSetting<*>, Any) -> Unit
+    onSettingHeaderClick: (AppSetting<*>) -> Unit,
+    onValueChange: (AppSetting<*>, Any) -> Unit,
+    settings: ImmutableList<AppSetting<*>> = persistentListOf()
 ) {
-    val groupedSettings = settings.groupBy { it.category }
+    val groupedSettings = remember(settings) { settings.groupBy { it.category } }
     val columns = if (isLandscape()) 2 else 1
     val containerColor = MaterialTheme.colorScheme.surfaceContainer
 
@@ -191,10 +194,10 @@ private fun SettingsScreenContent(
                     )
 
                     SettingsGroupItem(
-                        settingsGroup = settingsGroup,
+                        settingsGroup = settingsGroup.toImmutableList(),
                         columns = columns,
-                        onSettingHeaderClicked = onSettingHeaderClicked,
-                        onValueChanged = onValueChanged
+                        onSettingHeaderClick = onSettingHeaderClick,
+                        onValueChang = onValueChange
                     )
                 }
             }
@@ -250,10 +253,10 @@ private fun SettingsScreenContent(
 
 @Composable
 private fun SettingsGroupItem(
-    settingsGroup: List<AppSetting<*>>,
+    settingsGroup: ImmutableList<AppSetting<*>>,
     columns: Int,
-    onSettingHeaderClicked: (AppSetting<*>) -> Unit,
-    onValueChanged: (AppSetting<*>, Any) -> Unit
+    onSettingHeaderClick: (AppSetting<*>) -> Unit,
+    onValueChang: (AppSetting<*>, Any) -> Unit
 ) {
     settingsGroup.forEachIndexed { index, appSetting ->
         val itemModifier = if (columns > 1) {
@@ -269,7 +272,7 @@ private fun SettingsGroupItem(
                 HeaderComponent(
                     modifier = itemModifier,
                     appSetting = appSetting,
-                    onClick = { onSettingHeaderClicked(appSetting) }
+                    onClick = { onSettingHeaderClick(appSetting) }
                 )
             }
 
@@ -278,7 +281,7 @@ private fun SettingsGroupItem(
                     modifier = itemModifier,
                     appSetting = appSetting,
                     onValueChange = { newValue ->
-                        onValueChanged(appSetting, newValue)
+                        onValueChang(appSetting, newValue)
                     }
                 )
             }
@@ -288,7 +291,7 @@ private fun SettingsGroupItem(
                     modifier = itemModifier,
                     appSetting = appSetting,
                     onValueChange = { newValue ->
-                        onValueChanged(appSetting, newValue)
+                        onValueChang(appSetting, newValue)
                     }
                 )
             }
@@ -298,7 +301,7 @@ private fun SettingsGroupItem(
                     modifier = itemModifier,
                     appSetting = appSetting,
                     onValueChange = { newValue ->
-                        onValueChanged(appSetting, newValue)
+                        onValueChang(appSetting, newValue)
                     }
                 )
             }
@@ -340,7 +343,7 @@ fun RevertChangesDialog(onDismissRequest: () -> Unit) {
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
 internal fun SettingsScreenPreview() {
     SysctlGuiTheme {
-        val settings = listOf(
+        val settings = persistentListOf(
             ///////////  GENERAL SETTINGS  ////////////
             AppSetting(
                 key = Prefs.ListFoldersFirst.key,
@@ -399,8 +402,8 @@ internal fun SettingsScreenPreview() {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             SettingsScreenContent(
                 settings = settings,
-                onSettingHeaderClicked = {},
-                onValueChanged = { _, _ -> }
+                onSettingHeaderClick = {},
+                onValueChange = { _, _ -> }
             )
         }
     }

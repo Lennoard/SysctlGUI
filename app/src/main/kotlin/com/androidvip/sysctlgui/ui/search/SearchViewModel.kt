@@ -9,11 +9,14 @@ import com.androidvip.sysctlgui.helpers.UiKernelParamMapper
 import com.androidvip.sysctlgui.models.SearchHint
 import com.androidvip.sysctlgui.models.UiKernelParam
 import com.androidvip.sysctlgui.utils.BaseViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 
 class SearchViewModel(
     private val getUserParams: GetUserParamsUseCase,
@@ -35,6 +38,7 @@ class SearchViewModel(
             val uiSearchHints = fetchedHistory
                 .map { SearchHint(hint = it, isFromHistory = true) }
                 .takeLast(MAX_SEARCH_HINTS)
+                .toImmutableList()
 
             setState {
                 copy(
@@ -66,10 +70,10 @@ class SearchViewModel(
     private fun handleSearchQueryChange(query: String) {
         preSearchJob?.cancel()
         if (query.isEmpty()) {
-            setState { copy(searchResults = emptyList()) }
+            setState { copy(searchResults = persistentListOf()) }
         } else if (query.length >= MIN_PRE_SEARCH_QUERY_LENGTH) {
             preSearchJob = viewModelScope.launch {
-                delay(300L) // Debounce delay
+                delay(300.milliseconds) // Debounce delay
                 handlePreSearch(query)
             }
         }
@@ -86,6 +90,7 @@ class SearchViewModel(
                 searchableParams
                     .filter { it.name.contains(query, ignoreCase = true) }
                     .map(UiKernelParamMapper::map)
+                    .toImmutableList()
             }
 
             setState {
@@ -98,7 +103,6 @@ class SearchViewModel(
         viewModelScope.launch {
             val hints = withContext(Dispatchers.IO) {
                 val historyHints = searchHistory
-                    .toList()
                     .take(MAX_SEARCH_HISTORY)
                     .map { SearchHint(hint = it, isFromHistory = true) }
 
@@ -107,7 +111,7 @@ class SearchViewModel(
                     .take(MAX_SEARCH_HINTS)
                     .map { SearchHint(it.name) }
 
-                historyHints + paramHints
+                (historyHints + paramHints).toImmutableList()
             }
 
             setState {
@@ -128,6 +132,7 @@ class SearchViewModel(
                     searchHints = searchHistory
                         .take(MAX_SEARCH_HISTORY)
                         .map { SearchHint(hint = it, isFromHistory = true) }
+                        .toImmutableList()
                 )
             }
         }

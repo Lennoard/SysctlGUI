@@ -44,6 +44,8 @@ This project utilizes a modern Android development stack, leveraging a comprehen
 -   **UI Development:**
     -   [Jetpack Compose](https://developer.android.com/jetpack/compose): For building native UIs with a declarative approach.
         -   Compose Material 3 & Material Components
+        -   Material 3 Adaptive for responsive layouts across phones, tablets, foldables, and split-screen.
+        -   Real-time Predictive Back gesture transitions and accessibility enhancements.
     -   [Jetpack Glance](https://developer.android.com/develop/ui/compose/glance): For creating App Widgets with Jetpack Compose.
 -   **Asynchronous Programming:**
     -   [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) & [Flows](https://kotlinlang.org/docs/flow.html): For efficient and structured background tasks and reactive data streams.

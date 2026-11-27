@@ -2,6 +2,8 @@ package com.androidvip.sysctlgui.ui.settings.model
 
 import com.androidvip.sysctlgui.core.navigation.UiRoute
 import com.androidvip.sysctlgui.domain.models.AppSetting
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 sealed interface SettingsViewEvent {
     class SettingValueChanged<T>(val appSetting: AppSetting<T>, val newValue: Any) : SettingsViewEvent
@@ -17,5 +19,5 @@ sealed interface SettingsViewEffect {
 }
 
 data class SettingsViewState(
-    val settings: List<AppSetting<*>> = emptyList()
+    val settings: ImmutableList<AppSetting<*>> = persistentListOf()
 )

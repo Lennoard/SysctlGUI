@@ -61,7 +61,6 @@ import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ParamChangeHistoryScreen(
     mainViewModel: MainViewModel = koinViewModel(),
@@ -74,10 +73,9 @@ fun ParamChangeHistoryScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var deleteAllConfirmation by remember { mutableStateOf(false) }
     val title = stringResource(R.string.history)
-    val locales = LocalConfiguration.current.locales
     val rollbackSuccessMessageFormat = stringResource(R.string.change_history_rollback_success)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel, showSnackbar) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ParamChangeHistoryEffect.RollbackSuccess -> showSnackbar(
@@ -139,8 +137,10 @@ fun ParamChangeHistoryScreen(
 
         else -> {
             val dateFormatter = remember { DateFormat.getDateInstance(DateFormat.FULL) }
-            val changesByDate = state.changes.groupBy { change ->
-                dateFormatter.format(Date(change.changedAt))
+            val changesByDate = remember(state.changes) {
+                state.changes.groupBy { change ->
+                    dateFormatter.format(Date(change.changedAt))
+                }
             }
             if (isLandscape()) {
                 LazyVerticalGrid(
@@ -165,7 +165,7 @@ fun ParamChangeHistoryScreen(
                                 onDelete = {
                                     viewModel.onEvent(ParamChangeHistoryEvent.DeleteConfirmed(change.id))
                                 },
-                                onDeleteRequested = { deleteChangeConfirmation = change }
+                                onDeleteRequest = { deleteChangeConfirmation = change }
                             )
                         }
                     }
@@ -180,10 +180,13 @@ fun ParamChangeHistoryScreen(
                         val dateText = date.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase() else it.toString()
                         }
-                        stickyHeader(key = "date-$date") {
+                        stickyHeader(key = "date-$date", contentType = "header") {
                             ChangeHistoryDateHeader(dateText)
                         }
-                        items(changes, key = ParamChange::id) { change ->
+                        items(
+                            items = changes,
+                            key = ParamChange::id,
+                            contentType = { _ -> "historyCard" }) { change ->
                             ParamChangeCard(
                                 change = change,
                                 rollbackEnabled = !state.rollbackInProgress,
@@ -191,7 +194,7 @@ fun ParamChangeHistoryScreen(
                                 onDelete = {
                                     viewModel.onEvent(ParamChangeHistoryEvent.DeleteConfirmed(change.id))
                                 },
-                                onDeleteRequested = { deleteChangeConfirmation = change }
+                                onDeleteRequest = { deleteChangeConfirmation = change }
                             )
                         }
                     }
@@ -307,13 +310,13 @@ private fun ParamChangeCard(
     rollbackEnabled: Boolean,
     onRollback: () -> Unit,
     onDelete: () -> Unit,
-    onDeleteRequested: () -> Unit
+    onDeleteRequest: () -> Unit
 ) {
     var visible by remember(change.id) { mutableStateOf(true) }
     val dismissState = rememberSwipeToDismissBoxState()
     val swipeDescription = stringResource(R.string.change_history_delete)
 
-    LaunchedEffect(visible) {
+    LaunchedEffect(visible, onDelete) {
         if (!visible) {
             delay(DISMISS_ANIMATION_DURATION_MS.milliseconds)
             onDelete()
@@ -357,7 +360,7 @@ private fun ParamChangeCard(
                     .fillMaxWidth()
                     .combinedClickable(
                         onClick = {},
-                        onLongClick = onDeleteRequested
+                        onLongClick = onDeleteRequest
                     )
             ) {
                 Column(

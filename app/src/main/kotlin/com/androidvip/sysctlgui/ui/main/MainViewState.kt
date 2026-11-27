@@ -11,7 +11,8 @@ data class MainViewState(
     val showNavBar: Boolean = true,
     val showBackButton: Boolean = false,
     val showSearchAction: Boolean = true,
-    val deleteAllHistoryAction: (() -> Unit)? = null
+    val deleteAllHistoryAction: (() -> Unit)? = null,
+    val predictiveBackProgress: Float = 0f
 )
 
 data class ThemeSettings(

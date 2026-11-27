@@ -14,6 +14,8 @@ import com.androidvip.sysctlgui.domain.usecase.AddUserParamsUseCase
 import com.androidvip.sysctlgui.domain.usecase.GetUserParamsUseCase
 import com.androidvip.sysctlgui.models.toUiKernelParam
 import com.androidvip.sysctlgui.utils.BaseViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -43,7 +45,7 @@ class PresetsViewModel(
             }.onSuccess {
                 setState {
                     copy(
-                        paramsToImport = emptyList(),
+                        paramsToImport = persistentListOf(),
                         incomingPresetsScreenState = IncomingPresetsScreenState.Success
                     )
                 }
@@ -65,7 +67,7 @@ class PresetsViewModel(
                 val params = presetsFileProcessor.getKernelParamsFromUri(uri)
                 setState {
                     copy(
-                        paramsToImport = params.map { it.toUiKernelParam() },
+                        paramsToImport = params.map { it.toUiKernelParam() }.toImmutableList(),
                         incomingPresetsScreenState = IncomingPresetsScreenState.Idle
                     )
                 }

@@ -4,7 +4,8 @@ agp = "9.5.2"
 appcompat = "1.7.1"
 composeAnimationGraphics = "1.10.0"
 composeBom = "2025.09.01"
-composeMaterial3 = "1.5.0-alpha04"
+composeMaterial3 = "1.4.0"
+composeMaterial3Adaptive = "1.2.0"
 composeMaterial = "1.9.2"
 coreKtx = "1.17.0"
 coreSplashscreen = "1.0.1"
@@ -13,6 +14,7 @@ jsoup = "1.23.2"
 junit = "4.13.2"
 koin = "4.1.1"
 kotlin = "2.3.10"
+kotlinxCollectionsImmutable = "0.5.2"
 kotlinxCoroutinesAndroid = "1.10.2"
 kotlinxSerializationCore = "1.9.0"
 ksp = "2.3.6"
@@ -34,6 +36,7 @@ androidx-compose-animation-graphics = { group = "androidx.compose.animation", na
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive", version.ref = "composeMaterial3Adaptive" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -59,6 +62,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
